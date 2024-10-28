@@ -1,0 +1,65 @@
+import 'package:laiza/core/utils/app_extenson.dart';
+
+import '../../../../core/app_export.dart';
+import '../../../../core/utils/pref_utils.dart';
+import '../../../select_role/ui/select_role.dart';
+import '../bloc/login_event.dart';
+import '../bloc/login_state.dart';
+
+class SocialLoginWidgets extends StatelessWidget {
+  const SocialLoginWidgets({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<LoginBloc, LoginState>(
+      listener: (context, state) {
+        if (state is LoginError) {
+          context.showSnackBar(state.message);
+        } else if (state is LoginSuccessState) {
+          context.showSnackBar('Login Success');
+          if (PrefUtils.getRole() == UserRole.User.name) {
+            Navigator.of(context)
+                .pushReplacementNamed(AppRoutes.bottomBarScreen);
+          } else {
+            Navigator.of(context).pushReplacementNamed(AppRoutes.homeScreen);
+          }
+        }
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CustomImageView(
+            onTap: () {
+              Navigator.of(context).pushNamed(AppRoutes.logInWithPhoneScreen);
+            },
+            imagePath: ImageConstant.phoneAuth,
+          ),
+          SizedBox(width: 18.v),
+          BlocBuilder<LoginBloc, LoginState>(
+            buildWhen: (previous, current) => false,
+            builder: (context, state) {
+              return CustomImageView(
+                onTap: () {
+                  context.read<LoginBloc>().add(LoginWithGoggleEvent());
+                },
+                imagePath: ImageConstant.googleAuth,
+              );
+            },
+          ),
+          SizedBox(width: 18.v),
+          BlocBuilder<LoginBloc, LoginState>(
+            buildWhen: (previous, current) => false,
+            builder: (context, state) {
+              return CustomImageView(
+                onTap: () {
+                  context.read<LoginBloc>().add(LoginWithAppleEvent());
+                },
+                imagePath: ImageConstant.appleAuth,
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}

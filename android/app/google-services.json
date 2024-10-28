@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "825576746102",
+    "project_id": "laizanew",
+    "storage_bucket": "laizanew.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825576746102:android:54d8755cdfe4f77e6ec357",
+        "android_client_info": {
+          "package_name": "com.laiza.greatminds"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "825576746102-9dd6hj9gv3qpgkq5kuhifs7kg88o2mov.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.laiza.greatminds",
+            "certificate_hash": "8c02124eaac6c30d0af47154af7c7c6f954c91b4"
+          }
+        },
+        {
+          "client_id": "825576746102-3hfbp1onkou25vjv4qd9j2t6vf2e91j7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQLlkZEKGxPFBWCS-Ca6ZZdGWtCBEUexI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "825576746102-3hfbp1onkou25vjv4qd9j2t6vf2e91j7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "825576746102-25p5eqblcvr28eiqbd72qrq8fn1g6d3k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.laiza.greatminds"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
