@@ -1,7 +1,11 @@
+import 'package:laiza/data/services/firebase_services.dart';
+
 import '../core/app_export.dart';
+import '../data/models/live_stream_model.dart/live_stream_model.dart';
 
 class StreamsCard extends StatelessWidget {
-  const StreamsCard({super.key, this.width});
+  final LiveStreamModel model;
+  const StreamsCard({super.key, this.width, required this.model});
   final double? width;
   @override
   Widget build(BuildContext context) {
@@ -28,13 +32,13 @@ class StreamsCard extends StatelessWidget {
                     shape: BoxShape.circle,
                     color: AppColor.offWhite),
                 child: CustomImageView(
-                  height: 90.h,
-                  width: 90.v,
-                  fit: BoxFit.fill,
-                  radius: BorderRadius.circular(200.h),
-                  imagePath:
-                      'https://farm2.staticflickr.com/1533/26541536141_41abe98db3_z_d.jpg',
-                ),
+                    height: 90.h,
+                    width: 90.v,
+                    fit: BoxFit.fill,
+                    radius: BorderRadius.circular(200.h),
+                    imagePath: model.userProfile
+                    //'https://farm2.staticflickr.com/1533/26541536141_41abe98db3_z_d.jpg',
+                    ),
               ),
               Positioned(
                 top: 5.v,
@@ -59,7 +63,7 @@ class StreamsCard extends StatelessWidget {
           ),
           SizedBox(height: 8.h),
           Text(
-            'Kiara Kapoor',
+            model.userName ?? '',
             style: textTheme.titleLarge!.copyWith(fontSize: 16.fSize),
           ),
           SizedBox(height: 3.h),
@@ -70,7 +74,7 @@ class StreamsCard extends StatelessWidget {
                   imagePath: ImageConstant.visibilityIcon, color: Colors.grey),
               SizedBox(width: 5.h),
               Text(
-                '1.2K viewers',
+                '${model.viewCount} viewers',
                 style: textTheme.bodySmall,
               ),
             ],
@@ -82,7 +86,13 @@ class StreamsCard extends StatelessWidget {
               height: 33.v,
               width: 122.h,
               text: 'Watch Now',
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushNamed(AppRoutes.livePage,
+                    arguments: {'live_id': model.liveId, 'is_host': false});
+
+                FirebaseServices.updateOnGoingLiveStream(
+                    id: model.liveId ?? "", isAdd: true);
+              },
               buttonTextStyle: textTheme.titleSmall,
             ),
           ),

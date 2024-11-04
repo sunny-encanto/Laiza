@@ -1,6 +1,5 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/services/firebase_services.dart';
-import 'package:laiza/localization/language_cubit.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -30,11 +29,8 @@ class ProfileScreen extends StatelessWidget {
                               .copyWith(color: Colors.white)),
                       CustomImageView(
                           onTap: () {
-                            context
-                                .read<LanguageCubit>()
-                                .changeLanguage(const Locale('es'));
-                            // Navigator.of(context)
-                            //     .pushNamed(AppRoutes.notificationsScreen);
+                            Navigator.of(context)
+                                .pushNamed(AppRoutes.notificationsScreen);
                           },
                           imagePath: ImageConstant.notificationIcon)
                     ],

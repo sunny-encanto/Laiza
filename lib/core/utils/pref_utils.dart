@@ -68,6 +68,14 @@ class PrefUtils {
     return _sharedPreferences?.getString('userName') ?? '';
   }
 
+  static Future<void> setUserProfile(String value) {
+    return _sharedPreferences!.setString('userProfile', value);
+  }
+
+  static String getUserProfile() {
+    return _sharedPreferences?.getString('userProfile') ?? '';
+  }
+
   static Future<void> setUserEmail(String value) {
     return _sharedPreferences!.setString('userEmail', value);
   }

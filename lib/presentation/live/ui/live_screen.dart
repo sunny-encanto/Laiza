@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/data/models/live_stream_model.dart/live_stream_model.dart';
+import 'package:laiza/data/services/firebase_services.dart';
 
 import '../../../widgets/slider_widget.dart';
 import '../../../widgets/streams_card_widget.dart';
@@ -29,7 +32,7 @@ class LiveScreen extends StatelessWidget {
                     itemCount: 5,
                     itemBuilder: (context, index) => Padding(
                       padding: EdgeInsets.only(left: 8.h),
-                      child: profileWidget(textTheme),
+                      child: profileWidget(context),
                     ),
                   )),
               SizedBox(height: 28.v),
@@ -53,16 +56,31 @@ class LiveScreen extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 28.v),
-              SizedBox(
-                height: 250.v,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) => Padding(
-                    padding: EdgeInsets.only(right: 10.h),
-                    child: const StreamsCard(),
-                  ),
-                ),
-              ),
+              StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseServices.getOnGoingLiveStream(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox.shrink();
+                    }
+                    var snapShotData = snapshot.data?.docs ?? [];
+                    List<LiveStreamModel> liveStreamModel = snapShotData
+                        .map((e) => LiveStreamModel.fromMap(
+                            e.data() as Map<String, dynamic>))
+                        .toList();
+                    return SizedBox(
+                      height: liveStreamModel.isNotEmpty ? 250.v : 0.v,
+                      child: ListView.builder(
+                        itemCount: liveStreamModel.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) => Padding(
+                          padding: EdgeInsets.only(right: 10.h),
+                          child: StreamsCard(
+                            model: liveStreamModel[index],
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
               SizedBox(height: 36.v),
               Text(
                 'Upcoming Streams',
@@ -176,67 +194,71 @@ class LiveScreen extends StatelessWidget {
     // );
   }
 
-  Widget profileWidget(TextTheme textTheme) {
-    return Column(
-      children: [
-        Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
-          children: [
-            // Outer colored border
-            Container(
-              width: 82.h,
-              height: 82.v,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.red,
-                    Colors.blue,
-                    Colors.green,
-                    Colors.yellow,
-                  ],
-                  stops: [0.0, 0.3, 0.7, 1.0],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                shape: BoxShape.circle,
-              ),
-            ),
-            // Inner content
-            Container(
-              width: 75.v,
-              height: 75.v,
-              decoration: const BoxDecoration(shape: BoxShape.circle),
-              child: CustomImageView(
-                radius: BorderRadius.circular(82.h),
+  Widget profileWidget(BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
+    return InkWell(
+      onTap: () {},
+      child: Column(
+        children: [
+          Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              // Outer colored border
+              Container(
                 width: 82.h,
                 height: 82.v,
-                imagePath: ImageConstant.reelImg,
-              ),
-            ),
-            Positioned(
-              bottom: -5.v,
-              child: Container(
-                width: 42.h,
-                height: 19.v,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: const Color(0xFFFF4365),
-                    borderRadius: BorderRadius.circular(10.h)),
-                child: Text(
-                  'Live',
-                  style: TextStyle(color: Colors.white, fontSize: 12.fSize),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.red,
+                      Colors.blue,
+                      Colors.green,
+                      Colors.yellow,
+                    ],
+                    stops: [0.0, 0.3, 0.7, 1.0],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
                 ),
               ),
-            )
-          ],
-        ),
-        SizedBox(height: 12.h),
-        Text(
-          'Name ',
-          style: textTheme.titleMedium,
-        ),
-      ],
+              // Inner content
+              Container(
+                width: 75.v,
+                height: 75.v,
+                decoration: const BoxDecoration(shape: BoxShape.circle),
+                child: CustomImageView(
+                  radius: BorderRadius.circular(82.h),
+                  width: 82.h,
+                  height: 82.v,
+                  imagePath: ImageConstant.reelImg,
+                ),
+              ),
+              Positioned(
+                bottom: -5.v,
+                child: Container(
+                  width: 42.h,
+                  height: 19.v,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      color: const Color(0xFFFF4365),
+                      borderRadius: BorderRadius.circular(10.h)),
+                  child: Text(
+                    'Live',
+                    style: TextStyle(color: Colors.white, fontSize: 12.fSize),
+                  ),
+                ),
+              )
+            ],
+          ),
+          SizedBox(height: 12.h),
+          Text(
+            'Name ',
+            style: textTheme.titleMedium,
+          ),
+        ],
+      ),
     );
   }
 }

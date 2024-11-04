@@ -92,5 +92,12 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!-- for zegoCloud  start-->
+	<key>NSCameraUsageDescription</key>
+    <string>We require camera access to connect to a live</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>We require microphone access to connect to a live</string>
+	<!-- for zegoCloud  end-->
+
 </dict>
 </plist>

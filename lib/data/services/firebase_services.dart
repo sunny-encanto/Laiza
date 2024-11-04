@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get_video_thumbnail/get_video_thumbnail.dart';
 import 'package:get_video_thumbnail/index.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:laiza/data/models/live_stream_model.dart/live_stream_model.dart';
 import 'package:laiza/data/models/message/message_model.dart';
 import 'package:laiza/data/services/notification_service.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -45,14 +46,16 @@ class FirebaseServices {
           await _auth.signInWithCredential(credential);
       final User? user = authResult.user;
       if (user != null) {
-        PrefUtils.setId(authResult.user?.uid ?? "");
+        PrefUtils.setId(user.uid);
+        PrefUtils.setUserName(user.displayName ?? '');
+        PrefUtils.setUserEmail(user.email ?? '');
+        PrefUtils.setUserProfile(user.photoURL ?? '');
         if (authResult.additionalUserInfo!.isNewUser) {
-          PrefUtils.setId(user.uid);
           String fcmToken =
               await FirebaseMessagingService.generateToken() ?? "";
 
           UserModel userModel = UserModel(
-              id: user.uid ?? "",
+              id: user.uid,
               name: user.displayName ?? '',
               email: user.email ?? "",
               profile: user.photoURL ?? "",
@@ -92,10 +95,13 @@ class FirebaseServices {
       final UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(oauthCredential);
       final User? user = userCredential.user;
+
       if (user != null) {
-        PrefUtils.setId(userCredential.user?.uid ?? "");
+        PrefUtils.setId(user.uid);
+        PrefUtils.setUserName(user.displayName ?? '');
+        PrefUtils.setUserEmail(user.email ?? '');
+        PrefUtils.setUserProfile(user.photoURL ?? '');
         if (userCredential.additionalUserInfo!.isNewUser) {
-          PrefUtils.setId(user.uid);
           String fcmToken =
               await FirebaseMessagingService.generateToken() ?? "";
           UserModel userModel = UserModel(
@@ -106,7 +112,6 @@ class FirebaseServices {
             token: fcmToken,
             role: 'User',
           );
-
           await addUser(userModel);
         }
       } else {
@@ -369,6 +374,36 @@ class FirebaseServices {
     } catch (e) {
       print('Error uploading thumbnail to Firebase Storage: $e');
       return null; // Return null in case of an error
+    }
+  }
+
+/*-------- Add OnGoing LiveStream -----*/
+  static Future<void> addOnGoingLiveStream(
+      LiveStreamModel liveStreamModel) async {
+    await _firestore
+        .collection('OnGoingLiveStream')
+        .doc(liveStreamModel.liveId)
+        .set(liveStreamModel.toMap());
+  }
+
+/*--------get OnGoing LiveStream -----*/
+  static getOnGoingLiveStream() {
+    return _firestore.collection('OnGoingLiveStream').snapshots();
+  }
+
+/*--------update OnGoing LiveStream -----*/
+  static updateOnGoingLiveStream({required String id, required bool isAdd}) {
+    return _firestore.collection('OnGoingLiveStream').doc(id).update({
+      'viewCount': isAdd ? FieldValue.increment(1) : FieldValue.increment(-1),
+    });
+  }
+
+/*-------- Delete OnGoing LiveStream -----*/
+  static Future<void> deleteOnGoingStream(String id) async {
+    try {
+      await _firestore.collection('OnGoingLiveStream').doc(id).delete();
+    } catch (e) {
+      debugPrint('Delete OnGoing LiveStream Error : $e');
     }
   }
 

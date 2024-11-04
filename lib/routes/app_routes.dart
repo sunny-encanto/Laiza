@@ -7,6 +7,7 @@ import 'package:laiza/presentation/influencer/influencer_my_profile/bloc/influen
 import 'package:laiza/presentation/influencer/influencer_my_profile/ui/influencer_my_profile.dart';
 import 'package:laiza/presentation/influencer/schedule_stream/bloc/schedule_stream_bloc.dart';
 import 'package:laiza/presentation/influencer/seller_info/bloc/seller_info_bloc.dart';
+import 'package:laiza/presentation/live_page/ui/live_page.dart';
 
 import '../core/app_export.dart';
 import '../presentation/auth/login_with_phone/log_In_with_phone.dart';
@@ -124,6 +125,8 @@ class AppRoutes {
   static const String chatBoxScreen = '/chatBox_screen';
 
   static const String viewImageWidget = '/viewImageWidget';
+
+  static const String livePage = '/live_page';
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -405,6 +408,14 @@ class AppRoutes {
             builder: (context) => BlocProvider(
                   create: (context) => EditProfileBloc(),
                   child: EditProfileScreen(),
+                ));
+
+      case livePage:
+        Map<String, dynamic> data = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+            builder: (context) => LivePage(
+                  liveID: data['live_id'],
+                  isHost: data['is_host'],
                 ));
       default:
         return null;

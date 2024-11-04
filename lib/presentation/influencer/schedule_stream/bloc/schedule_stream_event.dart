@@ -42,3 +42,10 @@ class ScheduleNowRequestEvent extends ScheduleStreamEvent {
   @override
   List<Object> get props => [title, description, date, time, link];
 }
+
+class GoLiveButtonTapEvent extends ScheduleStreamEvent {
+  final LiveStreamModel liveStreamModel;
+  const GoLiveButtonTapEvent(this.liveStreamModel);
+  @override
+  List<Object> get props => [liveStreamModel];
+}

@@ -2,6 +2,8 @@
 
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/core/utils/date_time_utils.dart';
+import 'package:laiza/core/utils/pref_utils.dart';
+import 'package:laiza/data/models/live_stream_model.dart/live_stream_model.dart';
 
 import '../bloc/schedule_stream_bloc.dart';
 
@@ -37,8 +39,32 @@ class ScheduleStreamScreen extends StatelessWidget {
                       child: Text('Schedule Your Live Stream',
                           style: textTheme.titleMedium),
                     ),
-                    CustomOutlineButton(
-                        width: 127.h, height: 36.v, text: 'Go Live')
+                    BlocBuilder<ScheduleStreamBloc, ScheduleStreamState>(
+                      builder: (context, state) {
+                        return CustomOutlineButton(
+                            isLoading: state is ScheduleStreamLoading,
+                            onPressed: () async {
+                              LiveStreamModel liveStreamModel = LiveStreamModel(
+                                liveId: PrefUtils.getId(),
+                                userId: PrefUtils.getId(),
+                                userName: PrefUtils.getUserName(),
+                                userProfile: PrefUtils.getUserProfile(),
+                                viewCount: 1,
+                              );
+                              context
+                                  .read<ScheduleStreamBloc>()
+                                  .add(GoLiveButtonTapEvent(liveStreamModel));
+                              Navigator.of(context)
+                                  .pushNamed(AppRoutes.livePage, arguments: {
+                                'live_id': PrefUtils.getId(),
+                                'is_host': true
+                              });
+                            },
+                            width: 127.h,
+                            height: 36.v,
+                            text: 'Go Live');
+                      },
+                    )
                   ],
                 ),
                 SizedBox(height: 24.v),

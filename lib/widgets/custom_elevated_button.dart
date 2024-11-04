@@ -50,7 +50,7 @@ class CustomElevatedButton extends BaseButton {
                   backgroundColor: backgroundColor ?? AppColor.primary,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24.h))),
-          onPressed: isDisabled ?? false ? null : onPressed ?? () {},
+          onPressed: isLoading ?? false ? null : onPressed ?? () {},
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -128,7 +128,7 @@ class CustomOutlineButton extends BaseButton {
                   shape: RoundedRectangleBorder(
                       side: const BorderSide(color: Colors.black),
                       borderRadius: BorderRadius.circular(24.h))),
-          onPressed: isDisabled ?? false ? null : onPressed ?? () {},
+          onPressed: isLoading ?? false ? null : onPressed ?? () {},
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,

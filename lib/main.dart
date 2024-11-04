@@ -21,13 +21,13 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   await NotificationService.initialize();
   await FirebaseMessagingService.initialize();
   await FirebaseMessagingService.generateToken();
   await FirebaseMessagingService.handleInitialMessage();
   await FirebaseMessagingService.onBackgroundMessage();
   await PrefUtils.init();
-
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]).then((value) {

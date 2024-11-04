@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:laiza/data/models/live_stream_model.dart/live_stream_model.dart';
+import 'package:laiza/data/services/firebase_services.dart';
 
 import '../../../../core/app_export.dart';
 
@@ -13,6 +15,7 @@ class ScheduleStreamBloc
     on<SelectDateEvent>(_onSelectDate);
     on<SelectTimeEvent>(_onSelectTime);
     on<ScheduleNowRequestEvent>(_onScheduleNow);
+    on<GoLiveButtonTapEvent>(_onGoLive);
   }
 
   FutureOr<void> _onSelectDate(
@@ -29,6 +32,13 @@ class ScheduleStreamBloc
       ScheduleNowRequestEvent event, Emitter<ScheduleStreamState> emit) async {
     emit(ScheduleStreamLoading());
     await Future.delayed(const Duration(seconds: 1));
+    emit(ScheduleStreamSuccess());
+  }
+
+  FutureOr<void> _onGoLive(
+      GoLiveButtonTapEvent event, Emitter<ScheduleStreamState> emit) async {
+    emit(ScheduleStreamLoading());
+    await FirebaseServices.addOnGoingLiveStream(event.liveStreamModel);
     emit(ScheduleStreamSuccess());
   }
 }
