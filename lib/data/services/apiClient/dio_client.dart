@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
+import '../../../core/app_export.dart';
 import '../../../core/errors/exceptions.dart';
 import '../../../core/utils/api_constant.dart';
 
@@ -43,7 +44,7 @@ class ApiClient {
         },
         onError: (DioException error, handler) {
           // Handle errors
-          print('Request failed: ${error.response?.statusCode}');
+          debugPrint('Request failed: ${error.response?.statusCode}');
           return handler.next(error); // Continue with the error
         },
       )
@@ -93,8 +94,6 @@ class ApiClient {
       throw Exception('DELETE request failed: $e');
     }
   }
-
-  // You can add more helper methods for handling PATCH, HEAD, etc., if needed.
 
   // You can also add a method to set custom headers
   void setHeaders(Map<String, dynamic> headers) {

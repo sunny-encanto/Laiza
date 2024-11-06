@@ -4,6 +4,7 @@ import 'package:laiza/core/app_export.dart';
 import '../../../data/models/live_stream_model.dart/live_stream_model.dart';
 import '../../../data/services/firebase_services.dart';
 import '../../../widgets/streams_card_widget.dart';
+import '../../empty_pages/no_ongoing_stream/no_ongoing_streams.dart';
 
 class AllOngoingStreamsScreen extends StatelessWidget {
   const AllOngoingStreamsScreen({super.key});
@@ -29,19 +30,21 @@ class AllOngoingStreamsScreen extends StatelessWidget {
                 .map((e) =>
                     LiveStreamModel.fromMap(e.data() as Map<String, dynamic>))
                 .toList();
-            return MasonryGridView.count(
-              padding: EdgeInsets.all(5.h),
-              shrinkWrap: true,
-              itemCount: liveStreamModel.length,
-              crossAxisCount: 2,
-              mainAxisSpacing: 5.v,
-              crossAxisSpacing: 5.h,
-              itemBuilder: (context, index) {
-                return StreamsCard(
-                  model: liveStreamModel[index],
-                );
-              },
-            );
+            return liveStreamModel.isEmpty
+                ? const NoOngoingStreamsScreen()
+                : MasonryGridView.count(
+                    padding: EdgeInsets.all(5.h),
+                    shrinkWrap: true,
+                    itemCount: liveStreamModel.length,
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 5.v,
+                    crossAxisSpacing: 5.h,
+                    itemBuilder: (context, index) {
+                      return StreamsCard(
+                        model: liveStreamModel[index],
+                      );
+                    },
+                  );
           }),
     );
   }

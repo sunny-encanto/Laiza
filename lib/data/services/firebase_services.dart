@@ -189,7 +189,7 @@ class FirebaseServices {
       String base64Data = base64Encode(File(filePath).readAsBytesSync());
       String fileName =
           '${DateTime.now().millisecondsSinceEpoch}_${filePath.split('/').last}';
-      print('fileName:==>$fileName');
+      debugPrint('fileName:==>$fileName');
       // Create a reference to the location you want to upload to in Firebase Storage
       Reference ref = _storage.ref().child('uploads/$fileName');
 
@@ -318,7 +318,7 @@ class FirebaseServices {
         UserModel userModel = UserModel.fromJson(
             json: value.data() as Map<String, dynamic>, id: value.id);
         // if (userModel.isNotificationOn ?? true) {
-        print('Token: ${userModel.token}');
+        debugPrint('Token: ${userModel.token}');
         await FirebaseMessagingService.sendNotification(
           type: type,
           token: userModel.token!,
@@ -355,7 +355,7 @@ class FirebaseServices {
         quality: 25, // Adjust the thumbnail quality as needed
       );
     } catch (e) {
-      print('Error generating thumbnail: $e');
+      debugPrint('Error generating thumbnail: $e');
       return null; // Return null in case of an error
     }
 
@@ -372,7 +372,7 @@ class FirebaseServices {
       String downloadUrl = await uploadTask.ref.getDownloadURL();
       return downloadUrl;
     } catch (e) {
-      print('Error uploading thumbnail to Firebase Storage: $e');
+      debugPrint('Error uploading thumbnail to Firebase Storage: $e');
       return null; // Return null in case of an error
     }
   }
@@ -392,10 +392,20 @@ class FirebaseServices {
   }
 
 /*--------update OnGoing LiveStream -----*/
-  static updateOnGoingLiveStream({required String id, required bool isAdd}) {
-    return _firestore.collection('OnGoingLiveStream').doc(id).update({
-      'viewCount': isAdd ? FieldValue.increment(1) : FieldValue.increment(-1),
-    });
+  static Future<void> updateOnGoingLiveStream(
+      {required String id, required bool isAdd}) async {
+    try {
+      final docRef = _firestore.collection('OnGoingLiveStream').doc(id);
+      final docSnapShot = await docRef.get();
+      if (docSnapShot.exists) {
+        await docRef.update({
+          'viewCount':
+              isAdd ? FieldValue.increment(1) : FieldValue.increment(-1),
+        });
+      }
+    } catch (e) {
+      log('Error on updateOnGoingLiveStream', error: e);
+    }
   }
 
 /*-------- Delete OnGoing LiveStream -----*/

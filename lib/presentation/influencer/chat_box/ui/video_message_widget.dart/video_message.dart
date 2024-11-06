@@ -155,20 +155,4 @@ class VideoMessageWidget extends StatelessWidget {
       ],
     );
   }
-
-  // Future<Uint8List?> generateThumbnail(String videoUrl) async {
-
-  //   Uint8List? thumbnailData;
-  //   try {
-  //     thumbnailData = await VideoThumbnail.thumbnailData(
-  //       video: videoUrl,
-  //       imageFormat: ImageFormat.JPEG,
-  //       maxWidth: 200, // Adjust the thumbnail width as needed
-  //       quality: 25, // Adjust the thumbnail quality as needed
-  //     );
-  //   } catch (e) {
-  //     print('Error generating thumbnail: $e');
-  //   }
-  //   return thumbnailData;
-  // }
 }

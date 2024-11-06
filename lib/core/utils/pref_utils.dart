@@ -1,5 +1,6 @@
 //ignore: unused_import
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,7 +15,7 @@ class PrefUtils {
 
   static Future<void> init() async {
     _sharedPreferences ??= await SharedPreferences.getInstance();
-    print('SharedPreference Initialized');
+    log('/------SharedPreference Initialized------/');
     return;
   }
 

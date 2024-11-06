@@ -43,9 +43,9 @@ class NotificationService {
         );
 
     if (result == true) {
-      print('iOS notification permissions granted.');
+      debugPrint('iOS notification permissions granted.');
     } else {
-      print('iOS notification permissions denied.');
+      debugPrint('iOS notification permissions denied.');
     }
   }
 
@@ -115,7 +115,6 @@ class NotificationService {
 // iOS-specific callback for when a notification is received
   static Future _onDidReceiveLocalNotificationIOS(
       int id, String? title, String? body, String? payload) async {
-    print('Local Notification taped ios');
     if (payload != null) {
       debugPrint('notification payload: $payload');
       List data = payload.split(',');
@@ -134,7 +133,7 @@ class NotificationService {
   @pragma('vm:entry-point')
   static void notificationTapBackground(
       NotificationResponse notificationResponse) {
-    print('notificationTapBackground');
+    debugPrint('notificationTapBackground');
   }
 
   static void showLocalNotification(RemoteMessage message) async {

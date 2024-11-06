@@ -57,7 +57,7 @@ class ScheduleStreamScreen extends StatelessWidget {
                               Navigator.of(context)
                                   .pushNamed(AppRoutes.livePage, arguments: {
                                 'live_id': PrefUtils.getId(),
-                                'is_host': true
+                                'is_host': true,
                               });
                             },
                             width: 127.h,

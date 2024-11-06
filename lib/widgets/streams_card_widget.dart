@@ -87,8 +87,10 @@ class StreamsCard extends StatelessWidget {
               width: 122.h,
               text: 'Watch Now',
               onPressed: () {
-                Navigator.of(context).pushNamed(AppRoutes.livePage,
-                    arguments: {'live_id': model.liveId, 'is_host': false});
+                Navigator.of(context).pushNamed(AppRoutes.livePage, arguments: {
+                  'live_id': model.liveId,
+                  'is_host': false,
+                });
 
                 FirebaseServices.updateOnGoingLiveStream(
                     id: model.liveId ?? "", isAdd: true);

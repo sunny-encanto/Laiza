@@ -1,7 +1,7 @@
-import 'package:laiza/core/app_export.dart';
+import '../../../core/app_export.dart';
 
-class EmptyNotificationsScreen extends StatelessWidget {
-  const EmptyNotificationsScreen({super.key});
+class NoOngoingStreamsScreen extends StatelessWidget {
+  const NoOngoingStreamsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,13 +12,13 @@ class EmptyNotificationsScreen extends StatelessWidget {
       children: [
         Center(
           child: CustomImageView(
-            width: SizeUtils.width - 100.h,
-            imagePath: ImageConstant.noNotifications,
+            width: SizeUtils.width - 200.v,
+            imagePath: ImageConstant.noOnGoing,
           ),
         ),
         SizedBox(height: 10.v),
         Text(
-          'No Notifications',
+          'No Ongoing Streams',
           style: textTheme.titleMedium!
               .copyWith(fontSize: 18.fSize, fontWeight: FontWeight.bold),
         )

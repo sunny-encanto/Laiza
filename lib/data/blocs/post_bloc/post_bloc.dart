@@ -18,7 +18,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   FutureOr<void> onFetchPost(event, emit) async {
     try {
       emit(PostLoading());
-      final posts = await postRepository.fetchPosts();
+      final List<Post> posts = await postRepository.fetchPosts();
       emit(PostLoaded(posts: posts));
     } catch (e) {
       emit(PostError(message: e.toString()));

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -45,6 +46,7 @@ class FirebaseMessagingService {
       navigatorKey.currentState
           ?.pushNamed(AppRoutes.chatBoxScreen, arguments: message.data['id']);
     });
+    log('/----FirebaseMessagingService initialized-----/');
   }
 
   @pragma('vm:entry-point')

@@ -358,14 +358,6 @@ class HomeScreen extends StatelessWidget {
           CustomIconButton(
             icon: ImageConstant.bellIcon,
             onTap: () async {
-              // String token =
-              //     await FirebaseMessagingService.generateToken() ?? "";
-              // FirebaseMessagingService.sendNotification(
-              //     token: token,
-              //     title: 'Hii..',
-              //     body: 'Test',
-              //     id: PrefUtils.getId(),
-              //     type: NotificationType.Chat.name);
               Navigator.of(context).pushNamed(AppRoutes.notificationsScreen);
             },
           ),

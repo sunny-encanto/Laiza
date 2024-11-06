@@ -129,6 +129,8 @@ class ImageConstant {
 
   static String noSearchFound = '$imagePath/no_search_found.png';
 
+  static String noOnGoing = '$imagePath/no_on_going.svg';
+
   //Demo Image
   static String defaultProfile = '$imagePath/person_icon.png';
 }

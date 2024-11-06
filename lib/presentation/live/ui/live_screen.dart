@@ -61,6 +61,8 @@ class LiveScreen extends StatelessWidget {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const SizedBox.shrink();
+                    } else if (snapshot.hasError) {
+                      return const SizedBox.shrink();
                     }
                     var snapShotData = snapshot.data?.docs ?? [];
                     List<LiveStreamModel> liveStreamModel = snapShotData
