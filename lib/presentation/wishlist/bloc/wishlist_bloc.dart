@@ -2,22 +2,28 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:laiza/data/models/cart_model/cart_model.dart';
+import 'package:laiza/data/models/wishlist_model/wishlist_model.dart';
+import 'package:laiza/data/repositories/wishlist_repository/wishlist_repository.dart';
 
 part 'wishlist_event.dart';
 part 'wishlist_state.dart';
 
 class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
-  WishlistBloc() : super(WishlistInitial()) {
+  late WishlistRepository _wishlistRepository;
+  List<Wishlist> itemList = <Wishlist>[];
+
+  WishlistBloc(WishlistRepository wishlistRepository)
+      : super(WishlistInitial()) {
+    _wishlistRepository = wishlistRepository;
     on<FetchWishListsEvent>(_onFetchWishList);
     on<RemoveWishListsItemEvent>(_onWishListItemRemove);
   }
-  List<CartModel> itemList = cartItemsList;
+
   FutureOr<void> _onFetchWishList(
       FetchWishListsEvent event, Emitter<WishlistState> emit) async {
     try {
       emit(WishlistLoadingState());
-      await Future.delayed(const Duration(seconds: 1));
+      itemList = await _wishlistRepository.fetchWishList();
       emit(WishlistLoadedState(itemList));
     } catch (e) {
       emit(const WishlistErrorState('Failed to load wishlist'));
@@ -27,7 +33,7 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
   FutureOr<void> _onWishListItemRemove(
       RemoveWishListsItemEvent event, Emitter<WishlistState> emit) async {
     try {
-      final updatedItems = List<CartModel>.from(itemList)
+      final updatedItems = List<Wishlist>.from(itemList)
         ..removeWhere((item) => item.id == event.id);
       emit(WishlistLoadedState(updatedItems));
       // Update the original itemList to reflect the removal

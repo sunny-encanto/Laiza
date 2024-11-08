@@ -86,7 +86,7 @@ class SearchScreen extends StatelessWidget {
                                       Divider(height: 2.v),
                               itemBuilder: (context, index) =>
                                   _buildSearchResult(
-                                      state.searchResult[index], textTheme)),
+                                      state.searchResult[index], context)),
                       //Product View
                       Expanded(
                           child: GridView.builder(
@@ -148,9 +148,12 @@ class SearchScreen extends StatelessWidget {
     );
   }
 
-  ListTile _buildSearchResult(SearchModel item, TextTheme textTheme) {
+  ListTile _buildSearchResult(SearchModel item, BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     return ListTile(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).pushNamed(AppRoutes.influencerProfileScreen);
+      },
       contentPadding: const EdgeInsets.all(0),
       leading: CustomImageView(
         height: 50.h,

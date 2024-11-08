@@ -1,13 +1,14 @@
+import 'package:equatable/equatable.dart';
 import 'package:laiza/core/app_export.dart';
 
-class CommentModel {
+class CommentModel extends Equatable {
   final int id;
   final String name;
   final String comment;
   final String profile;
-  int commentCount;
-  bool isLiked;
-  CommentModel({
+  final int commentCount;
+  final bool isLiked;
+  const CommentModel({
     required this.id,
     required this.name,
     required this.comment,
@@ -29,6 +30,10 @@ class CommentModel {
       commentCount: commentCount ?? this.commentCount,
     );
   }
+
+  @override
+  List<Object?> get props =>
+      [id, name, comment, profile, commentCount, isLiked];
 }
 
 List<CommentModel> commentList = <CommentModel>[

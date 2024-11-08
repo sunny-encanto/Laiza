@@ -12,7 +12,7 @@ final class WishlistInitial extends WishlistState {}
 final class WishlistLoadingState extends WishlistState {}
 
 final class WishlistLoadedState extends WishlistState {
-  final List<CartModel> items;
+  final List<Wishlist> items;
   const WishlistLoadedState(this.items);
 
   @override

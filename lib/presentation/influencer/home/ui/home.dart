@@ -128,12 +128,10 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 12.v),
-                SizedBox(
-                  height: 280.v,
-                  child: ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: 4,
-                      itemBuilder: (context, index) => _buildConnectionItem(
+                Column(
+                  children: List.generate(
+                      4,
+                      (index) => _buildConnectionItem(
                           connectionsList[index], textTheme)),
                 ),
                 SizedBox(height: 28.v),

@@ -1,3 +1,5 @@
+import 'package:laiza/data/repositories/cart_repository/cart_repository.dart';
+import 'package:laiza/data/repositories/wishlist_repository/wishlist_repository.dart';
 import 'package:laiza/presentation/influencer/chats/bloc/chats_bloc.dart';
 import 'package:laiza/presentation/influencer/discover_connections/bloc/discover_connections_bloc.dart';
 import 'package:laiza/presentation/influencer/edit_profile/ui/edit_profile.dart';
@@ -206,7 +208,7 @@ class AppRoutes {
       case cartScreen:
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => CartBloc(),
+                  create: (context) => CartBloc(context.read<CartRepository>()),
                   child: const CartScreen(),
                 ));
 
@@ -296,7 +298,8 @@ class AppRoutes {
       case wishlistScreen:
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => WishlistBloc(),
+                  create: (context) =>
+                      WishlistBloc(context.read<WishlistRepository>()),
                   child: const WishlistScreen(),
                 ));
 

@@ -1,5 +1,4 @@
 import 'package:laiza/core/app_export.dart';
-import 'package:laiza/core/utils/app_extenson.dart';
 import 'package:laiza/data/models/cart_model/cart_model.dart';
 
 class CartScreen extends StatelessWidget {
@@ -70,10 +69,20 @@ class CartScreen extends StatelessWidget {
                         activeColor: AppColor.primary,
                         value: state.items.every((item) => item.isSelected),
                         onChanged: (value) {
-                          for (var item in state.items) {
-                            context
-                                .read<CartBloc>()
-                                .add(ToggleSelection(item.id));
+                          if (state.items.every((item) => item.isSelected)) {
+                            for (var item in state.items) {
+                              context
+                                  .read<CartBloc>()
+                                  .add(ToggleSelection(item.id));
+                            }
+                          } else {
+                            for (var item in state.items) {
+                              if (item.isSelected == false) {
+                                context
+                                    .read<CartBloc>()
+                                    .add(ToggleSelection(item.id));
+                              }
+                            }
                           }
                         },
                       );

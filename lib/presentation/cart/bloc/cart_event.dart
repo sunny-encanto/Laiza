@@ -9,13 +9,6 @@ sealed class CartEvent extends Equatable {
 
 class FetchCartEvent extends CartEvent {}
 
-class ToggleSelectAllCartEvent extends CartEvent {
-  final bool isSelectedAll;
-  const ToggleSelectAllCartEvent(this.isSelectedAll);
-  @override
-  List<Object> get props => [isSelectedAll];
-}
-
 class AddItem extends CartEvent {
   final CartModel item;
 

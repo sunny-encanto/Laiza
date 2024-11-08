@@ -44,7 +44,7 @@ class HelpCentreScreen extends StatelessWidget {
                 textTheme),
             _buildFAQ(
                 "How can I contact customer support?",
-                "You can reach customer support via email at support@dawabajar.com, or by calling our support number listed below.",
+                "You can reach customer support via email at support@Laiza.com, or by calling our support number listed below.",
                 textTheme),
 
             const SizedBox(height: 16),

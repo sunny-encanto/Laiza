@@ -3,12 +3,18 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:laiza/data/models/cart_model/cart_model.dart';
+import 'package:laiza/data/repositories/cart_repository/cart_repository.dart';
 
 part 'cart_event.dart';
 part 'cart_state.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
-  CartBloc() : super(const CartState(items: <CartModel>[], isLoading: true)) {
+  List<CartModel> _cartItemsList = <CartModel>[];
+  late CartRepository _cartRepository;
+
+  CartBloc(CartRepository cartRepository)
+      : super(const CartState(items: <CartModel>[], isLoading: true)) {
+    _cartRepository = cartRepository;
     on<FetchCartEvent>(_onCartLoaded);
     on<AddItem>(_onAddItem);
 
@@ -21,6 +27,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<ToggleSelection>(_onToggleSelection);
 
     on<CheckOutEvent>(_onCheckOutEvent);
+  }
+
+  FutureOr<void> _onCartLoaded(
+      FetchCartEvent event, Emitter<CartState> emit) async {
+    emit(state.copyWith(isLoading: true));
+    _cartItemsList = await _cartRepository.fetchCart();
+    emit(state.copyWith(isLoading: false, items: _cartItemsList));
   }
 
   FutureOr<void> _onCheckOutEvent(event, emit) {
@@ -36,7 +49,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   FutureOr<void> _onToggleSelection(event, emit) {
     final updatedItems = state.items.map((item) {
       if (item.id == event.id) {
-        return item..isSelected = !item.isSelected;
+        return item.copyWith(isSelected: !item.isSelected);
       }
       return item;
     }).toList();
@@ -46,15 +59,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   FutureOr<void> _onDecreaseQuantity(event, emit) {
     final updatedItems = state.items.map((item) {
       if (item.id == event.id && item.quantity > 1) {
-        // Return a new CartItem with the updated quantity
-        return CartModel(
-          url: item.url,
-          id: item.id,
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity - 1,
-          isSelected: item.isSelected,
-        );
+        return item.copyWith(quantity: item.quantity - 1);
       }
       return item;
     }).toList();
@@ -64,15 +69,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   FutureOr<void> _onIncreaseQuantity(event, emit) {
     final updatedItems = state.items.map((item) {
       if (item.id == event.id) {
-        // Return a new CartItem with the updated quantity
-        return CartModel(
-          url: item.url,
-          id: item.id,
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity + 1,
-          isSelected: item.isSelected,
-        );
+        return item.copyWith(quantity: item.quantity + 1);
       }
       return item;
     }).toList();
@@ -103,11 +100,5 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       totalPrice: totalPrice,
       selectedItemCount: selectedItemCount,
     );
-  }
-
-  FutureOr<void> _onCartLoaded(
-      FetchCartEvent event, Emitter<CartState> emit) async {
-    await Future.delayed(const Duration(seconds: 1));
-    emit(state.copyWith(isLoading: false, items: cartItemsList));
   }
 }

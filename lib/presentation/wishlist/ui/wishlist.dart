@@ -1,5 +1,6 @@
+import 'package:laiza/data/models/wishlist_model/wishlist_model.dart';
+
 import '../../../core/app_export.dart';
-import '../../../data/models/cart_model/cart_model.dart';
 import '../../empty_pages/empty_wishlist/empty_wishlist.dart';
 
 class WishlistScreen extends StatelessWidget {
@@ -38,7 +39,7 @@ class WishlistScreen extends StatelessWidget {
     );
   }
 
-  SizedBox _buildItems(CartModel item, BuildContext context) {
+  SizedBox _buildItems(Wishlist item, BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return SizedBox(
       width: SizeUtils.width,
@@ -53,7 +54,7 @@ class WishlistScreen extends StatelessWidget {
               radius: BorderRadius.only(
                   topLeft: Radius.circular(12.h),
                   bottomLeft: Radius.circular(12.h)),
-              imagePath: item.url,
+              imagePath: item.thumbnail,
             ),
             SizedBox(width: 5.h),
             Expanded(
@@ -61,7 +62,7 @@ class WishlistScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.name,
+                    item.title,
                     style: textTheme.bodySmall,
                   ),
                   SizedBox(height: 8.v),
