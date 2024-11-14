@@ -92,9 +92,25 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 24.v),
-                Text(
-                  'Products from your connections',
-                  style: textTheme.titleMedium!.copyWith(fontSize: 16.fSize),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Products from your connections',
+                      style:
+                          textTheme.titleMedium!.copyWith(fontSize: 16.fSize),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(AppRoutes.allProductsScreen);
+                      },
+                      child: Text(
+                        'View All',
+                        style: textTheme.bodySmall!,
+                      ),
+                    )
+                  ],
                 ),
                 SizedBox(height: 12.v),
                 SizedBox(

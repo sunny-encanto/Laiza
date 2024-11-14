@@ -24,17 +24,26 @@ class InfluencerProfileScreen extends StatelessWidget {
                 ],
                 iconTheme: const IconThemeData(color: Colors.black),
                 pinned: true,
-                bottom: TabBar(
-                    indicatorColor: AppColor.primary,
-                    labelColor: AppColor.primary,
-                    tabs: const [
-                      Tab(
-                        text: 'Post',
-                      ),
-                      Tab(
-                        text: 'Product',
-                      ),
-                    ]),
+                bottom: PreferredSize(
+                  preferredSize: Size(SizeUtils.width, 60.v),
+                  child: Container(
+                    color: Colors.white,
+                    child: TabBar(
+                      tabAlignment: TabAlignment.fill,
+                      indicatorColor: AppColor.primary,
+                      labelColor: AppColor.primary,
+                      tabs: const [
+                        Tab(
+                          text: 'Post',
+                        ),
+                        Tab(
+                          text: 'Product',
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                foregroundColor: Colors.white,
                 backgroundColor: Colors.white,
                 expandedHeight: SizeUtils.height - 100.v,
                 flexibleSpace: FlexibleSpaceBar(
@@ -73,24 +82,7 @@ class InfluencerProfileScreen extends StatelessWidget {
                             SizedBox(height: 18.v),
                             _buildNotifyMeBanner(textTheme),
                             SizedBox(height: 24.v),
-                            // TabBar(
-                            //     indicatorColor: AppColor.primary,
-                            //     labelColor: AppColor.primary,
-                            //     tabs: const [
-                            //       Tab(
-                            //         text: 'Post',
-                            //       ),
-                            //       Tab(
-                            //         text: 'Product',
-                            //       ),
-                            //     ]),
                             SizedBox(height: 24.v),
-
-                            // ConstrainedBox(
-                            //     constraints: const BoxConstraints(
-                            //         minHeight: 400, maxHeight: 3220),
-                            //     child: const TabBarView(
-                            //         children: [PostView(), ProductView()])),
                           ],
                         ),
                       )

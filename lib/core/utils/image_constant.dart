@@ -30,10 +30,11 @@ class ImageConstant {
   static String profileIcon = '$imagePath/IconProfile.svg';
   static String searchIcon = '$imagePath/search_icon.svg';
   static String menuIcon = '$imagePath/menu_icon.svg';
-  static String favIcon = '$imagePath/fav_icon.svg';
+  static String favIcon = '$imagePath/new_like.svg';
   static String bookIcon = '$imagePath/book.svg';
-  static String shareIcon = '$imagePath/share.svg';
-  static String commentIcon = '$imagePath/comment.svg';
+  static String shareIcon = '$imagePath/new_share.svg';
+  static String shareIconDark = '$imagePath/share_icon_dark.svg';
+  static String commentIcon = '$imagePath/new_commnets.svg';
   static String visibilityIcon = '$imagePath/visibility.svg';
   static String shoeImg = '$imagePath/shoe.png';
   static String reelImg = '$imagePath/Reels.png';

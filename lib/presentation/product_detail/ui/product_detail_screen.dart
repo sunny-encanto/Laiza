@@ -4,8 +4,10 @@ import 'package:readmore/readmore.dart';
 import '../../../data/services/share.dart';
 import '../../../widgets/slider_widget.dart';
 
+// ignore: must_be_immutable
 class ProductDetailScreen extends StatelessWidget {
-  ProductDetailScreen({super.key});
+  final int id;
+  ProductDetailScreen({super.key, required this.id});
   int _currentIndex = 0;
   bool _isLiked = false;
   int _selectedSize = 1;

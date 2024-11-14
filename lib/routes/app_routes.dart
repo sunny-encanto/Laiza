@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:laiza/data/repositories/cart_repository/cart_repository.dart';
 import 'package:laiza/data/repositories/wishlist_repository/wishlist_repository.dart';
 import 'package:laiza/presentation/influencer/chats/bloc/chats_bloc.dart';
@@ -12,6 +13,7 @@ import 'package:laiza/presentation/influencer/seller_info/bloc/seller_info_bloc.
 import 'package:laiza/presentation/live_page/ui/live_page.dart';
 
 import '../core/app_export.dart';
+import '../presentation/all_products/ui/all_products.dart';
 import '../presentation/auth/login_with_phone/log_In_with_phone.dart';
 import '../presentation/auth/otp_screen/otp_screen.dart';
 import '../presentation/influencer/chat_box/ui/chat_box_ui.dart';
@@ -130,173 +132,180 @@ class AppRoutes {
 
   static const String livePage = '/live_page';
 
+  static const String allProductsScreen = '/all_products_screen';
+
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       // User Screens
       case splashScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => SplashBloc()..add(SplashStarted()),
                   child: const SplashScreen(),
                 ));
       case introScreen:
-        return MaterialPageRoute(builder: (context) => const IntroScreen());
+        return CupertinoPageRoute(builder: (context) => const IntroScreen());
 
       case selectRoleScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => const SelectRoleScreen());
 
       case signInScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => LoginBloc(),
                   child: LoginScreen(),
                 ));
 
       case logInWithPhoneScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => LoginBloc(),
                   child: LogInWithPhoneScreen(),
                 ));
 
       case otpScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => LoginBloc(),
                   child: OtpScreen(),
                 ));
 
       case signUpScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => SignUpBloc(),
                   child: SignUpScreen(),
                 ));
 
       case sellerFormScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => SellerFormBloc(),
                   child: SellerFormScreen(),
                 ));
 
       case influencerFormScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => InfluencerFormBloc(),
                   child: InfluencerFormScreen(),
                 ));
 
       case successScreen:
-        return MaterialPageRoute(builder: (context) => const SuccessScreen());
+        return CupertinoPageRoute(builder: (context) => const SuccessScreen());
 
       case bottomBarScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => BottomBarCubit(),
                   child: BottomBar(),
                 ));
 
       case productDetailScreen:
-        return MaterialPageRoute(
+        int id = settings.arguments as int;
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => ProductDetailBloc(),
-                  child: ProductDetailScreen(),
+                  child: ProductDetailScreen(
+                    id: id,
+                  ),
                 ));
 
       case cartScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => CartBloc(context.read<CartRepository>()),
                   child: const CartScreen(),
                 ));
 
       case checkOutScreen:
-        return MaterialPageRoute(builder: (context) => const CheckOutScreen());
+        return CupertinoPageRoute(builder: (context) => const CheckOutScreen());
 
       case influencerProfileScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => const InfluencerProfileScreen());
 
       case collectionViewScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => const CollectionViewScreen());
 
       case allTrendingScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => const AllTrendingScreen());
 
       case followingScreen:
-        return MaterialPageRoute(builder: (context) => const FollowingScreen());
+        return CupertinoPageRoute(
+            builder: (context) => const FollowingScreen());
 
       case addAddressScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => AddAddressBloc(),
                   child: AddAddressScreen(),
                 ));
 
       case forgotPasswordScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => ForgotPasswordBloc(),
                   child: ForgotPasswordScreen(),
                 ));
 
       case changePasswordScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => ChangePasswordBloc(),
                   child: ChangePasswordScreen(),
                 ));
 
       case orderTrackScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => const OrderTrackScreen());
 
       case myOrderScreen:
-        return MaterialPageRoute(builder: (context) => const MyOrderScreen());
+        return CupertinoPageRoute(builder: (context) => const MyOrderScreen());
 
       case orderPlacedScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => const OrderPlacedScreen());
 
       case notificationsScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => NotificationsBloc(),
                   child: const NotificationsScreen(),
                 ));
 
       case searchScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
+            fullscreenDialog: true,
             builder: (context) => BlocProvider(
                   create: (context) => SearchBloc(),
                   child: SearchScreen(),
                 ));
 
       case filterScreen:
-        return MaterialPageRoute(builder: (context) => const FilterScreen());
+        return CupertinoPageRoute(builder: (context) => const FilterScreen());
 
       case allOngoingStreamsScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => const AllOngoingStreamsScreen());
 
       case allFavInfluencerScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => const AllFavInfluencerScreen());
 
       case privacyPolicyScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => const PrivacyPolicyScreen());
 
       case helpCentreScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => const HelpCentreScreen());
 
       case wishlistScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) =>
                       WishlistBloc(context.read<WishlistRepository>()),
@@ -304,110 +313,111 @@ class AppRoutes {
                 ));
 
       case commentsScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => CommentsBloc(),
                   child: const CommentsScreen(),
                 ));
       case viewImageWidget:
         final String url = settings.arguments as String;
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => ViewImageWidget(
                   url: url,
                 ));
 
       // Influencer  Screen
       case connectionsScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => ConnectionsBloc(),
                   child: ConnectionsScreen(),
                 ));
 
       case createConnectionsScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => CreateCollectionBloc(),
                   child: const CreateCollectionScreen(),
                 ));
 
       case influenceProfileSetupScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => InfluenceProfileSetupBloc(),
                   child: InfluenceProfileSetupScreen(),
                 ));
 
       case followersScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => FollowersBloc(),
                   child: FollowersScreen(),
                 ));
 
       case uploadReelScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => UploadReelBloc(),
                   child: const UploadReelScreen(),
                 ));
 
       case homeScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => HomeBloc(),
                   child: const HomeScreen(),
                 ));
 
       case scheduleStreamScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => ScheduleStreamBloc(),
                   child: ScheduleStreamScreen(),
                 ));
 
       case sellerInfoScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => SellerInfoBloc(),
                   child: SellerInfoScreen(),
                 ));
 
       case influencerMyProfile:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => InfluencerMyProfileBloc(),
                   child: const InfluencerMyProfileScreen(),
                 ));
 
       case dashboardScreen:
-        return MaterialPageRoute(builder: (context) => const DashboardScreen());
+        return CupertinoPageRoute(
+            builder: (context) => const DashboardScreen());
 
       case connectionsRequestScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => ConnectionRequestBloc(),
                   child: const ConnectionsRequestScreen(),
                 ));
 
       case chatsScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => ChatsBloc(),
                   child: const ChatsScreen(),
                 ));
       case discoverConnectionsScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => DiscoverConnectionsBloc(),
                   child: DiscoverConnectionsScreen(),
                 ));
       case chatBoxScreen:
         String id = settings.arguments as String;
-        return MaterialPageRoute(builder: (context) => ChatBoxScreen(id: id));
+        return CupertinoPageRoute(builder: (context) => ChatBoxScreen(id: id));
 
       case editProfileScreen:
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => EditProfileBloc(),
                   child: EditProfileScreen(),
@@ -415,11 +425,14 @@ class AppRoutes {
 
       case livePage:
         Map<String, dynamic> data = settings.arguments as Map<String, dynamic>;
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
             builder: (context) => LivePage(
                   liveID: data['live_id'],
                   isHost: data['is_host'],
                 ));
+      case allProductsScreen:
+        return CupertinoPageRoute(
+            builder: (context) => const AllProductsScreen());
       default:
         return null;
     }

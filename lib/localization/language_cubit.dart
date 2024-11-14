@@ -8,5 +8,5 @@ class LanguageCubit extends Cubit<Locale> {
     emit(locale); // Emit the new locale
   }
 }
- // Change language to Spanish (or any locale you want to set)
-  // context.read<LanguageCubit>().changeLanguage(Locale('es'));
+// Change language to Spanish (or any locale you want to set)
+// context.read<LanguageCubit>().changeLanguage(Locale('es'));

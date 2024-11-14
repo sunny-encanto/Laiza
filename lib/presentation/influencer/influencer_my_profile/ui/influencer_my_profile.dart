@@ -38,17 +38,22 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                 ],
                 iconTheme: const IconThemeData(color: Colors.black),
                 pinned: true,
-                bottom: TabBar(
-                    indicatorColor: AppColor.primary,
-                    labelColor: AppColor.primary,
-                    tabs: const [
-                      Tab(
-                        text: 'Post',
-                      ),
-                      Tab(
-                        text: 'Product',
-                      ),
-                    ]),
+                bottom: PreferredSize(
+                    preferredSize: Size(SizeUtils.width, 60.v),
+                    child: Container(
+                      color: Colors.white,
+                      child: TabBar(
+                          indicatorColor: AppColor.primary,
+                          labelColor: AppColor.primary,
+                          tabs: const [
+                            Tab(
+                              text: 'Post',
+                            ),
+                            Tab(
+                              text: 'Product',
+                            ),
+                          ]),
+                    )),
                 backgroundColor: Colors.white,
                 expandedHeight: SizeUtils.height - 100.v,
                 flexibleSpace: FlexibleSpaceBar(
@@ -198,34 +203,41 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                 topLeft: Radius.circular(12.h)),
             imagePath: ImageConstant.productImage,
           ),
+          SizedBox(height: 7.v),
           Padding(
-            padding: EdgeInsets.all(5.h),
+            padding: EdgeInsets.symmetric(horizontal: 5.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   children: [
-                    const Icon(
-                      Icons.favorite_border,
+                    CustomImageView(
+                      imagePath: ImageConstant.favIcon,
                       color: Colors.grey,
                     ),
+                    SizedBox(height: 8.v),
                     Text(
                       '52.3K',
-                      style: textTheme.bodySmall,
+                      style: textTheme.bodySmall!.copyWith(
+                          fontSize: 12.fSize,
+                          color: const Color(0xFF232323),
+                          fontWeight: FontWeight.w300),
                     )
                   ],
                 ),
                 Column(
                   children: [
                     CustomImageView(
-                      height: 25.v,
-                      width: 25.v,
                       imagePath: ImageConstant.commentIcon,
                       color: Colors.grey,
                     ),
+                    SizedBox(height: 8.v),
                     Text(
                       '380',
-                      style: textTheme.bodySmall,
+                      style: textTheme.bodySmall!.copyWith(
+                          fontSize: 12.fSize,
+                          color: const Color(0xFF232323),
+                          fontWeight: FontWeight.w300),
                     )
                   ],
                 ),
@@ -235,9 +247,13 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                       imagePath: ImageConstant.shareIcon,
                       color: Colors.grey,
                     ),
+                    SizedBox(height: 8.v),
                     Text(
-                      'share',
-                      style: textTheme.bodySmall,
+                      'Share',
+                      style: textTheme.bodySmall!.copyWith(
+                          fontSize: 12.fSize,
+                          color: const Color(0xFF232323),
+                          fontWeight: FontWeight.w300),
                     )
                   ],
                 ),

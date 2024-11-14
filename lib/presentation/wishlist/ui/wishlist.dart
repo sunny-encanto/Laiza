@@ -1,4 +1,5 @@
 import 'package:laiza/data/models/wishlist_model/wishlist_model.dart';
+import 'package:laiza/presentation/shimmers/loading_list.dart';
 
 import '../../../core/app_export.dart';
 import '../../empty_pages/empty_wishlist/empty_wishlist.dart';
@@ -20,9 +21,9 @@ class WishlistScreen extends StatelessWidget {
         builder: (context, state) {
           if (state is WishlistInitial) {
             context.read<WishlistBloc>().add(FetchWishListsEvent());
-            return const Center(child: CircularProgressIndicator());
+            return const LoadingListPage();
           } else if (state is WishlistLoadingState) {
-            return const Center(child: CircularProgressIndicator());
+            return const LoadingListPage();
           } else if (state is WishlistLoadedState) {
             return state.items.isEmpty
                 ? const EmptyWishlistScreen()
@@ -80,8 +81,9 @@ class WishlistScreen extends StatelessWidget {
                         buttonTextStyle:
                             textTheme.titleSmall!.copyWith(fontSize: 12.fSize),
                         onPressed: () {
-                          Navigator.of(context)
-                              .pushNamed(AppRoutes.productDetailScreen);
+                          Navigator.of(context).pushNamed(
+                              AppRoutes.productDetailScreen,
+                              arguments: item.id);
                         },
                       ),
                       const Spacer(),

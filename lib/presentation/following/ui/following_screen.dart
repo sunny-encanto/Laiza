@@ -1,5 +1,6 @@
 import 'package:laiza/core/app_export.dart';
-import 'package:laiza/widgets/influencer_profile_card_widget.dart';
+
+import '../../../widgets/influencer_profile_card_widget.dart';
 
 class FollowingScreen extends StatelessWidget {
   const FollowingScreen({super.key});
@@ -28,7 +29,7 @@ class FollowingScreen extends StatelessWidget {
                 shrinkWrap: true,
                 itemCount: imagesList.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  childAspectRatio: 185.h / 140.v,
+                  childAspectRatio: 165.h / 140.v,
                   crossAxisCount: 2,
                   crossAxisSpacing: 20.h,
                   mainAxisSpacing: 20.v,
@@ -38,44 +39,62 @@ class FollowingScreen extends StatelessWidget {
                     Navigator.of(context)
                         .pushNamed(AppRoutes.influencerProfileScreen);
                   },
-                  child: Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: [
-                      CustomImageView(
-                        radius: BorderRadius.circular(4.h),
-                        imagePath: imagesList[index],
-                        fit: BoxFit.fill,
-                      ),
-                      Container(
-                        height: 80.v,
-                        width: SizeUtils.width,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: AppColor.offWhite),
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(4.h),
-                                topRight: Radius.circular(4.h))),
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 25.v),
-                          child: Text(
-                            'Monica Bellucci',
-                            style: textTheme.titleMedium,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4.h),
+                        image: DecorationImage(
+                            fit: BoxFit.fill,
+                            image: NetworkImage(imagesList[index]))),
+                    height: 120.v,
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        Container(
+                          height: 82.v,
+                          width: SizeUtils.width,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: AppColor.offWhite),
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(4.h),
+                                  topRight: Radius.circular(4.h))),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(height: 15.v),
+                              Text(
+                                'Monica Bellucci',
+                                style: textTheme.titleMedium,
+                              ),
+                              SizedBox(height: 4.v),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CustomImageView(
+                                      imagePath: ImageConstant.groupIcon),
+                                  SizedBox(width: 4.v),
+                                  Text(
+                                    '10K Followers',
+                                    style: textTheme.bodySmall,
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 40.v),
-                        child: CustomImageView(
-                          width: 60.v,
-                          height: 60.v,
-                          imagePath: imagesList[index],
-                          radius: BorderRadius.circular(90.h),
-                          // border: Border.all(color: Colors.white, width: 3.h),
-                          fit: BoxFit.fill,
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 55.v),
+                          child: CustomImageView(
+                            width: 60.v,
+                            height: 60.v,
+                            imagePath: imagesList[index],
+                            radius: BorderRadius.circular(90.h),
+                            fit: BoxFit.fill,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

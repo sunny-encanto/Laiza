@@ -1,5 +1,6 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/models/cart_model/cart_model.dart';
+import 'package:laiza/presentation/shimmers/loading_list.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -21,9 +22,7 @@ class CartScreen extends StatelessWidget {
         builder: (context, state) {
           if (state.isLoading!) {
             context.read<CartBloc>().add(FetchCartEvent());
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const LoadingListPage();
           } else if (state.items.isEmpty) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
