@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:laiza/data/repositories/auth_repository/auth_repository.dart';
 import 'package:laiza/data/repositories/cart_repository/cart_repository.dart';
 import 'package:laiza/data/repositories/wishlist_repository/wishlist_repository.dart';
+import 'package:laiza/presentation/auth/otp_screen/bloc/otp_screen_bloc.dart';
 import 'package:laiza/presentation/influencer/chats/bloc/chats_bloc.dart';
 import 'package:laiza/presentation/influencer/discover_connections/bloc/discover_connections_bloc.dart';
 import 'package:laiza/presentation/influencer/edit_profile/ui/edit_profile.dart';
@@ -23,7 +25,11 @@ import '../presentation/influencer/connections_request/bloc/connection_request_b
 import '../presentation/influencer/connections_request/ui/connections_request.dart';
 import '../presentation/influencer/dashboard/ui/dashboard.dart';
 import '../presentation/influencer/discover_connections/ui/discover_connections.dart';
+import '../presentation/influencer/earnings/ui/earnings_screen.dart';
 import '../presentation/influencer/edit_profile/bloc/edit_profile_bloc.dart';
+import '../presentation/influencer/order_management/ui/order_management.dart';
+import '../presentation/influencer/recent_transactions/ui/recent_transactions.dart';
+import '../presentation/influencer/return_product/ui/return_product.dart';
 import '../presentation/influencer/schedule_stream/ui/schedule_stream.dart';
 import '../presentation/influencer/seller_info/ui/seller_info.dart';
 import '../presentation/notifications/bloc/notifications_bloc.dart';
@@ -134,6 +140,14 @@ class AppRoutes {
 
   static const String allProductsScreen = '/all_products_screen';
 
+  static const String earningsScreen = '/earnings_screen';
+
+  static const String recentTransactionsScreen = '/recent_transactions_screen';
+
+  static const String returnProductScreen = '/Return_product_screen';
+
+  static const String orderManagementScreen = '/orderManagement_screen';
+
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       // User Screens
@@ -153,28 +167,37 @@ class AppRoutes {
       case signInScreen:
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => LoginBloc(),
+                  create: (context) =>
+                      LoginBloc(context.read<AuthRepository>()),
                   child: LoginScreen(),
                 ));
 
       case logInWithPhoneScreen:
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => LoginBloc(),
+                  create: (context) =>
+                      LoginBloc(context.read<AuthRepository>()),
                   child: LogInWithPhoneScreen(),
                 ));
 
       case otpScreen:
+        var data = settings.arguments as Map<String, dynamic>;
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => LoginBloc(),
-                  child: OtpScreen(),
+                  create: (context) =>
+                      OtpScreenBloc(context.read<AuthRepository>()),
+                  child: OtpScreen(
+                    userId: data['id'],
+                    routeName: data['routeName'],
+                    email: data['email'],
+                  ),
                 ));
 
       case signUpScreen:
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => SignUpBloc(),
+                  create: (context) =>
+                      SignUpBloc(context.read<AuthRepository>()),
                   child: SignUpScreen(),
                 ));
 
@@ -248,15 +271,20 @@ class AppRoutes {
       case forgotPasswordScreen:
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => ForgotPasswordBloc(),
+                  create: (context) =>
+                      ForgotPasswordBloc(context.read<AuthRepository>()),
                   child: ForgotPasswordScreen(),
                 ));
 
       case changePasswordScreen:
+        String email = settings.arguments as String;
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => ChangePasswordBloc(),
-                  child: ChangePasswordScreen(),
+                  create: (context) =>
+                      ChangePasswordBloc(context.read<AuthRepository>()),
+                  child: ChangePasswordScreen(
+                    email: email,
+                  ),
                 ));
 
       case orderTrackScreen:
@@ -406,12 +434,14 @@ class AppRoutes {
                   create: (context) => ChatsBloc(),
                   child: const ChatsScreen(),
                 ));
+
       case discoverConnectionsScreen:
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => DiscoverConnectionsBloc(),
                   child: DiscoverConnectionsScreen(),
                 ));
+
       case chatBoxScreen:
         String id = settings.arguments as String;
         return CupertinoPageRoute(builder: (context) => ChatBoxScreen(id: id));
@@ -430,9 +460,25 @@ class AppRoutes {
                   liveID: data['live_id'],
                   isHost: data['is_host'],
                 ));
+
       case allProductsScreen:
         return CupertinoPageRoute(
             builder: (context) => const AllProductsScreen());
+
+      case earningsScreen:
+        return CupertinoPageRoute(builder: (context) => const EarningsScreen());
+
+      case recentTransactionsScreen:
+        return CupertinoPageRoute(
+            builder: (context) => const RecentTransactionsScreen());
+
+      case returnProductScreen:
+        return CupertinoPageRoute(
+            builder: (context) => const ReturnProductScreen());
+
+      case orderManagementScreen:
+        return CupertinoPageRoute(
+            builder: (context) => const OrderManagementScreen());
       default:
         return null;
     }

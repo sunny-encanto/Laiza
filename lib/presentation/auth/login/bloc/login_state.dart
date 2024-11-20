@@ -18,7 +18,12 @@ final class LoginError extends LoginState {
   List<Object> get props => [message];
 }
 
-final class LoginSuccessState extends LoginState {}
+final class LoginSuccessState extends LoginState {
+  final int userId;
+  const LoginSuccessState(this.userId);
+  @override
+  List<Object> get props => [userId];
+}
 
 final class LoginPasswordToggleState extends LoginState {
   final bool isVisible;

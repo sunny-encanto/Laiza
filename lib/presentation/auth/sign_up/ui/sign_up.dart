@@ -1,8 +1,11 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:laiza/core/app_export.dart';
-import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/presentation/auth/sign_up/bloc/sign_up_states.dart';
 import 'package:laiza/presentation/select_role/ui/select_role.dart';
 
+import '../../../../core/utils/pref_utils.dart';
+import '../../../../data/repositories/auth_repository/auth_repository.dart';
 import '../../login/ui/socail_login_widget.dart';
 import '../bloc/sign_up_event.dart';
 
@@ -13,6 +16,9 @@ class SignUpScreen extends StatelessWidget {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final reEnterpasswordController = TextEditingController();
+  bool _isPasswordVisible = true;
+  bool _isConfirmPasswordVisible = true;
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -23,21 +29,18 @@ class SignUpScreen extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 20.h),
           child: BlocListener<SignUpBloc, SignUpState>(
             listener: (context, state) {
-              if (state.isFailure) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('SignUp Failed')),
-                );
-              } else if (state.isSuccess) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('SignUp Successful')),
-                );
-                if (PrefUtils.getRole() == UserRole.Influencer.name) {
-                  Navigator.of(context)
-                      .pushReplacementNamed(AppRoutes.influencerFormScreen);
-                } else {
-                  Navigator.of(context)
-                      .pushReplacementNamed(AppRoutes.successScreen);
-                }
+              if (state is SignUpErrorState) {
+                context.showSnackBar(state.message);
+              } else if (state is SignUpSuccessStates) {
+                context.showSnackBar(state.message);
+                Navigator.of(context)
+                    .pushReplacementNamed(AppRoutes.otpScreen, arguments: {
+                  'id': state.userId,
+                  'routeName': PrefUtils.getRole() == UserRole.influencer.name
+                      ? AppRoutes.influencerFormScreen
+                      : AppRoutes.signInScreen,
+                  'email': ''
+                });
               }
             },
             child: Form(
@@ -101,23 +104,30 @@ class SignUpScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 8.v),
-                        BlocBuilder<SignUpBloc, SignUpState>(
+                        BlocConsumer<SignUpBloc, SignUpState>(
+                          buildWhen: (previous, current) =>
+                              current is TogglePasswordVisibleState,
+                          listener: (context, state) {
+                            if (state is TogglePasswordVisibleState) {
+                              _isPasswordVisible = state.isVisible;
+                            }
+                          },
                           builder: (context, state) {
                             return CustomTextFormField(
                               controller: passwordController,
-                              obscureText: !state.isPasswordVisible,
+                              obscureText: _isPasswordVisible,
                               hintText: '**********',
                               suffix: InkWell(
                                 child: Icon(
-                                  state.isPasswordVisible
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
+                                  _isPasswordVisible
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
                                   color: Colors.grey,
                                 ),
                                 onTap: () {
-                                  context
-                                      .read<SignUpBloc>()
-                                      .add(TogglePasswordVisibility());
+                                  context.read<SignUpBloc>().add(
+                                      TogglePasswordVisibility(
+                                          isVisible: _isPasswordVisible));
                                 },
                               ),
                               validator: (value) {
@@ -135,23 +145,31 @@ class SignUpScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 8.v),
-                        BlocBuilder<SignUpBloc, SignUpState>(
+                        BlocConsumer<SignUpBloc, SignUpState>(
+                          buildWhen: (previous, current) =>
+                              current is ToggleReInterPasswordVisibleState,
+                          listener: (context, state) {
+                            if (state is ToggleReInterPasswordVisibleState) {
+                              _isConfirmPasswordVisible = state.isVisible;
+                            }
+                          },
                           builder: (context, state) {
                             return CustomTextFormField(
                               controller: reEnterpasswordController,
-                              obscureText: !state.isReEnterPasswordVisible,
+                              obscureText: _isConfirmPasswordVisible,
                               hintText: '**********',
                               suffix: InkWell(
                                 child: Icon(
-                                  state.isReEnterPasswordVisible
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
+                                  _isConfirmPasswordVisible
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
                                   color: Colors.grey,
                                 ),
                                 onTap: () {
-                                  context
-                                      .read<SignUpBloc>()
-                                      .add(ToggleReEnterPasswordVisibility());
+                                  context.read<SignUpBloc>().add(
+                                      ToggleReEnterPasswordVisibility(
+                                          isVisible:
+                                              _isConfirmPasswordVisible));
                                 },
                               ),
                               validator: (value) {
@@ -167,7 +185,7 @@ class SignUpScreen extends StatelessWidget {
                           builder: (context, state) {
                             return CustomElevatedButton(
                                 text: context.translate('sign_up'),
-                                isLoading: state.isSubmitting,
+                                isLoading: state is SignUpLoadingState,
                                 onPressed: () {
                                   FocusScope.of(context).unfocus();
                                   if (!_formkey.currentState!.validate()) {
@@ -175,8 +193,11 @@ class SignUpScreen extends StatelessWidget {
                                   } else {
                                     context.read<SignUpBloc>().add(
                                           SignUpButtonPressed(
-                                            state.email,
-                                            state.password,
+                                            name: nameController.text.trim(),
+                                            email: emailController.text.trim(),
+                                            password:
+                                                passwordController.text.trim(),
+                                            userType: UserRole.influencer.name,
                                           ),
                                         );
                                   }
@@ -194,7 +215,8 @@ class SignUpScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 32.v),
                         BlocProvider(
-                          create: (context) => LoginBloc(),
+                          create: (context) =>
+                              LoginBloc(context.read<AuthRepository>()),
                           child: const SocialLoginWidgets(),
                         ),
                       ],
@@ -216,6 +238,7 @@ class SignUpScreen extends StatelessWidget {
               context.translate('alreadyHaveAccount'),
               style: textTheme.bodySmall?.copyWith(fontSize: 16.fSize),
             ),
+            SizedBox(width: 2.h),
             InkWell(
               onTap: () {
                 Navigator.of(context).pushNamed(AppRoutes.signInScreen);

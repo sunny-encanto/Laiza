@@ -1,11 +1,13 @@
 import 'package:laiza/core/app_export.dart';
-import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/presentation/auth/login/bloc/login_state.dart';
 import 'package:laiza/presentation/auth/login/ui/socail_login_widget.dart';
-import 'package:laiza/presentation/select_role/ui/select_role.dart';
 
+import '../../../../core/utils/pref_utils.dart';
+import '../../../../data/repositories/auth_repository/auth_repository.dart';
+import '../../../select_role/ui/select_role.dart';
 import '../bloc/login_event.dart';
 
+// ignore: must_be_immutable
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
   final _formkey = GlobalKey<FormState>();
@@ -19,7 +21,7 @@ class LoginScreen extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: BlocProvider(
-          create: (context) => LoginBloc(),
+          create: (context) => LoginBloc(context.read<AuthRepository>()),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.h),
             child: Form(
@@ -112,9 +114,10 @@ class LoginScreen extends StatelessWidget {
                       if (state is LoginError) {
                         context.showSnackBar(state.message);
                       } else if (state is LoginSuccessState) {
-                        context
-                            .showSnackBar(context.translate('login_success'));
-                        if (PrefUtils.getRole() == UserRole.User.name) {
+                        // Navigator.of(context).pushNamed(AppRoutes.otpScreen,
+                        //     arguments: state.userId);
+                        context.showSnackBar('Successfully logged In');
+                        if (PrefUtils.getRole() == UserRole.user.name) {
                           Navigator.of(context)
                               .pushReplacementNamed(AppRoutes.bottomBarScreen);
                         } else {

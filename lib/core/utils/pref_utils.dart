@@ -61,6 +61,14 @@ class PrefUtils {
     return _sharedPreferences?.getString('id') ?? '';
   }
 
+  static Future<void> setToken(String value) {
+    return _sharedPreferences!.setString('token', value);
+  }
+
+  static String getToken() {
+    return _sharedPreferences?.getString('token') ?? '';
+  }
+
   static Future<void> setUserName(String value) {
     return _sharedPreferences!.setString('userName', value);
   }

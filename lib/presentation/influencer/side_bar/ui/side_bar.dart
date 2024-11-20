@@ -85,7 +85,7 @@ class SideBar extends StatelessWidget {
               imagePath: ImageConstant.payments,
               tittle: 'Payments',
               onTap: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pushNamed(AppRoutes.earningsScreen);
               },
               textTheme: textTheme,
             ),
@@ -93,7 +93,8 @@ class SideBar extends StatelessWidget {
               imagePath: ImageConstant.orders,
               tittle: 'Orders',
               onTap: () {
-                Navigator.of(context).pop();
+                Navigator.of(context)
+                    .pushNamed(AppRoutes.orderManagementScreen);
               },
               textTheme: textTheme,
             ),

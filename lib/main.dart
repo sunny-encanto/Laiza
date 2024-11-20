@@ -9,6 +9,7 @@ import 'package:laiza/localization/language_cubit.dart';
 import 'core/app_export.dart';
 import 'core/network/connectivity_cubit.dart';
 import 'core/utils/pref_utils.dart';
+import 'data/repositories/auth_repository/auth_repository.dart';
 import 'data/repositories/cart_repository/cart_repository.dart';
 import 'data/repositories/wishlist_repository/wishlist_repository.dart';
 import 'data/services/firebase_messaging_service.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
           RepositoryProvider(create: (context) => PostRepository()),
           RepositoryProvider(create: (context) => CartRepository()),
           RepositoryProvider(create: (context) => WishlistRepository()),
+          RepositoryProvider(create: (context) => AuthRepository()),
         ],
         child: MultiBlocProvider(
           providers: [

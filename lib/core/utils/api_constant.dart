@@ -4,5 +4,11 @@ class ApiConstant {
   static int appID = 397392320;
   static String appSign =
       '3403e4e2e81fbdc3325351999e71e815593f91cac4632cc1a4021c320147785c';
-  static String baseUrl = 'https://dummyjson.com';
+  static String baseUrl = 'https://laiza.encantotech.in/';
+  static String singUp = 'api/signup';
+  static String login = 'api/login';
+  static String verifyOtp = 'api/verify_otp';
+  static String resendOtp = 'api/resend_otp';
+  static String forgotPassword = 'api/forgot_password';
+  static String resetPassword = 'api/reset_password';
 }

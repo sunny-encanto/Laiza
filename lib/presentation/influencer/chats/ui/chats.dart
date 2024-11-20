@@ -57,7 +57,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
                     List userList = [];
                     userList.clear();
                     for (var doc in dataList) {
-                      if (doc.id.contains(PrefUtils.getId())) {
+                      if (doc.id.contains(PrefUtils.getId().toString())) {
                         List userIds = doc.id.split('_');
                         userIds.remove(PrefUtils.getId());
                         userList.addAll(userIds);

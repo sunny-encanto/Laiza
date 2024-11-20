@@ -2,7 +2,8 @@ import '../../../../core/app_export.dart';
 
 // ignore: must_be_immutable
 class ChangePasswordScreen extends StatelessWidget {
-  ChangePasswordScreen({super.key});
+  final String email;
+  ChangePasswordScreen({super.key, required this.email});
   final _formKey = GlobalKey<FormState>();
   final passwordController = TextEditingController();
   final reEnterPasswordController = TextEditingController();
@@ -112,8 +113,11 @@ class ChangePasswordScreen extends StatelessWidget {
               BlocConsumer<ChangePasswordBloc, ChangePasswordState>(
                 listener: (context, state) {
                   if (state is ChangePasswordSuccess) {
-                    // Navigator.of(context)
-                    //     .pushNamed(AppRoutes.changePasswordScreen);
+                    context.showSnackBar(state.message);
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        AppRoutes.signInScreen, (route) => false);
+                  } else if (state is ChangePasswordError) {
+                    context.showSnackBar(state.message);
                   }
                 },
                 builder: (context, state) {
@@ -126,7 +130,10 @@ class ChangePasswordScreen extends StatelessWidget {
                       } else {
                         context.read<ChangePasswordBloc>().add(
                             ChangePasswordSubmitRequest(
-                                passwordController.text));
+                                email: email,
+                                newPassword: passwordController.text,
+                                confirmPassword:
+                                    reEnterPasswordController.text));
                       }
                     },
                   );

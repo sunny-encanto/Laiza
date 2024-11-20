@@ -3,7 +3,7 @@ import '../../../../core/app_export.dart';
 class ForgotPasswordScreen extends StatelessWidget {
   ForgotPasswordScreen({super.key});
   final _formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController();
+  final _emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -35,7 +35,7 @@ class ForgotPasswordScreen extends StatelessWidget {
               ),
               SizedBox(height: 8.v),
               CustomTextFormField(
-                controller: emailController,
+                controller: _emailController,
                 hintText: 'Eg. example@gmail.com',
                 validator: (value) {
                   return validateEmail(value!);
@@ -50,8 +50,15 @@ class ForgotPasswordScreen extends StatelessWidget {
               BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
                 listener: (context, state) {
                   if (state is ForgotPasswordSuccessState) {
+                    context.showSnackBar(state.message);
                     Navigator.of(context)
-                        .pushNamed(AppRoutes.changePasswordScreen);
+                        .pushNamed(AppRoutes.otpScreen, arguments: {
+                      'id': state.userId,
+                      'routeName': AppRoutes.changePasswordScreen,
+                      'email': _emailController.text.trim()
+                    });
+                  } else if (state is ForgotPasswordErrorState) {
+                    context.showSnackBar(state.message);
                   }
                 },
                 builder: (context, state) {
@@ -62,8 +69,9 @@ class ForgotPasswordScreen extends StatelessWidget {
                       if (!_formKey.currentState!.validate()) {
                         return;
                       } else {
+                        FocusScope.of(context).unfocus();
                         context.read<ForgotPasswordBloc>().add(
-                            ForgotPasswordSubmitRequest(emailController.text));
+                            ForgotPasswordSubmitRequest(_emailController.text));
                       }
                     },
                   );

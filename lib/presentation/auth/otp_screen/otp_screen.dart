@@ -1,9 +1,19 @@
 import 'package:laiza/core/app_export.dart';
-import 'package:laiza/presentation/auth/login/bloc/login_event.dart';
-import 'package:laiza/presentation/auth/login/bloc/login_state.dart';
+import 'package:laiza/presentation/auth/otp_screen/bloc/otp_screen_bloc.dart';
+import 'package:pinput/pinput.dart';
+
+import '../../../core/utils/pref_utils.dart';
+import '../../select_role/ui/select_role.dart';
 
 class OtpScreen extends StatelessWidget {
-  OtpScreen({super.key});
+  final int userId;
+  final String routeName;
+  final String email;
+  OtpScreen(
+      {super.key,
+      required this.userId,
+      required this.routeName,
+      required this.email});
 
   final _formKey = GlobalKey<FormState>();
   final _otpController = TextEditingController();
@@ -21,50 +31,97 @@ class OtpScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Enter OTP',
+                'Enter Verification Code ',
                 style: textTheme.titleLarge,
               ),
               SizedBox(height: 12.v),
-              Text(
-                'Enter OTP',
-                style: textTheme.titleMedium,
-              ),
+              // Text(
+              //   'Enter OTP sent on User144@email.com',
+              //   style: textTheme.titleMedium,
+              // ),
               SizedBox(height: 8.v),
-              CustomTextFormField(
-                controller: _otpController,
-                hintText: '**********',
-                maxLength: 6,
-                counter: const Text(''),
-                validator: (value) {
-                  return validateField(value: value!, title: 'otp');
+              _pinInputFiled(context),
+              TextButton(
+                onPressed: () {
+                  context
+                      .read<OtpScreenBloc>()
+                      .add(OtpResnetEvent(userId: userId, email));
                 },
+                child: Text(
+                  'Resend  OTP',
+                  style: textTheme.titleMedium!
+                      .copyWith(decoration: TextDecoration.underline),
+                ),
               ),
               SizedBox(height: 24.v),
-              BlocConsumer<LoginBloc, LoginState>(
-                listener: (context, state) {
-                  if (state is LoginSuccessState) {
-                    // Navigator.of(context).pushNamed(AppRoutes.homeScreen);
-                  }
-                },
-                builder: (context, state) {
-                  return CustomElevatedButton(
-                    isLoading: state is LoginLoading,
-                    text: 'Continue',
-                    onPressed: () {
-                      if (!_formKey.currentState!.validate()) {
-                        return;
-                      } else {
-                        context
-                            .read<LoginBloc>()
-                            .add(VerifyOtpEvent(_otpController.text));
-                      }
-                    },
-                  );
-                },
-              )
             ],
           ),
         ),
+      ),
+      bottomSheet: BlocConsumer<OtpScreenBloc, OtpScreenState>(
+        listener: (context, state) {
+          if (state is OtpScreenErrorState) {
+            context.showSnackBar(state.message);
+          } else if (state is OtpResentSuccessState) {
+            context.showSnackBar(state.message);
+          } else if (state is OtpScreenSuccessState) {
+            if (routeName.isEmpty) {
+              if (PrefUtils.getRole() == UserRole.user.name) {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    AppRoutes.bottomBarScreen, (route) => false);
+              } else {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    AppRoutes.homeScreen, (route) => false);
+              }
+            } else {
+              Navigator.of(context)
+                  .pushReplacementNamed(routeName, arguments: email);
+            }
+          }
+        },
+        builder: (context, state) {
+          return Padding(
+            padding: EdgeInsets.all(20.h),
+            child: CustomElevatedButton(
+              isLoading: state is OtpScreenScreenLoadingState,
+              text: 'Continue',
+              onPressed: () {
+                if (!_formKey.currentState!.validate()) {
+                  return;
+                } else {
+                  context.read<OtpScreenBloc>().add(OtpSubmitEvent(
+                      userId: userId, otp: _otpController.text.trim()));
+                }
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _pinInputFiled(BuildContext context) {
+    return Center(
+      child: Pinput(
+        length: 4,
+        defaultPinTheme: const PinTheme(
+          width: 56,
+          height: 56,
+          textStyle: TextStyle(
+            fontSize: 22,
+            color: Colors.black,
+          ),
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: Colors.grey)),
+          ),
+        ),
+        onCompleted: (pin) {
+          context.read<OtpScreenBloc>().add(
+              OtpSubmitEvent(userId: userId, otp: _otpController.text.trim()));
+        },
+        onChanged: (pin) {
+          _otpController.text = pin;
+        },
       ),
     );
   }

@@ -1,4 +1,3 @@
-import 'package:laiza/core/utils/app_extenson.dart';
 import 'package:laiza/presentation/auth/login/bloc/login_state.dart';
 
 import '../../../core/app_export.dart';
@@ -58,7 +57,12 @@ class LogInWithPhoneScreen extends StatelessWidget {
                 buildWhen: (previous, current) => previous != current,
                 listener: (context, state) {
                   if (state is LoginSuccessState) {
-                    Navigator.of(context).pushNamed(AppRoutes.otpScreen);
+                    Navigator.of(context).pushNamed(AppRoutes.otpScreen,
+                        arguments: {
+                          'id': state.userId,
+                          'routeName': '',
+                          'email': ''
+                        });
                   } else {
                     if (state is LoginError) {
                       context.showSnackBar(state.message);

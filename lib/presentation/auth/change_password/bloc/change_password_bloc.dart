@@ -2,22 +2,19 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:laiza/data/models/common_model/common_model.dart';
+import 'package:laiza/data/repositories/auth_repository/auth_repository.dart';
 
 part 'change_password_event.dart';
 part 'change_password_state.dart';
 
 class ChangePasswordBloc
     extends Bloc<ChangePasswordEvent, ChangePasswordState> {
-  ChangePasswordBloc() : super(ChangePasswordInitial()) {
+  final AuthRepository _authRepository;
+  ChangePasswordBloc(this._authRepository) : super(ChangePasswordInitial()) {
     on<ChangePasswordSubmitRequest>(onSubmitRequest);
     on<NewPasswordToggle>(onNewPasswordToggle);
     on<ReEnteredNewPasswordToggle>(onReEnterPasswordToggle);
-  }
-
-  FutureOr<void> onSubmitRequest(event, emit) async {
-    emit(ChangePasswordLoading());
-    await Future.delayed(const Duration(seconds: 2));
-    emit(ChangePasswordSuccess());
   }
 
   FutureOr<void> onNewPasswordToggle(event, emit) async {
@@ -26,5 +23,19 @@ class ChangePasswordBloc
 
   FutureOr<void> onReEnterPasswordToggle(event, emit) async {
     emit(ReEnterNewPasswordToggleState(event.isVisible));
+  }
+
+  FutureOr<void> onSubmitRequest(ChangePasswordSubmitRequest event,
+      Emitter<ChangePasswordState> emit) async {
+    try {
+      emit(ChangePasswordLoading());
+      CommonModel model = await _authRepository.resetPassword(
+          email: event.email,
+          password: event.newPassword,
+          confirmPassword: event.confirmPassword);
+      emit(ChangePasswordSuccess(model.message ?? ''));
+    } catch (e) {
+      emit(ChangePasswordError(e.toString()));
+    }
   }
 }

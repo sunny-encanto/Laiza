@@ -71,7 +71,7 @@ class ApiClient {
     try {
       return await _dio.post(path, data: data, options: options);
     } catch (e) {
-      throw Exception('POST request failed: $e');
+      rethrow;
     }
   }
 

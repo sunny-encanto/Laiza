@@ -39,14 +39,14 @@ class SelectRoleScreen extends StatelessWidget {
                 SizedBox(height: 25.v),
                 CustomImageView(
                     onTap: () async {
-                      await PrefUtils.setRole(UserRole.User.name);
+                      await PrefUtils.setRole(UserRole.user.name);
                       Navigator.of(context).pushNamed(AppRoutes.signInScreen);
                     },
                     width: SizeUtils.width,
                     imagePath: ImageConstant.userCard),
                 CustomImageView(
                     onTap: () async {
-                      await PrefUtils.setRole(UserRole.Influencer.name);
+                      await PrefUtils.setRole(UserRole.influencer.name);
                       Navigator.of(context).pushNamed(AppRoutes.signInScreen);
                     },
                     width: SizeUtils.width,
@@ -60,4 +60,4 @@ class SelectRoleScreen extends StatelessWidget {
   }
 }
 
-enum UserRole { User, Influencer }
+enum UserRole { user, influencer }

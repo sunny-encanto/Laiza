@@ -5,6 +5,7 @@ import '../../creator/ui/creator_screen.dart';
 import '../../profile/ui/profile_screen.dart';
 import '../../reels/ui/reel_screen.dart';
 
+// ignore: must_be_immutable
 class BottomBar extends StatelessWidget {
   BottomBar({super.key});
   int _selectedIndex = 0;
@@ -32,7 +33,7 @@ class BottomBar extends StatelessWidget {
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: _buildIcon(ImageConstant.reelIcon, 0),
-                label: 'Reels',
+                label: 'Pops',
               ),
               BottomNavigationBarItem(
                 icon: _buildIcon(ImageConstant.liveIcon, 1),

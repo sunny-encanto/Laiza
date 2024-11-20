@@ -14,7 +14,7 @@ class SplashScreen extends StatelessWidget {
         listener: (context, state) {
           if (state is SplashSuccess) {
             if (PrefUtils.getId().isNotEmpty) {
-              if (PrefUtils.getRole() == UserRole.User.name) {
+              if (PrefUtils.getRole() == UserRole.user.name) {
                 Navigator.of(context)
                     .pushReplacementNamed(AppRoutes.bottomBarScreen);
               } else {
