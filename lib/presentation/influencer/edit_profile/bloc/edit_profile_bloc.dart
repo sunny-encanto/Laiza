@@ -2,22 +2,30 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:laiza/data/models/user/user_model.dart';
+import 'package:laiza/data/repositories/user_repository/user_repository.dart';
 import 'package:laiza/data/services/media_services.dart';
 
 part 'edit_profile_event.dart';
 part 'edit_profile_state.dart';
 
 class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
-  EditProfileBloc() : super(EditProfileInitial()) {
+  final UserRepository _userRepository;
+  EditProfileBloc(this._userRepository) : super(EditProfileInitial()) {
     on<ProfileUpdateEvent>(_onProfileUpdate);
     on<ProfilePhotoChangeEvent>(_onProfileChange);
+    on<FetchProfileEvent>(_onProfileFetched);
   }
 
   FutureOr<void> _onProfileUpdate(
       ProfileUpdateEvent event, Emitter<EditProfileState> emit) async {
-    emit(EditProfileLoadingState());
-    await Future.delayed(const Duration(seconds: 2));
-    emit(EditProfileSuccessState());
+    try {
+      emit(EditProfileLoadingState());
+      UserModel user = await _userRepository.updateUserProfile(event._user);
+      emit(EditProfileSuccessState());
+    } catch (e) {
+      emit(EditProfileError(e.toString()));
+    }
   }
 
   FutureOr<void> _onProfileChange(
@@ -26,5 +34,12 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
     if (imagePath != null) {
       emit(ProfilePhotoChangedState(imagePath));
     }
+  }
+
+  FutureOr<void> _onProfileFetched(
+      FetchProfileEvent event, Emitter<EditProfileState> emit) async {
+    emit(ProfileFetchLoadingState());
+    UserModel user = await _userRepository.getUserProfile();
+    emit(ProfileFetchedState(user));
   }
 }

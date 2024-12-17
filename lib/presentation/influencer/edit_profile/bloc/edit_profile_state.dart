@@ -7,6 +7,15 @@ sealed class EditProfileState extends Equatable {
   List<Object> get props => [];
 }
 
+final class ProfileFetchedState extends EditProfileState {
+  final UserModel user;
+  const ProfileFetchedState(this.user);
+  @override
+  List<Object> get props => [user];
+}
+
+final class ProfileFetchLoadingState extends EditProfileState {}
+
 final class EditProfileInitial extends EditProfileState {}
 
 final class EditProfileLoadingState extends EditProfileState {}

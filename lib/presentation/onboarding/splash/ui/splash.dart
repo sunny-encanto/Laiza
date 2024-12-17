@@ -31,31 +31,10 @@ class SplashScreen extends StatelessWidget {
             }
           }
         },
-        child: Column(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: CustomImageView(
-                  imagePath: ImageConstant.modern1,
-                ),
-              ),
-            ),
-            CustomImageView(
-              height: 171.v,
-              imagePath: ImageConstant.logo,
-            ),
-            Expanded(
-              flex: 1,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: CustomImageView(
-                  imagePath: ImageConstant.modern2,
-                ),
-              ),
-            ),
-          ],
+        child: CustomImageView(
+          width: SizeUtils.width,
+          height: SizeUtils.height,
+          imagePath: ImageConstant.laizaVideo,
         ),
       ),
     );

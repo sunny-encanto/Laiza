@@ -24,6 +24,7 @@ class CustomDropDown extends StatelessWidget {
     this.filled = false,
     this.validator,
     this.onChanged,
+    this.value,
   });
 
   final Alignment? alignment;
@@ -64,6 +65,8 @@ class CustomDropDown extends StatelessWidget {
 
   final Function(SelectionPopupModel)? onChanged;
 
+  final SelectionPopupModel? value;
+
   @override
   Widget build(BuildContext context) {
     return alignment != null
@@ -77,6 +80,9 @@ class CustomDropDown extends StatelessWidget {
   Widget get dropDownWidget => SizedBox(
         width: width ?? double.maxFinite,
         child: DropdownButtonFormField<SelectionPopupModel>(
+          isDense: true,
+          iconSize: 0.fSize,
+          value: value,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           focusNode: focusNode ?? FocusNode(),
           icon: icon,
@@ -99,22 +105,21 @@ class CustomDropDown extends StatelessWidget {
           },
         ),
       );
+
   InputDecoration get decoration => InputDecoration(
         hintText: hintText ?? "",
         hintStyle: hintStyle ??
             TextStyle(fontSize: 14.0.fSize, color: AppColor.secondaryTextColor),
         prefixIcon: prefix,
         prefixIconConstraints: prefixConstraints,
-        suffixIcon: suffix,
+        suffixIcon: Icon(
+          Icons.arrow_drop_down,
+          color: Colors.grey,
+          size: 20.h,
+        ),
         suffixIconConstraints: suffixConstraints,
         isDense: true,
-        contentPadding: contentPadding ??
-            EdgeInsets.only(
-              left: 13.v,
-              top: 13.v,
-              right: 13.h,
-              bottom: 13.v,
-            ),
+        contentPadding: contentPadding ?? EdgeInsets.all(13.v),
         fillColor: fillColor ?? AppColor.offWhite,
         filled: true,
         focusedErrorBorder: OutlineInputBorder(

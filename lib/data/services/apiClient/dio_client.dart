@@ -66,8 +66,7 @@ class ApiClient {
   }
 
   // POST request
-  Future<Response> post(String path,
-      {Map<String, dynamic>? data, Options? options}) async {
+  Future<Response> post(String path, {dynamic data, Options? options}) async {
     try {
       return await _dio.post(path, data: data, options: options);
     } catch (e) {

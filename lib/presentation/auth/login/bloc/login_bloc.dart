@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/data/models/login_model/login_model.dart';
 import 'package:laiza/data/repositories/auth_repository/auth_repository.dart';
 import 'package:laiza/data/services/firebase_services.dart';
@@ -31,7 +32,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(LoginLoading());
       LoginModel loginModel = await _authRepository.login(
           email: event.email, password: event.password);
-      emit(LoginSuccessState(loginModel.data?.user?.id ?? 0));
+      PrefUtils.setToken(loginModel.data?.token ?? '');
+      PrefUtils.setId(loginModel.data?.user?.id.toString() ?? "");
+      //TODO:Need to get profile complete status
+      emit(LoginSuccessState(
+          userId: loginModel.data?.user?.id ?? 0, isProfileComplete: true));
     } catch (e) {
       emit(LoginError(e.toString()));
     }
@@ -42,7 +47,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       emit(LoginLoading());
       await Future.delayed(const Duration(seconds: 2));
-      emit(const LoginSuccessState(0));
+      //TODO:Need to get profile complete status
+      emit(const LoginSuccessState(userId: 0, isProfileComplete: true));
     } catch (e) {
       emit(LoginError(e.toString()));
     }
@@ -53,7 +59,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       emit(LoginLoading());
       await Future.delayed(const Duration(seconds: 2));
-      emit(const LoginSuccessState(0));
+      //TODO:Need to get profile complete status
+      emit(const LoginSuccessState(userId: 0, isProfileComplete: true));
     } catch (e) {
       emit(LoginError(e.toString()));
     }
@@ -65,7 +72,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(LoginLoading());
       User? user = await FirebaseServices.signInWithGoogle();
       if (user != null) {
-        emit(const LoginSuccessState(0));
+        emit(const SocialLoginSuccessState());
       }
     } catch (e) {
       emit(const LoginError('Login Failed'));
@@ -78,7 +85,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(LoginLoading());
       User? user = await FirebaseServices.signInWithApple();
       if (user != null) {
-        emit(const LoginSuccessState(0));
+        //TODO:Need to get profile complete status
+        emit(const LoginSuccessState(userId: 0, isProfileComplete: true));
       }
     } catch (e) {
       emit(const LoginError('Login Failed'));

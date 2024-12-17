@@ -11,6 +11,7 @@ import '../bloc/sign_up_event.dart';
 
 class SignUpScreen extends StatelessWidget {
   SignUpScreen({super.key});
+
   final _formkey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final emailController = TextEditingController();
@@ -22,6 +23,7 @@ class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
+    print('Role=> ${PrefUtils.getRole()}');
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -39,7 +41,7 @@ class SignUpScreen extends StatelessWidget {
                   'routeName': PrefUtils.getRole() == UserRole.influencer.name
                       ? AppRoutes.influencerFormScreen
                       : AppRoutes.signInScreen,
-                  'email': ''
+                  'email': emailController.text.trim()
                 });
               }
             },
@@ -193,12 +195,12 @@ class SignUpScreen extends StatelessWidget {
                                   } else {
                                     context.read<SignUpBloc>().add(
                                           SignUpButtonPressed(
-                                            name: nameController.text.trim(),
-                                            email: emailController.text.trim(),
-                                            password:
-                                                passwordController.text.trim(),
-                                            userType: UserRole.influencer.name,
-                                          ),
+                                              name: nameController.text.trim(),
+                                              email:
+                                                  emailController.text.trim(),
+                                              password: passwordController.text
+                                                  .trim(),
+                                              userType: PrefUtils.getRole()),
                                         );
                                   }
                                 });

@@ -9,10 +9,17 @@ sealed class InfluencerFormState extends Equatable {
 
 final class InfluencerFormInitial extends InfluencerFormState {}
 
-final class SInfluencerFormInitial extends InfluencerFormState {}
-
 final class InfluencerFormLoadingState extends InfluencerFormState {}
 
 final class InfluencerFormSuccessState extends InfluencerFormState {}
 
 final class InfluencerFormErrorState extends InfluencerFormState {}
+
+final class DataFetchedState extends InfluencerFormState {
+  final UserModel userModel;
+
+  const DataFetchedState(this.userModel);
+
+  @override
+  List<Object> get props => [userModel];
+}

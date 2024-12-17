@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/data/models/login_model/login_model.dart';
 import 'package:laiza/data/models/otp_verification_model/otp_verification_model.dart';
 import 'package:laiza/data/models/signup_model/signup_model.dart';
@@ -17,6 +18,7 @@ class AuthRepository {
     Map<String, dynamic> data = {
       'email': email,
       'password': password,
+      'user_type': PrefUtils.getRole(),
     };
     try {
       Response response = await _apiClient.post(ApiConstant.login, data: data);
@@ -67,16 +69,16 @@ class AuthRepository {
   }
 
   Future<OtpVerificationModel> verifyOtp({
-    required int userId,
+    required String email,
     required String otp,
   }) async {
     Map<String, dynamic> data = {
-      'user_id': userId,
+      'email': email,
       'otp': otp,
     };
     try {
-      Response response =
-          await _apiClient.post(ApiConstant.verifyOtp, data: data);
+      Response response = await _apiClient
+          .post(ApiConstant.verifyForgotPasswordOtp, data: data);
       if (response.statusCode == 200) {
         var responseData = await response.data;
         return OtpVerificationModel.fromJson(responseData);
@@ -92,9 +94,9 @@ class AuthRepository {
     }
   }
 
-  Future<CommonModel> resendOtp({required int userId}) async {
+  Future<CommonModel> resendOtp({required String email}) async {
     Map<String, dynamic> data = {
-      'user_id': userId,
+      'email': email,
     };
     try {
       Response response =

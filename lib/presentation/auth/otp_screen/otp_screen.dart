@@ -9,14 +9,15 @@ class OtpScreen extends StatelessWidget {
   final int userId;
   final String routeName;
   final String email;
+
   OtpScreen(
       {super.key,
       required this.userId,
       required this.routeName,
       required this.email});
 
-  final _formKey = GlobalKey<FormState>();
-  final _otpController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _otpController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +66,7 @@ class OtpScreen extends StatelessWidget {
           } else if (state is OtpResentSuccessState) {
             context.showSnackBar(state.message);
           } else if (state is OtpScreenSuccessState) {
+            print('routeName => $routeName  token=> ${state.token}');
             if (routeName.isEmpty) {
               if (PrefUtils.getRole() == UserRole.user.name) {
                 Navigator.of(context).pushNamedAndRemoveUntil(
@@ -90,7 +92,7 @@ class OtpScreen extends StatelessWidget {
                   return;
                 } else {
                   context.read<OtpScreenBloc>().add(OtpSubmitEvent(
-                      userId: userId, otp: _otpController.text.trim()));
+                      email: email, otp: _otpController.text.trim()));
                 }
               },
             ),
@@ -117,7 +119,7 @@ class OtpScreen extends StatelessWidget {
         ),
         onCompleted: (pin) {
           context.read<OtpScreenBloc>().add(
-              OtpSubmitEvent(userId: userId, otp: _otpController.text.trim()));
+              OtpSubmitEvent(email: email, otp: _otpController.text.trim()));
         },
         onChanged: (pin) {
           _otpController.text = pin;

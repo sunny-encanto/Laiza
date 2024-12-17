@@ -1,4 +1,5 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/presentation/influencer/influencer_my_profile/bloc/influencer_my_profile_bloc.dart';
 
 import '../../../../data/services/media_services.dart';
 import '../../../../data/services/share.dart';
@@ -80,6 +81,54 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                             Text(
                               'Every Day Style to make you feel your best believer, mama, runner, ice cream lover ',
                               style: textTheme.bodySmall,
+                            ),
+                            SizedBox(height: 12.v),
+                            Row(
+                              children: [
+                                CustomImageView(
+                                  onTap: () {
+                                    context
+                                        .read<InfluencerMyProfileBloc>()
+                                        .add(OnInstagramIconTap());
+                                  },
+                                  height: 36.v,
+                                  width: 36.v,
+                                  imagePath: ImageConstant.instagram,
+                                ),
+                                SizedBox(width: 24.h),
+                                CustomImageView(
+                                  onTap: () {
+                                    context
+                                        .read<InfluencerMyProfileBloc>()
+                                        .add(OnXIconTap());
+                                  },
+                                  height: 36.v,
+                                  width: 36.v,
+                                  imagePath: ImageConstant.xIcon,
+                                ),
+                                SizedBox(width: 24.h),
+                                CustomImageView(
+                                  onTap: () {
+                                    context
+                                        .read<InfluencerMyProfileBloc>()
+                                        .add(OnFBIconTap());
+                                  },
+                                  height: 36.v,
+                                  width: 36.v,
+                                  imagePath: ImageConstant.fb,
+                                ),
+                                SizedBox(width: 24.h),
+                                CustomImageView(
+                                  onTap: () {
+                                    context
+                                        .read<InfluencerMyProfileBloc>()
+                                        .add(OnSnapIconTap());
+                                  },
+                                  height: 36.v,
+                                  width: 36.v,
+                                  imagePath: ImageConstant.snap,
+                                ),
+                              ],
                             ),
                             SizedBox(height: 24.h),
                             SizedBox(

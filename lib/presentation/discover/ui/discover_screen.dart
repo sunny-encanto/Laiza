@@ -1,6 +1,5 @@
 import '../../../core/app_export.dart';
 import '../../../widgets/influencer_card_widget.dart';
-import '../../../widgets/influencer_profile_card_widget.dart';
 import '../../../widgets/trending_card_widget.dart';
 
 class DiscoverScreen extends StatelessWidget {
@@ -156,18 +155,19 @@ class DiscoverScreen extends StatelessWidget {
                     ),
                     childrenDelegate: SliverChildBuilderDelegate(
                       childCount: imagesList.length,
-                      (context, index) => InfluencerCardWidget(index: index),
+                      (context, int index) =>
+                          InfluencerCardWidget(index: index),
                     ),
                   ),
                 ),
                 SizedBox(height: 24.v),
                 Text(
-                  'Top Influencer Picks for You',
+                  'Explore More Products',
                   style: textTheme.titleMedium,
                 ),
                 SizedBox(height: 2.v),
                 Text(
-                  'Follow these influencers to discover more products, deals, and recommendations',
+                  'Endless options tailored just for you—scroll through to find what you love!',
                   style: textTheme.bodySmall,
                 ),
                 SizedBox(height: 20.h),
@@ -176,10 +176,10 @@ class DiscoverScreen extends StatelessWidget {
                   itemCount: 12,
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisCount: 2,
-                  mainAxisSpacing: 5.v,
-                  crossAxisSpacing: 5.h,
+                  mainAxisSpacing: 15.v,
+                  crossAxisSpacing: 10.h,
                   itemBuilder: (context, index) {
-                    return const InfluencerProfileCardWidget();
+                    return ProductCardWidget(image: imagesList[index]);
                   },
                 ),
               ],

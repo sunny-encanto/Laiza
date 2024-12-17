@@ -20,6 +20,49 @@ class OrderManagementScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(
+                height: 46.v,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 4,
+                  itemBuilder: (context, index) => Padding(
+                    padding: EdgeInsets.only(right: 12.h),
+                    child: index == 0
+                        ? Chip(
+                            backgroundColor: AppColor.primary,
+                            label: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CustomImageView(
+                                  imagePath: ImageConstant.menuIcon,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 5.h),
+                                Text(
+                                  'Filters',
+                                  style: textTheme.bodySmall!
+                                      .copyWith(color: Colors.white),
+                                )
+                              ],
+                            ))
+                        : Chip(
+                            shape: StadiumBorder(
+                                side: BorderSide(color: AppColor.primary)),
+                            backgroundColor: Colors.white,
+                            label: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  getFilterName(index),
+                                  style: textTheme.bodySmall!
+                                      .copyWith(color: AppColor.primary),
+                                ),
+                              ],
+                            )),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.h),
               Text(
                 'Upcoming Orders',
                 style: textTheme.titleMedium,
@@ -64,6 +107,19 @@ class OrderManagementScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String getFilterName(int index) {
+    switch (index) {
+      case 1:
+        return 'All';
+      case 2:
+        return 'Upcoming Orders';
+      case 3:
+        return 'Received Orders';
+      default:
+        return '';
+    }
   }
 
   SizedBox _buildItem(TextTheme textTheme, BuildContext context,

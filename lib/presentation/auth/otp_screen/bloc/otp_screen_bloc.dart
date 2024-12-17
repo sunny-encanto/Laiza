@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/data/models/common_model/common_model.dart';
 import 'package:laiza/data/repositories/auth_repository/auth_repository.dart';
 
@@ -12,6 +13,7 @@ part 'otp_screen_state.dart';
 
 class OtpScreenBloc extends Bloc<OtpScreenEvent, OtpScreenState> {
   final AuthRepository _authRepository;
+
   OtpScreenBloc(this._authRepository) : super(OtpScreenInitial()) {
     on<OtpSubmitEvent>(onSubmit);
     on<OtpResnetEvent>(onResentOtp);
@@ -22,10 +24,11 @@ class OtpScreenBloc extends Bloc<OtpScreenEvent, OtpScreenState> {
     try {
       emit(OtpScreenScreenLoadingState());
       OtpVerificationModel otpVerificationModel =
-          await _authRepository.verifyOtp(userId: event.userId, otp: event.otp);
-      // PrefUtils.setId(otpVerificationModel.userId.toString());
-      // PrefUtils.setToken(otpVerificationModel.token ?? "");
-      emit(OtpScreenSuccessState(message: otpVerificationModel.message ?? ""));
+          await _authRepository.verifyOtp(email: event.email, otp: event.otp);
+      await PrefUtils.setToken(otpVerificationModel.token ?? '');
+      emit(OtpScreenSuccessState(
+          message: otpVerificationModel.message ?? "",
+          token: otpVerificationModel.token ?? ""));
     } catch (e) {
       emit(OtpScreenErrorState(message: e.toString()));
     }
@@ -35,7 +38,7 @@ class OtpScreenBloc extends Bloc<OtpScreenEvent, OtpScreenState> {
       OtpResnetEvent event, Emitter<OtpScreenState> emit) async {
     try {
       emit(OtpScreenScreenLoadingState());
-      CommonModel model = await _authRepository.resendOtp(userId: event.userId);
+      CommonModel model = await _authRepository.resendOtp(email: event.email);
       emit(OtpResentSuccessState(message: model.message ?? ""));
     } catch (e) {
       emit(OtpScreenErrorState(message: e.toString()));

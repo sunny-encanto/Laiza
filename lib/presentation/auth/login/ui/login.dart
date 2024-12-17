@@ -10,7 +10,7 @@ import '../bloc/login_event.dart';
 // ignore: must_be_immutable
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
-  final _formkey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _emailController = TextEditingController();
   bool _isPasswordVisible = false;
@@ -25,7 +25,7 @@ class LoginScreen extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.h),
             child: Form(
-              key: _formkey,
+              key: _formKey,
               child: Column(
                 children: [
                   Text(
@@ -114,13 +114,12 @@ class LoginScreen extends StatelessWidget {
                       if (state is LoginError) {
                         context.showSnackBar(state.message);
                       } else if (state is LoginSuccessState) {
-                        // Navigator.of(context).pushNamed(AppRoutes.otpScreen,
-                        //     arguments: state.userId);
                         context.showSnackBar('Successfully logged In');
                         if (PrefUtils.getRole() == UserRole.user.name) {
                           Navigator.of(context)
                               .pushReplacementNamed(AppRoutes.bottomBarScreen);
                         } else {
+                          //TODO:Need to add Condition based on profile complete status
                           Navigator.of(context)
                               .pushReplacementNamed(AppRoutes.homeScreen);
                         }
@@ -132,7 +131,7 @@ class LoginScreen extends StatelessWidget {
                           isLoading: state is LoginLoading,
                           onPressed: () {
                             FocusScope.of(context).unfocus();
-                            if (!_formkey.currentState!.validate()) {
+                            if (!_formKey.currentState!.validate()) {
                               return;
                             } else {
                               context.read<LoginBloc>().add(

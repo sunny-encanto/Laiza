@@ -9,106 +9,227 @@ class IntroScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
     return BlocProvider(
       create: (context) => PageViewCubit(itemCount: 3),
       child: Scaffold(
-        body: BlocBuilder<PageViewCubit, int>(
-          builder: (context, currentIndex) {
-            return Stack(
-              children: [
-                AnimatedSwitcher(
-                  switchInCurve: Curves.bounceInOut,
-                  switchOutCurve: Curves.bounceInOut,
-                  duration:
-                      const Duration(milliseconds: 500), // Animation duration
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) {
-                    final offsetAnimation = Tween<Offset>(
-                      begin: const Offset(1.0, 0.0), // From right to left
-                      end: const Offset(0.0, 0.0),
-                    ).animate(animation);
-
-                    return SlideTransition(
-                      position: offsetAnimation,
-                      child: child,
-                    );
-                  },
-                  child: CustomImageView(
-                    fit: BoxFit.cover,
+        body: SafeArea(
+          child: BlocBuilder<PageViewCubit, int>(
+            builder: (context, currentIndex) {
+              return Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  SizedBox(
                     width: SizeUtils.width,
                     height: SizeUtils.height,
-                    imagePath: onboardingItmesList[currentIndex].image,
                   ),
-                ),
-                Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: [0.6854, 0.7707],
-                      colors: [
-                        Color.fromRGBO(255, 255, 255, 0),
-                        Color.fromRGBO(215, 215, 215, 0.75),
-                      ],
+                  CustomImageView(
+                    imagePath: ImageConstant.wellComeTo,
+                  ),
+                  Visibility(
+                    visible: currentIndex == 0,
+                    child: Positioned(
+                      top: 180.v,
+                      left: 10.h,
+                      child: Text(
+                        'Shop Smarter \n Discover More'.toUpperCase(),
+                        style: GoogleFonts.juliusSansOne(
+                          fontSize: 19.fSize,
+                          fontWeight: FontWeight.w400,
+                          height: 1.2,
+                          letterSpacing:
+                              0.02 * 22.0, // Letter-spacing is absolute
+
+                          decorationStyle: TextDecorationStyle.solid,
+
+                          color: Colors
+                              .black, // Set text color (can be customized)
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
-                  child: Column(
+                  Visibility(
+                    visible: currentIndex == 1,
+                    child: Positioned(
+                      top: 200.v,
+                      right: 20.h,
+                      child: Text(
+                        'Into \nRevenue'.toUpperCase(),
+                        style: GoogleFonts.juliusSansOne(
+                          fontSize: 15.fSize,
+                          fontWeight: FontWeight.w400,
+                          height: 1.2,
+                          letterSpacing:
+                              0.02 * 22.0, // Letter-spacing is absolute
+
+                          decorationStyle: TextDecorationStyle.solid,
+
+                          color: Colors
+                              .black, // Set text color (can be customized)
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: currentIndex == 1,
+                    child: Positioned(
+                      top: 200.v,
+                      left: 10.h,
+                      child: Text(
+                        'Transform \nReach ',
+                        style: GoogleFonts.juliusSansOne(
+                          fontSize: 15.fSize,
+                          fontWeight: FontWeight.w400,
+                          height: 1.2,
+                          letterSpacing:
+                              0.02 * 22.0, // Letter-spacing is absolute
+
+                          decorationStyle: TextDecorationStyle.solid,
+
+                          color: Colors
+                              .black, // Set text color (can be customized)
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: currentIndex == 2,
+                    child: Positioned(
+                      top: 180.v,
+                      left: 10.h,
+                      child: Text(
+                        'Grow Your\n Business with Ease'.toUpperCase(),
+                        style: GoogleFonts.juliusSansOne(
+                          fontSize: 19.fSize,
+                          fontWeight: FontWeight.w400,
+                          height: 1.2,
+                          letterSpacing:
+                              0.02 * 22.0, // Letter-spacing is absolute
+
+                          decorationStyle: TextDecorationStyle.solid,
+
+                          color: Colors
+                              .black, // Set text color (can be customized)
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: AnimatedSwitcher(
+                      switchInCurve: Curves.easeInOut,
+                      switchOutCurve: Curves.easeInOut,
+                      duration: const Duration(milliseconds: 500),
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) {
+                        // Slide transition
+                        final slideAnimation = Tween<Offset>(
+                          begin: const Offset(1.0, 0.0), // From right to left
+                          end: const Offset(0.0, 0.0),
+                        ).animate(animation);
+
+                        // Scale transition
+                        final scaleAnimation = Tween<double>(
+                          begin: 0.8, // Start slightly smaller
+                          end: 1.0, // End at normal size
+                        ).animate(animation);
+
+                        // Fade transition
+                        final fadeAnimation = Tween<double>(
+                          begin: 0.0, // Fully transparent
+                          end: 1.0, // Fully opaque
+                        ).animate(animation);
+
+                        return SlideTransition(
+                          position: slideAnimation,
+                          child: ScaleTransition(
+                            scale: scaleAnimation,
+                            child: FadeTransition(
+                              opacity: fadeAnimation,
+                              child: child,
+                            ),
+                          ),
+                        );
+                      },
+                      child: CustomImageView(
+                        key: ValueKey<int>(
+                            currentIndex), // Key to ensure proper widget rebuild
+                        fit: BoxFit.contain,
+                        width: SizeUtils.width,
+                        height: SizeUtils.height - 250.h,
+                        imagePath: onboardingItemsList[currentIndex].image,
+                      ),
+                    ),
+                  ),
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.h),
+                      Container(
+                        width: SizeUtils.width,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: AssetImage(ImageConstant.glassBg)),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.2),
+                            width: 1.5,
+                          ),
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(24.h),
+                              topRight: Radius.circular(24.h)),
+                        ),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text(onboardingItmesList[currentIndex].title,
-                                textAlign: TextAlign.center,
-                                style: textTheme.titleLarge!
-                                    .copyWith(color: Colors.white)),
+                            SizedBox(height: 35.h),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16.h),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    onboardingItemsList[currentIndex].subTitle,
+                                    style: GoogleFonts.juliusSansOne(
+                                      fontSize: 22.0.fSize,
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.2,
+                                      letterSpacing: 0.02 *
+                                          22.0, // Letter-spacing is absolute
+                                      decorationStyle:
+                                          TextDecorationStyle.solid,
+
+                                      color: Colors
+                                          .black, // Set text color (can be customized)
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
                             SizedBox(height: 20.v),
-                            Text(onboardingItmesList[currentIndex].subTitle,
-                                textAlign: TextAlign.center,
-                                style: textTheme.titleLarge!.copyWith(
-                                    fontSize: 16.fSize, color: Colors.black)),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16.h),
+                              child: CustomElevatedButton(
+                                text: 'Get Started',
+                                onPressed: () {
+                                  PrefUtils.setIsNewUser(false);
+                                  Navigator.of(context).pushReplacementNamed(
+                                      AppRoutes.selectRoleScreen);
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 20.v),
                           ],
                         ),
-                      ),
-                      SizedBox(height: 46.v),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.h),
-                        child: CustomElevatedButton(
-                          text: 'Get Started',
-                          onPressed: () {
-                            PrefUtils.setIsNewUser(false);
-                            Navigator.of(context).pushReplacementNamed(
-                                AppRoutes.selectRoleScreen);
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 20.v),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(
-                          3,
-                          (index) => Container(
-                            margin: EdgeInsets.all(2.h),
-                            height: 10.h,
-                            width: 10.h,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: currentIndex == index
-                                    ? AppColor.primary
-                                    : Colors.white),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 12.v),
+                      )
                     ],
-                  ),
-                )
-              ],
-            );
-          },
+                  )
+                ],
+              );
+            },
+          ),
         ),
       ),
     );

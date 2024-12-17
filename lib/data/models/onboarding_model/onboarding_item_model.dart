@@ -9,20 +9,20 @@ class OnboardingItmes {
       {required this.image, required this.title, required this.subTitle});
 }
 
-List<OnboardingItmes> onboardingItmesList = <OnboardingItmes>[
+List<OnboardingItmes> onboardingItemsList = <OnboardingItmes>[
   OnboardingItmes(
-      image: ImageConstant.influencer,
+      image: ImageConstant.intro3,
       title: 'Grow Your Influence & Sales Today',
       subTitle:
-          'Showcase, engage, and boost your sales effortlessly on our live e-commerce platform.'),
+          'Browse trending products, watch live streams, and shop with ease'),
   OnboardingItmes(
-      image: ImageConstant.buyer,
+      image: ImageConstant.intro1,
       title: 'Experience Real-Time Shopping Delight',
       subTitle:
-          'Discover products, interact live, and enjoy seamless shopping from your favorite streams.'),
+          'Partner with sellers, promote products, and earn while doing what you love'),
   OnboardingItmes(
-      image: ImageConstant.seller,
+      image: ImageConstant.intro2,
       title: 'Streamline Sales with Live Shopping',
       subTitle:
-          'Showcase products, connect with buyers, and boost sales through live streaming.'),
+          'List products, connect with top influencers, and manage orders seamlessly on Laiza'),
 ];

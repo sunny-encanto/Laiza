@@ -52,7 +52,7 @@ class SelectRoleScreen extends StatelessWidget {
                     width: SizeUtils.width,
                     imagePath: ImageConstant.influencerCard),
               ],
-            ),
+            )
           ],
         ),
       ),

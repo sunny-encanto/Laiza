@@ -1,15 +1,21 @@
 ///SelectionPopupModel is common model
 ///used for setting data into dropdowns
 class SelectionPopupModel {
-  int? id;
   String title;
   dynamic value;
-  bool isSelected;
 
   SelectionPopupModel({
-    this.id,
     required this.title,
     this.value,
-    this.isSelected = false,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SelectionPopupModel &&
+          runtimeType == other.runtimeType &&
+          value == other.value;
+
+  @override
+  int get hashCode => value.hashCode;
 }

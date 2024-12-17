@@ -8,11 +8,13 @@ sealed class OtpScreenEvent extends Equatable {
 }
 
 class OtpSubmitEvent extends OtpScreenEvent {
-  final int userId;
+  final String email;
   final String otp;
-  const OtpSubmitEvent({required this.userId, required this.otp});
+
+  const OtpSubmitEvent({required this.email, required this.otp});
+
   @override
-  List<Object> get props => [userId, otp];
+  List<Object> get props => [email, otp];
 }
 
 class OtpResnetEvent extends OtpScreenEvent {
@@ -20,6 +22,7 @@ class OtpResnetEvent extends OtpScreenEvent {
   final String email;
 
   const OtpResnetEvent(this.email, {required this.userId});
+
   @override
   List<Object> get props => [userId];
 }

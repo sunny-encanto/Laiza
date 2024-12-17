@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:laiza/data/blocs/profile_api_bloc/profile_api_bloc.dart';
 import 'package:laiza/data/repositories/auth_repository/auth_repository.dart';
 import 'package:laiza/data/repositories/cart_repository/cart_repository.dart';
+import 'package:laiza/data/repositories/user_repository/user_repository.dart';
 import 'package:laiza/data/repositories/wishlist_repository/wishlist_repository.dart';
 import 'package:laiza/presentation/auth/otp_screen/bloc/otp_screen_bloc.dart';
 import 'package:laiza/presentation/influencer/chats/bloc/chats_bloc.dart';
@@ -16,7 +18,7 @@ import 'package:laiza/presentation/live_page/ui/live_page.dart';
 
 import '../core/app_export.dart';
 import '../presentation/all_products/ui/all_products.dart';
-import '../presentation/auth/login_with_phone/log_In_with_phone.dart';
+import '../presentation/auth/login_with_phone/login_with_phone.dart';
 import '../presentation/auth/otp_screen/otp_screen.dart';
 import '../presentation/influencer/chat_box/ui/chat_box_ui.dart';
 import '../presentation/influencer/chat_box/ui/image_message_widget/image_message_widget.dart';
@@ -210,8 +212,15 @@ class AppRoutes {
 
       case influencerFormScreen:
         return CupertinoPageRoute(
-            builder: (context) => BlocProvider(
-                  create: (context) => InfluencerFormBloc(),
+            builder: (context) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                        create: (BuildContext context) =>
+                            InfluencerFormBloc(context.read<UserRepository>())),
+                    BlocProvider(
+                        create: (BuildContext context) =>
+                            ProfileApiBloc(context.read<UserRepository>())),
+                  ],
                   child: InfluencerFormScreen(),
                 ));
 
@@ -449,7 +458,8 @@ class AppRoutes {
       case editProfileScreen:
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => EditProfileBloc(),
+                  create: (context) =>
+                      EditProfileBloc(context.read<UserRepository>()),
                   child: EditProfileScreen(),
                 ));
 

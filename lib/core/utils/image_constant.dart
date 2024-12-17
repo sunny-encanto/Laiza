@@ -134,4 +134,27 @@ class ImageConstant {
 
   //Demo Image
   static String defaultProfile = '$imagePath/person_icon.png';
+
+  static String editIcon = '$imagePath/edit_icon.svg';
+
+  static String intro1 = '$imagePath/new_intro1.png';
+
+  static String intro2 = '$imagePath/new_intro2.png';
+
+  static String intro3 = '$imagePath/new_intro3.png';
+
+  static String wellComeTo = '$imagePath/wellcome_to.png';
+
+  static String glassBg = '$imagePath/glass_bg.png';
+
+  static String laizaVideo = '$imagePath/Laizavideo.gif';
+
+  static String snap = '$imagePath/sm_5b321c9cb2d25 2.png';
+
+  static String instagram = '$imagePath/Instagram_icon.png';
+
+  static String fb = '$imagePath/fb_icon.png';
+
+  static String xIcon =
+      '$imagePath/transparent-x-icon-black-and-white-x-in-the-1710889063979 1.png';
 }

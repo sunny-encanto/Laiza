@@ -85,6 +85,7 @@ class CustomTextFormField extends StatelessWidget {
 
   VoidCallback? onTap;
   Widget? counter;
+
   @override
   Widget build(BuildContext context) {
     return alignment != null
@@ -113,6 +114,7 @@ class CustomTextFormField extends StatelessWidget {
           validator: validator,
         ),
       );
+
   InputDecoration get decoration => InputDecoration(
         counter: counter,
         hintText: hintText ?? "",
@@ -183,6 +185,7 @@ extension TextFormFieldStyleHelper on CustomTextFormField {
         borderRadius: BorderRadius.circular(24.h),
         borderSide: BorderSide.none,
       );
+
   static OutlineInputBorder get outlineRedATL4 => OutlineInputBorder(
         borderRadius: BorderRadius.circular(4.h),
         borderSide: const BorderSide(
@@ -190,6 +193,7 @@ extension TextFormFieldStyleHelper on CustomTextFormField {
           width: 1,
         ),
       );
+
   static OutlineInputBorder get fillRed => OutlineInputBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(

@@ -20,9 +20,17 @@ final class LoginError extends LoginState {
 
 final class LoginSuccessState extends LoginState {
   final int userId;
-  const LoginSuccessState(this.userId);
+  final bool isProfileComplete;
+  const LoginSuccessState(
+      {required this.userId, required this.isProfileComplete});
   @override
-  List<Object> get props => [userId];
+  List<Object> get props => [userId, isProfileComplete];
+}
+
+final class SocialLoginSuccessState extends LoginState {
+  const SocialLoginSuccessState();
+  @override
+  List<Object> get props => [];
 }
 
 final class LoginPasswordToggleState extends LoginState {

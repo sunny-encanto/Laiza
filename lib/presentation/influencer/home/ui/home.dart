@@ -23,6 +23,7 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomTextFormField(
+                        contentPadding: EdgeInsets.only(left: 10.h),
                         prefixConstraints: BoxConstraints(maxWidth: 25.h),
                         prefix: Padding(
                           padding: EdgeInsets.only(left: 10.h),
@@ -49,6 +50,7 @@ class HomeScreen extends StatelessWidget {
                   height: 46.v,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
+                    itemCount: 3,
                     itemBuilder: (context, index) => Padding(
                       padding: EdgeInsets.only(right: 12.h),
                       child: index == 0
@@ -77,7 +79,7 @@ class HomeScreen extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    'Product',
+                                    getFilterName(index),
                                     style: textTheme.bodySmall!
                                         .copyWith(color: AppColor.primary),
                                   ),
@@ -241,6 +243,17 @@ class HomeScreen extends StatelessWidget {
             ),
           )),
     );
+  }
+
+  String getFilterName(int index) {
+    switch (index) {
+      case 1:
+        return 'Payment Status';
+      case 2:
+        return 'Month';
+      default:
+        return '';
+    }
   }
 
   Container _buildProductCart(TextTheme textTheme) {
