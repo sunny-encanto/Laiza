@@ -1,6 +1,5 @@
 import '../../../../core/app_export.dart';
 import '../../../../core/utils/pref_utils.dart';
-import '../../../select_role/ui/select_role.dart';
 import '../bloc/login_event.dart';
 import '../bloc/login_state.dart';
 
@@ -15,11 +14,17 @@ class SocialLoginWidgets extends StatelessWidget {
           context.showSnackBar(state.message);
         } else if (state is SocialLoginSuccessState) {
           context.showSnackBar('Login Success');
+
           if (PrefUtils.getRole() == UserRole.user.name) {
             Navigator.of(context)
                 .pushReplacementNamed(AppRoutes.bottomBarScreen);
           } else {
-            Navigator.of(context).pushReplacementNamed(AppRoutes.homeScreen);
+            if (state.isSignUp) {
+              Navigator.of(context)
+                  .pushReplacementNamed(AppRoutes.influencerFormScreen);
+            } else {
+              Navigator.of(context).pushReplacementNamed(AppRoutes.homeScreen);
+            }
           }
         }
       },

@@ -11,14 +11,12 @@ import '../../services/apiClient/dio_client.dart';
 class AuthRepository {
   final ApiClient _apiClient = ApiClient();
 
-  Future<LoginModel> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<LoginModel> login(
+      {required String email, required String password}) async {
     Map<String, dynamic> data = {
       'email': email,
       'password': password,
-      'user_type': PrefUtils.getRole(),
+      'user_type': PrefUtils.getRole()
     };
     try {
       Response response = await _apiClient.post(ApiConstant.login, data: data);
@@ -31,9 +29,39 @@ class AuthRepository {
       }
     } on DioException catch (e) {
       String message = e.response?.data['message'] ?? 'Unknown error';
+      if (message == 'Account not approved') {
+        PrefUtils.setId((e.response?.data['data']['user']['id']).toString());
+        PrefUtils.setToken(e.response?.data['data']['token']);
+      }
       throw message;
     } catch (e) {
       throw Exception('Failed to login');
+    }
+  }
+
+  Future<LoginModel> socialLogin(
+      {required String email, required String source}) async {
+    Map<String, dynamic> data = {
+      'email': email,
+      'source': source,
+      'user_type': PrefUtils.getRole()
+    };
+    try {
+      Response response =
+          await _apiClient.post(ApiConstant.socialLogin, data: data);
+      if (response.statusCode == 200) {
+        return LoginModel.fromJson(response.data);
+      } else {
+        print('else=> ${response.data}');
+        return LoginModel.fromJson(response.data);
+      }
+    } on DioException catch (e) {
+      print('catch=> ${e}');
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      print('Errror=> ${e}');
+      throw Exception('Failed to  social Login ');
     }
   }
 

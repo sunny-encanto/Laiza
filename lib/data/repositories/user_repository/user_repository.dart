@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:laiza/core/utils/pref_utils.dart';
+import 'package:laiza/data/models/common_model/common_model.dart';
 import 'package:laiza/data/models/user/user_model.dart';
 import 'package:laiza/data/models/user_profile_model/user_profile_model.dart';
 
@@ -36,7 +36,7 @@ class UserRepository {
     }
   }
 
-  Future<UserModel> updateUserProfile(UserModel user) async {
+  Future<CommonModel> updateUserProfile(UserModel user) async {
     try {
       _apiClient
           .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
@@ -56,18 +56,9 @@ class UserRepository {
       Response response =
           await _apiClient.post(ApiConstant.updateProfile, data: formData);
       if (response.statusCode == 200) {
-        var responseData = await response.data;
-        UserProfileModel model = UserProfileModel.fromJson(responseData);
-        Fluttertoast.showToast(msg: model.message ?? '');
-        return UserModel.fromJson(
-            json: model.data!.user!.toJson(),
-            id: model.data!.user!.id.toString());
+        return CommonModel.fromJson(response.data);
       } else {
-        var responseData = await response.data;
-        UserProfileModel model = UserProfileModel.fromJson(responseData);
-        return UserModel.fromJson(
-            json: model.data!.user!.toJson(),
-            id: model.data!.user!.id.toString());
+        return CommonModel.fromJson(response.data);
       }
     } on DioException catch (e) {
       String message = e.response?.data['message'] ?? 'Unknown error';

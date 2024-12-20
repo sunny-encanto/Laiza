@@ -1,7 +1,6 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/core/utils/pref_utils.dart';
 
-import '../../../select_role/ui/select_role.dart';
 import '../bloc/splash_state.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -18,8 +17,18 @@ class SplashScreen extends StatelessWidget {
                 Navigator.of(context)
                     .pushReplacementNamed(AppRoutes.bottomBarScreen);
               } else {
-                Navigator.of(context)
-                    .pushReplacementNamed(AppRoutes.homeScreen);
+                if (PrefUtils.getIsFormComplete()) {
+                  if (PrefUtils.getIsApproved()) {
+                    Navigator.of(context)
+                        .pushReplacementNamed(AppRoutes.homeScreen);
+                  } else {
+                    Navigator.of(context)
+                        .pushReplacementNamed(AppRoutes.successScreen);
+                  }
+                } else {
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.influencerFormScreen);
+                }
               }
             } else {
               if (PrefUtils.getIsNewUser()) {

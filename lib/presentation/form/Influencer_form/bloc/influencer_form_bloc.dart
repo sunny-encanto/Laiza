@@ -16,9 +16,14 @@ class InfluencerFormBloc
     on<InfluencerFormSubmitEvent>(onInfluencerFormSubmit);
   }
 
-  FutureOr<void> onInfluencerFormSubmit(event, emit) async {
-    emit(InfluencerFormLoadingState());
-    await Future.delayed(const Duration(seconds: 2));
-    emit(InfluencerFormSuccessState());
+  FutureOr<void> onInfluencerFormSubmit(
+      InfluencerFormSubmitEvent event, emit) async {
+    try {
+      emit(InfluencerFormLoadingState());
+      await _userRepository.updateUserProfile(event.userModel);
+      emit(const InfluencerFormSuccessState('Success'));
+    } catch (e) {
+      emit(InfluencerFormErrorState(e.toString()));
+    }
   }
 }

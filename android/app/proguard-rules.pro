@@ -23,3 +23,5 @@
 -dontwarn com.xiaomi.mipush.sdk.MiPushCommandMessage
 -dontwarn com.xiaomi.mipush.sdk.MiPushMessage
 -dontwarn com.xiaomi.mipush.sdk.PushMessageReceiver
+
+

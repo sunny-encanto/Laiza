@@ -7,12 +7,13 @@ class ApiConstant {
   static String baseUrl = 'https://laiza.encantotech.in/';
   static String singUp = 'api/signup';
   static String login = 'api/login';
+  static String socialLogin = 'api/social_media_login';
   static String verifyOtp = 'api/verify_otp';
   static String resendOtp = 'api/resend_otp';
   static String forgotPassword = 'api/forgot_password';
   static String verifyForgotPasswordOtp = 'api/verify_forgot_password_otp';
   static String resetPassword = 'api/reset_password';
-  static String profile = 'api/user/profile';
+  static String profile = 'api/profile';
   static String updateProfile = 'api/user/update_profile';
   static String getCategories = 'api/product/get_categories';
   static String getCountries = 'api/get_countries';

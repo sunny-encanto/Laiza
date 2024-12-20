@@ -13,7 +13,9 @@ final class LoginLoading extends LoginState {}
 
 final class LoginError extends LoginState {
   final String message;
+
   const LoginError(this.message);
+
   @override
   List<Object> get props => [message];
 }
@@ -21,21 +23,30 @@ final class LoginError extends LoginState {
 final class LoginSuccessState extends LoginState {
   final int userId;
   final bool isProfileComplete;
+
   const LoginSuccessState(
       {required this.userId, required this.isProfileComplete});
+
   @override
   List<Object> get props => [userId, isProfileComplete];
 }
 
+final class LoginUserNotApproved extends LoginState {}
+
 final class SocialLoginSuccessState extends LoginState {
-  const SocialLoginSuccessState();
+  final bool isSignUp;
+
+  const SocialLoginSuccessState(this.isSignUp);
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [isSignUp];
 }
 
 final class LoginPasswordToggleState extends LoginState {
   final bool isVisible;
+
   const LoginPasswordToggleState(this.isVisible);
+
   @override
   List<Object> get props => [isVisible];
 }

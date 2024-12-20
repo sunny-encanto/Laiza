@@ -45,6 +45,22 @@ class PrefUtils {
     return _sharedPreferences?.getBool('isNew') ?? true;
   }
 
+  static Future<void> setIsFormComplete(bool value) {
+    return _sharedPreferences!.setBool('isFormComplete', value);
+  }
+
+  static bool getIsFormComplete() {
+    return _sharedPreferences?.getBool('isFormComplete') ?? true;
+  }
+
+  static Future<void> setIsApproved(bool value) {
+    return _sharedPreferences!.setBool('isApproved', value);
+  }
+
+  static bool getIsApproved() {
+    return _sharedPreferences?.getBool('isApproved') ?? true;
+  }
+
   static Future<void> setRole(String value) {
     return _sharedPreferences!.setString('role', value);
   }

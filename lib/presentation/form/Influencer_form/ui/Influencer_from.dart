@@ -6,6 +6,7 @@ import 'package:laiza/data/blocs/country_bloc/country_bloc.dart';
 import 'package:laiza/data/blocs/profile_api_bloc/profile_api_bloc.dart';
 import 'package:laiza/data/blocs/state_bloc/state_bloc.dart';
 import 'package:laiza/data/models/city_model/city.dart';
+import 'package:laiza/data/models/user/user_model.dart';
 import 'package:laiza/data/repositories/category_repository/category_repository.dart';
 import 'package:laiza/data/repositories/region_repository/region_repository.dart';
 
@@ -19,11 +20,10 @@ import '../cubit/stepper_cubit.dart';
 class InfluencerFormScreen extends StatelessWidget {
   InfluencerFormScreen({super.key});
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKey1 = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKey2 = GlobalKey<FormState>();
-  final GlobalKey<FormState> _formKey3 = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
+  final TextEditingController laizaUserNameController = TextEditingController();
   final TextEditingController brandNameController = TextEditingController();
   final TextEditingController companyNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -35,8 +35,7 @@ class InfluencerFormScreen extends StatelessWidget {
       TextEditingController();
   final TextEditingController followersCountController =
       TextEditingController();
-  final TextEditingController instagramAccountCountController =
-      TextEditingController();
+
   final TextEditingController xAccountController = TextEditingController();
   final TextEditingController facebookAccountController =
       TextEditingController();
@@ -48,7 +47,7 @@ class InfluencerFormScreen extends StatelessWidget {
   final TextEditingController branchController = TextEditingController();
   final TextEditingController accountHolderNameController =
       TextEditingController();
-  final TextEditingController aahaarController = TextEditingController();
+  final TextEditingController aadhaarController = TextEditingController();
   final TextEditingController bankVerificationController =
       TextEditingController();
 
@@ -64,142 +63,140 @@ class InfluencerFormScreen extends StatelessWidget {
     return BlocProvider(
       create: (BuildContext context) => StepperCubit(),
       child: Scaffold(
-        body: Padding(
-          padding: EdgeInsets.all(20.h),
-          child: BlocBuilder<ProfileApiBloc, ProfileApiState>(
-            builder: (context, state) {
-              if (state is ProfileApiInitial) {
-                context.read<ProfileApiBloc>().add(FetchProfileApi());
-                return const SizedBox.shrink();
-              } else if (state is ProfileApiError) {
-                return Center(child: Text(state.message));
-              } else if (state is ProfileApiLoadedState) {
-                nameController.text = state.userModel.name ?? '';
-                emailController.text = state.userModel.email ?? '';
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 12.v),
-                    Align(
-                      alignment: Alignment.center,
-                      child: CustomImageView(
-                          width: 100.h, imagePath: ImageConstant.logo),
-                    ),
-                    SizedBox(height: 16.v),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        context.translate('joinUsNow'),
-                        style:
-                            textTheme.titleLarge!.copyWith(fontSize: 16.fSize),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(20.h),
+            child: BlocBuilder<ProfileApiBloc, ProfileApiState>(
+              builder: (context, state) {
+                if (state is ProfileApiInitial) {
+                  context.read<ProfileApiBloc>().add(FetchProfileApi());
+                  return const SizedBox.shrink();
+                } else if (state is ProfileApiError) {
+                  return Center(child: Text(state.message));
+                } else if (state is ProfileApiLoadedState) {
+                  nameController.text = state.userModel.name ?? '';
+                  emailController.text = state.userModel.email ?? '';
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 12.v),
+                      Align(
+                        alignment: Alignment.center,
+                        child: CustomImageView(
+                            width: 100.h, imagePath: ImageConstant.logo),
                       ),
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        context.translate('influenceWithPurpose'),
-                        style: textTheme.titleLarge!.copyWith(
-                            color: AppColor.lightTitleColor,
-                            fontSize: 16.fSize),
+                      SizedBox(height: 16.v),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          context.translate('joinUsNow'),
+                          style: textTheme.titleLarge!
+                              .copyWith(fontSize: 16.fSize),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 24.v),
-                    BlocBuilder<StepperCubit, int>(
-                      buildWhen: (previous, current) => previous != current,
-                      builder: (BuildContext context, currentStep) {
-                        _currentStep = currentStep;
-                        return Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            _getTittle(currentStep),
-                            style: textTheme.titleLarge,
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 20.v),
-                    // build Stepper Header
-                    BlocBuilder<StepperCubit, int>(
-                      buildWhen: (previous, current) => previous != current,
-                      builder: (BuildContext context, currentStep) {
-                        _currentStep = currentStep;
-                        return Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.h),
-                          child: Row(
-                            children: [
-                              _buildStepIndication(0, currentStep, context),
-                              Expanded(
-                                child: Container(
-                                  width: 20,
-                                  height: 5.v,
-                                  decoration: BoxDecoration(
-                                      color: currentStep <= 0
-                                          ? Colors.grey
-                                          : AppColor.primary),
-                                ),
-                              ),
-                              _buildStepIndication(1, currentStep, context),
-                              Expanded(
-                                  child: Container(
-                                width: 20,
-                                height: 5.v,
-                                decoration: BoxDecoration(
-                                    color: currentStep <= 1
-                                        ? Colors.grey
-                                        : AppColor.primary),
-                              )),
-                              _buildStepIndication(2, currentStep, context),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 20.v),
-                    // Build Stepper body
-                    BlocBuilder<StepperCubit, int>(
-                      buildWhen: (previous, current) => previous != current,
-                      builder: (BuildContext context, currentStep) {
-                        _currentStep = currentStep;
-                        return SizedBox(
-                          height: SizeUtils.height - 350.v,
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Visibility(
-                                    visible: currentStep == 0,
-                                    maintainState: true,
-                                    child: _buildPersonalInfoStep(context)),
-                                Visibility(
-                                    visible: currentStep == 1,
-                                    maintainState: true,
-                                    child: _buildSocialMediaStep(context)),
-                                Visibility(
-                                    visible: currentStep == 2,
-                                    maintainState: true,
-                                    child: _buildBankingDetailsStep(context)),
-                                SizedBox(
-                                  height: 300.v,
-                                )
-                              ],
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          context.translate('influenceWithPurpose'),
+                          style: textTheme.titleLarge!.copyWith(
+                              color: AppColor.lightTitleColor,
+                              fontSize: 16.fSize),
+                        ),
+                      ),
+                      SizedBox(height: 24.v),
+                      BlocBuilder<StepperCubit, int>(
+                        buildWhen: (previous, current) => previous != current,
+                        builder: (BuildContext context, currentStep) {
+                          _currentStep = currentStep;
+                          return Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              _getTittle(currentStep),
+                              style: textTheme.titleLarge,
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                );
-              }
-              return const SizedBox.shrink();
-            },
+                          );
+                        },
+                      ),
+                      SizedBox(height: 20.v),
+                      // build Stepper Header
+                      // BlocBuilder<StepperCubit, int>(
+                      //   buildWhen: (previous, current) => previous != current,
+                      //   builder: (BuildContext context, currentStep) {
+                      //     _currentStep = currentStep;
+                      //     return Padding(
+                      //       padding: EdgeInsets.symmetric(horizontal: 20.h),
+                      //       child: Row(
+                      //         children: [
+                      //           _buildStepIndication(0, currentStep, context),
+                      //           Expanded(
+                      //             child: Container(
+                      //               width: 20,
+                      //               height: 5.v,
+                      //               decoration: BoxDecoration(
+                      //                   color: currentStep <= 0
+                      //                       ? Colors.grey
+                      //                       : AppColor.primary),
+                      //             ),
+                      //           ),
+                      //           _buildStepIndication(1, currentStep, context),
+                      //           // Expanded(
+                      //           //     child: Container(
+                      //           //   width: 20,
+                      //           //   height: 5.v,
+                      //           //   decoration: BoxDecoration(
+                      //           //       color: currentStep <= 1
+                      //           //           ? Colors.grey
+                      //           //           : AppColor.primary),
+                      //           // )),
+                      //           // _buildStepIndication(2, currentStep, context),
+                      //         ],
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
+                      // SizedBox(height: 20.v),
+                      // Build Stepper body
+                      BlocBuilder<StepperCubit, int>(
+                        buildWhen: (previous, current) => previous != current,
+                        builder: (BuildContext context, currentStep) {
+                          _currentStep = currentStep;
+                          return Column(
+                            children: [
+                              Visibility(
+                                  visible: currentStep == 0,
+                                  maintainState: true,
+                                  child: _buildPersonalInfoStep(context)),
+                              Visibility(
+                                  visible: currentStep == 1,
+                                  maintainState: true,
+                                  child: _buildSocialMediaStep(context)),
+                              SizedBox(height: 50.v)
+                              // Visibility(
+                              //     visible: currentStep == 2,
+                              //     maintainState: true,
+                              //     child: _buildBankingDetailsStep(context)),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
           ),
         ),
         bottomSheet: Padding(
           padding: EdgeInsets.all(16.0.h),
           child: BlocConsumer<InfluencerFormBloc, InfluencerFormState>(
             listener: (BuildContext context, InfluencerFormState state) {
+              if (state is InfluencerFormErrorState) {
+                context.showSnackBar(state.message);
+              }
               if (state is InfluencerFormSuccessState) {
-                Navigator.of(context).pushReplacementNamed(
-                    AppRoutes.influenceProfileSetupScreen);
+                Navigator.of(context)
+                    .pushReplacementNamed(AppRoutes.successScreen);
               }
             },
             builder: (context, state) {
@@ -208,26 +205,41 @@ class InfluencerFormScreen extends StatelessWidget {
                 text: 'Next',
                 onPressed: () {
                   FocusScope.of(context).unfocus();
-
                   if (_currentStep == 0) {
                     if (!_formKey1.currentState!.validate()) {
                       return;
                     } else {
-                      context.read<StepperCubit>().nextStep(3);
+                      context.read<StepperCubit>().nextStep(2);
                     }
                   } else if (_currentStep == 1) {
                     if (!_formKey2.currentState!.validate()) {
                       return;
                     } else {
-                      context.read<StepperCubit>().nextStep(3);
-                    }
-                  } else if (_currentStep == 2) {
-                    if (!_formKey3.currentState!.validate()) {
-                      return;
-                    } else {
+                      UserModel userModel = UserModel(
+                        name: nameController.text.trim(),
+                        phoneNumber: phoneNumberController.text.trim(),
+                        email: emailController.text.trim(),
+                        country: selectedCountry?.value ?? 0,
+                        state: selectedState?.value ?? 0,
+                        city: selectedCity?.value ?? 0,
+                        username: laizaUserNameController.text,
+                        instagramUserName: instagramUserNameController.text,
+                        instagramFollowers: followersCountController.text,
+                        instagramLink: instagramLinkController.text.trim(),
+                        xComLink: xAccountController.text.trim(),
+                        facebookLink: facebookAccountController.text.trim(),
+                        snapchatLink: snapchatController.text.trim(),
+                        accountNumber: accountNumberController.text,
+                        // iFCCode: ifscCodeController.text,
+                        // branchName: branchController.text,
+                        // accountHolderName: accountHolderNameController.text,
+                        // aadharNumber: aadhaarController.text,
+                        // bankVerification: bankVerificationController.text,
+                      );
+
                       context
                           .read<InfluencerFormBloc>()
-                          .add(InfluencerFormSubmitEvent());
+                          .add(InfluencerFormSubmitEvent(userModel));
                     }
                   }
                 },
@@ -250,36 +262,6 @@ class InfluencerFormScreen extends StatelessWidget {
       default:
         return '';
     }
-  }
-
-  _buildStepIndication(int stepIndex, int currentStep, BuildContext context) {
-    final stepperCubit = context.read<StepperCubit>();
-    _currentStep = currentStep;
-    return GestureDetector(
-      onTap: () {
-        print('$_currentStep');
-        if (!_formKey1.currentState!.validate()) {
-          return;
-        } else {
-          stepperCubit.goToStep(stepIndex);
-        }
-      },
-      child: Container(
-        width: 26.h,
-        height: 26.v,
-        decoration: currentStep <= stepIndex
-            ? BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                border: Border.all(color: AppColor.primary))
-            : BoxDecoration(shape: BoxShape.circle, color: AppColor.primary),
-        child: Icon(
-          Icons.done,
-          color: Colors.white,
-          size: 15.fSize,
-        ),
-      ),
-    );
   }
 
   Form _buildPersonalInfoStep(BuildContext context) {
@@ -309,6 +291,19 @@ class InfluencerFormScreen extends StatelessWidget {
             CustomTextFormField(
               controller: nameController,
               hintText: context.translate('fullNamePlaceholder'),
+              validator: (value) {
+                return validateName(value!);
+              },
+            ),
+            SizedBox(height: 16.v),
+            Text(
+              'Laiza Username',
+              style: textTheme.titleMedium,
+            ),
+            SizedBox(height: 8.v),
+            CustomTextFormField(
+              controller: laizaUserNameController,
+              hintText: 'username',
               validator: (value) {
                 return validateName(value!);
               },
@@ -369,6 +364,7 @@ class InfluencerFormScreen extends StatelessWidget {
                     },
                     onChanged: (SelectionPopupModel? val) {
                       selectedCountry = val;
+                      selectedState = null;
                       context
                           .read<StateBloc>()
                           .add(StateLoadEvent(val?.value ?? 0));
@@ -378,6 +374,7 @@ class InfluencerFormScreen extends StatelessWidget {
                 return const SizedBox.shrink();
               },
             ),
+            SizedBox(height: 16.v),
             Text(
               context.translate('stateField'),
               style: textTheme.titleMedium,
@@ -396,6 +393,8 @@ class InfluencerFormScreen extends StatelessWidget {
                     },
                     onChanged: (val) {
                       selectedState = val;
+                      selectedCity = null;
+
                       context
                           .read<CityBloc>()
                           .add(CityLoadEvent(val.value ?? 0));
@@ -417,6 +416,7 @@ class InfluencerFormScreen extends StatelessWidget {
                     },
                     onChanged: (SelectionPopupModel val) {
                       selectedState = val;
+                      selectedCity = null;
                       context
                           .read<CityBloc>()
                           .add(CityLoadEvent(val.value ?? 0));
@@ -505,6 +505,7 @@ class InfluencerFormScreen extends StatelessWidget {
           SizedBox(height: 8.v),
           CustomTextFormField(
             controller: followersCountController,
+            textInputType: TextInputType.number,
             hintText: 'Eg.50K',
             validator: (value) {
               return validateField(value: value!, title: 'followers count');
@@ -512,12 +513,12 @@ class InfluencerFormScreen extends StatelessWidget {
           ),
           SizedBox(height: 16.v),
           Text(
-            'Instagram Account',
+            'Instagram Account Link',
             style: textTheme.titleMedium,
           ),
           SizedBox(height: 8.v),
           CustomTextFormField(
-            controller: instagramAccountCountController,
+            controller: instagramLinkController,
             hintText: 'Paste link',
             validator: (value) {
               return validateField(value: value!, title: ' instagram account');
@@ -525,7 +526,7 @@ class InfluencerFormScreen extends StatelessWidget {
           ),
           SizedBox(height: 16.v),
           Text(
-            'X.com Account',
+            'X.com Account Link',
             style: textTheme.titleMedium,
           ),
           SizedBox(height: 8.v),
@@ -538,7 +539,7 @@ class InfluencerFormScreen extends StatelessWidget {
           ),
           SizedBox(height: 16.v),
           Text(
-            'Facebook Account',
+            'Facebook Account Link',
             style: textTheme.titleMedium,
           ),
           SizedBox(height: 8.v),
@@ -551,7 +552,7 @@ class InfluencerFormScreen extends StatelessWidget {
           ),
           SizedBox(height: 16.v),
           Text(
-            'Snapchat  Account',
+            'Snapchat  Account Link',
             style: textTheme.titleMedium,
           ),
           SizedBox(height: 8.v),
@@ -607,10 +608,40 @@ class InfluencerFormScreen extends StatelessWidget {
     );
   }
 
+  GestureDetector _buildStepIndication(
+      int stepIndex, int currentStep, BuildContext context) {
+    final stepperCubit = context.read<StepperCubit>();
+    _currentStep = currentStep;
+    return GestureDetector(
+      onTap: () {
+        if (!_formKey1.currentState!.validate()) {
+          return;
+        } else {
+          stepperCubit.goToStep(stepIndex);
+        }
+      },
+      child: Container(
+        width: 26.h,
+        height: 26.v,
+        decoration: currentStep <= stepIndex
+            ? BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                border: Border.all(color: AppColor.primary))
+            : BoxDecoration(shape: BoxShape.circle, color: AppColor.primary),
+        child: Icon(
+          Icons.done,
+          color: Colors.white,
+          size: 15.fSize,
+        ),
+      ),
+    );
+  }
+
   Form _buildBankingDetailsStep(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Form(
-      key: _formKey3,
+      // key: _formKey3,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -674,7 +705,7 @@ class InfluencerFormScreen extends StatelessWidget {
           ),
           SizedBox(height: 8.v),
           CustomTextFormField(
-            controller: aahaarController,
+            controller: aadhaarController,
             hintText: 'Upload jpeg',
             suffix: const Icon(Icons.attach_file),
             validator: (value) {

@@ -13,44 +13,66 @@ class UserModel {
   String? phoneNumber;
   dynamic brandName;
   dynamic companyName;
+  num? country;
   num? state;
   num? city;
   String? productCategory;
   String? instagramFollowers;
-  String? instagramLink;
+
   String? userType;
   num? isLogin;
   num? isDelete;
   num? isApprove;
   num? isVerified;
-  String? createdAt;
-  String? updatedAt;
-  UserModel({
-    this.id,
-    this.name,
-    this.email,
-    this.profile,
-    this.token,
-    this.role,
-    this.profileImg,
-    this.username,
-    this.emailVerifiedAt,
-    this.phoneNumber,
-    this.brandName,
-    this.companyName,
-    this.state,
-    this.city,
-    this.productCategory,
-    this.instagramFollowers,
-    this.instagramLink,
-    this.userType,
-    this.isLogin,
-    this.isDelete,
-    this.isApprove,
-    this.isVerified,
-    this.createdAt,
-    this.updatedAt,
-  });
+  num? isProfileComplete;
+
+  String? instagramLink;
+  String? instagramUserName;
+  String? xComLink;
+  String? facebookLink;
+  String? snapchatLink;
+  String? accountNumber;
+  String? iFCCode;
+  String? branchName;
+  String? accountHolderName;
+  String? aadharNumber;
+  String? bankVerification;
+
+  UserModel(
+      {this.id,
+      this.name,
+      this.email,
+      this.profile,
+      this.token,
+      this.role,
+      this.profileImg,
+      this.username,
+      this.emailVerifiedAt,
+      this.phoneNumber,
+      this.brandName,
+      this.companyName,
+      this.country,
+      this.state,
+      this.city,
+      this.productCategory,
+      this.instagramFollowers,
+      this.instagramLink,
+      this.userType,
+      this.isLogin,
+      this.isDelete,
+      this.isApprove,
+      this.isVerified,
+      this.isProfileComplete,
+      this.facebookLink,
+      this.snapchatLink,
+      this.xComLink,
+      this.accountNumber,
+      this.iFCCode,
+      this.branchName,
+      this.accountHolderName,
+      this.aadharNumber,
+      this.bankVerification,
+      this.instagramUserName});
 
   factory UserModel.fromJson(
           {required Map<String, dynamic> json, required String id}) =>
@@ -67,18 +89,22 @@ class UserModel {
         phoneNumber: json['phone_number'],
         brandName: json['brand_name'],
         companyName: json['company_name'],
+        country: json['country'],
         state: json['state'],
         city: json['city'],
         productCategory: json['product_category'],
         instagramFollowers: json['instagram_followers'],
         instagramLink: json['instagram_link'],
+        xComLink: json['x_account_link'],
+        facebookLink: json['facebook_link'],
+        snapchatLink: json['snapchat_link'],
         userType: json['user_type'],
         isLogin: json['is_login'],
         isDelete: json['is_delete'],
         isApprove: json['is_approve'],
         isVerified: json['is_verified'],
-        createdAt: json['created_at'],
-        updatedAt: json['updated_at'],
+        isProfileComplete: json['is_profile_complete'],
+        instagramUserName: json['insta_username'],
       );
 
   Map<String, dynamic> toJson() {
@@ -95,6 +121,7 @@ class UserModel {
     if (phoneNumber != null) data['phone_number'] = phoneNumber;
     if (brandName != null) data['brand_name'] = brandName;
     if (companyName != null) data['company_name'] = companyName;
+    if (country != null) data['country'] = country;
     if (state != null) data['state'] = state;
     if (city != null) data['city'] = city;
     if (productCategory != null) data['product_category'] = productCategory;
@@ -106,8 +133,10 @@ class UserModel {
     if (isDelete != null) data['is_delete'] = isDelete;
     if (isApprove != null) data['is_approve'] = isApprove;
     if (isVerified != null) data['is_verified'] = isVerified;
-    if (createdAt != null) data['created_at'] = createdAt;
-    if (updatedAt != null) data['updated_at'] = updatedAt;
+    if (isProfileComplete != null)
+      data['is_profile_complete'] = isProfileComplete;
+
+    if (instagramUserName != null) data['insta_username'] = instagramUserName;
     return data;
   }
 }

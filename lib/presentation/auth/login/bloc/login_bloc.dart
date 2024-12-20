@@ -1,24 +1,27 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/data/models/login_model/login_model.dart';
 import 'package:laiza/data/repositories/auth_repository/auth_repository.dart';
 import 'package:laiza/data/services/firebase_services.dart';
 
+import '../../../../core/app_export.dart';
+import '../../../../data/models/user/user_model.dart';
+import '../../../../data/repositories/user_repository/user_repository.dart';
+import '../../../../data/services/firebase_messaging_service.dart';
 import 'login_event.dart';
 import 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final AuthRepository _authRepository;
+
   LoginBloc(this._authRepository) : super(LoginInitial()) {
     on<TogglePasswordVisibility>(_onTogglePasswordVisibility);
     on<LoginButtonPressed>(_onLoginButtonPressed);
     on<LoginWithGoggleEvent>(_onLoginWithGoogle);
     on<LoginWithPhoneEvent>(_onLoginWithPhone);
     on<LoginWithAppleEvent>(_onLoginWithAppleEvent);
-    on<VerifyOtpEvent>(_onVerifyOtp);
   }
 
   void _onTogglePasswordVisibility(
@@ -34,11 +37,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           email: event.email, password: event.password);
       PrefUtils.setToken(loginModel.data?.token ?? '');
       PrefUtils.setId(loginModel.data?.user?.id.toString() ?? "");
-      //TODO:Need to get profile complete status
       emit(LoginSuccessState(
           userId: loginModel.data?.user?.id ?? 0, isProfileComplete: true));
     } catch (e) {
-      emit(LoginError(e.toString()));
+      if (e.toString() == 'Account not approved') {
+        emit(LoginUserNotApproved());
+      } else {
+        emit(LoginError(e.toString()));
+      }
     }
   }
 
@@ -54,28 +60,29 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
   }
 
-  FutureOr<void> _onVerifyOtp(
-      VerifyOtpEvent event, Emitter<LoginState> emit) async {
-    try {
-      emit(LoginLoading());
-      await Future.delayed(const Duration(seconds: 2));
-      //TODO:Need to get profile complete status
-      emit(const LoginSuccessState(userId: 0, isProfileComplete: true));
-    } catch (e) {
-      emit(LoginError(e.toString()));
-    }
-  }
-
   FutureOr<void> _onLoginWithGoogle(
       LoginWithGoggleEvent event, Emitter<LoginState> emit) async {
     try {
       emit(LoginLoading());
-      User? user = await FirebaseServices.signInWithGoogle();
+      UserCredential authResult = await FirebaseServices.signInWithGoogle();
+      User? user = authResult.user;
       if (user != null) {
-        emit(const SocialLoginSuccessState());
+        LoginModel model = await _authRepository.socialLogin(
+            email: user.email ?? '', source: LoginSource.google.name);
+
+        PrefUtils.setUserName(user.displayName ?? '');
+        PrefUtils.setUserEmail(user.email ?? '');
+        PrefUtils.setUserProfile(user.photoURL ?? '');
+        PrefUtils.setToken(model.data?.token ?? '');
+
+        await setUserInFirebase(
+            authResult, model.data?.user?.id?.toString() ?? '');
+        UserRepository userRepository = UserRepository();
+        UserModel profileModel = await userRepository.getUserProfile();
+        emit(SocialLoginSuccessState(profileModel.isProfileComplete == 0));
       }
     } catch (e) {
-      emit(const LoginError('Login Failed'));
+      emit(LoginError(e.toString()));
     }
   }
 
@@ -83,13 +90,48 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       LoginWithAppleEvent event, Emitter<LoginState> emit) async {
     try {
       emit(LoginLoading());
-      User? user = await FirebaseServices.signInWithApple();
+      UserCredential authResult = await FirebaseServices.signInWithApple();
+      User? user = authResult.user;
+
       if (user != null) {
-        //TODO:Need to get profile complete status
-        emit(const LoginSuccessState(userId: 0, isProfileComplete: true));
+        LoginModel model = await _authRepository.socialLogin(
+            email: user.email ?? '', source: LoginSource.apple.name);
+
+        PrefUtils.setUserName(user.displayName ?? '');
+        PrefUtils.setUserEmail(user.email ?? '');
+        PrefUtils.setUserProfile(user.photoURL ?? '');
+        PrefUtils.setToken(model.data?.token ?? '');
+
+        await setUserInFirebase(
+            authResult, model.data?.user?.id?.toString() ?? '');
+        UserRepository userRepository = UserRepository();
+        UserModel profileModel = await userRepository.getUserProfile();
+        await setUserInFirebase(
+            authResult, model.data?.user?.id?.toString() ?? '');
+        emit(SocialLoginSuccessState(profileModel.isProfileComplete == 0));
       }
     } catch (e) {
       emit(const LoginError('Login Failed'));
+    }
+  }
+
+  Future<void> setUserInFirebase(
+      UserCredential authResult, String userId) async {
+    PrefUtils.setId(userId);
+    User? user = authResult.user;
+    String fcmToken = await FirebaseMessagingService.generateToken() ?? "";
+    UserModel userModel = UserModel(
+      id: userId,
+      name: user?.displayName ?? '',
+      email: user?.email ?? "",
+      profile: user?.photoURL ?? "",
+      token: fcmToken,
+      role: PrefUtils.getRole(),
+    );
+    if (authResult.additionalUserInfo!.isNewUser) {
+      await FirebaseServices.addUser(userModel);
+    } else {
+      await FirebaseServices.updateUser(userModel);
     }
   }
 }

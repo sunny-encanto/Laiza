@@ -4,16 +4,17 @@ import 'package:laiza/presentation/auth/login/ui/socail_login_widget.dart';
 
 import '../../../../core/utils/pref_utils.dart';
 import '../../../../data/repositories/auth_repository/auth_repository.dart';
-import '../../../select_role/ui/select_role.dart';
 import '../bloc/login_event.dart';
 
 // ignore: must_be_immutable
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
+
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _emailController = TextEditingController();
   bool _isPasswordVisible = false;
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -123,6 +124,9 @@ class LoginScreen extends StatelessWidget {
                           Navigator.of(context)
                               .pushReplacementNamed(AppRoutes.homeScreen);
                         }
+                      } else if (state is LoginUserNotApproved) {
+                        Navigator.of(context)
+                            .pushReplacementNamed(AppRoutes.successScreen);
                       }
                     },
                     builder: (context, state) {

@@ -59,5 +59,3 @@ class SelectRoleScreen extends StatelessWidget {
     );
   }
 }
-
-enum UserRole { user, influencer }

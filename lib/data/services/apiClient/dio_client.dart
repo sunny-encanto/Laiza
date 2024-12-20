@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
-import '../../../core/app_export.dart';
 import '../../../core/errors/exceptions.dart';
 import '../../../core/utils/api_constant.dart';
 
@@ -32,6 +32,7 @@ class ApiClient {
           responseHeader: false,
           error: true,
           compact: true,
+          enabled: kDebugMode,
           maxWidth: 90),
       InterceptorsWrapper(
         onRequest: (options, handler) {

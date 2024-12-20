@@ -30,7 +30,7 @@ class FirebaseServices {
   static final GoogleSignIn googleSignIn = GoogleSignIn();
 
 /*-----------GOOGLE LOGIN---------------*/
-  static Future<User?> signInWithGoogle() async {
+  static Future<UserCredential> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleSignInAccount =
           await googleSignIn.signIn();
@@ -44,40 +44,15 @@ class FirebaseServices {
 
       final UserCredential authResult =
           await _auth.signInWithCredential(credential);
-      final User? user = authResult.user;
-      if (user != null) {
-        PrefUtils.setId(user.uid);
-        PrefUtils.setUserName(user.displayName ?? '');
-        PrefUtils.setUserEmail(user.email ?? '');
-        PrefUtils.setUserProfile(user.photoURL ?? '');
-        if (authResult.additionalUserInfo!.isNewUser) {
-          String fcmToken =
-              await FirebaseMessagingService.generateToken() ?? "";
 
-          UserModel userModel = UserModel(
-              id: user.uid,
-              name: user.displayName ?? '',
-              email: user.email ?? "",
-              profile: user.photoURL ?? "",
-              token: fcmToken,
-              role: 'User');
-
-          await addUser(userModel);
-        }
-      } else {
-        String fcmToken = await FirebaseMessagingService.generateToken() ?? "";
-        UserModel userModel = UserModel(token: fcmToken);
-        await updateUser(userModel);
-        PrefUtils.setId(user?.uid ?? "");
-      }
-      return user;
+      return authResult;
     } catch (e) {
       rethrow;
     }
   }
 
 /*-----------APPLE LOGIN---------------*/
-  static Future<User?> signInWithApple() async {
+  static Future<UserCredential> signInWithApple() async {
     try {
       final appleCredential = await SignInWithApple.getAppleIDCredential(
         scopes: [
@@ -94,34 +69,8 @@ class FirebaseServices {
       // Sign in the user with the credential
       final UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-      final User? user = userCredential.user;
 
-      if (user != null) {
-        PrefUtils.setId(user.uid);
-        PrefUtils.setUserName(user.displayName ?? '');
-        PrefUtils.setUserEmail(user.email ?? '');
-        PrefUtils.setUserProfile(user.photoURL ?? '');
-        if (userCredential.additionalUserInfo!.isNewUser) {
-          String fcmToken =
-              await FirebaseMessagingService.generateToken() ?? "";
-          UserModel userModel = UserModel(
-            id: user.uid,
-            name: user.displayName ?? '',
-            email: user.email ?? "",
-            profile: user.photoURL ?? "",
-            token: fcmToken,
-            role: 'User',
-          );
-          await addUser(userModel);
-        }
-      } else {
-        String fcmToken = await FirebaseMessagingService.generateToken() ?? "";
-        UserModel userModel = UserModel(token: fcmToken);
-        await updateUser(userModel);
-        PrefUtils.setId(user?.uid ?? "");
-      }
-      // Return the User from UserCredential
-      return userCredential.user;
+      return userCredential;
     } catch (e) {
       rethrow;
     }
@@ -132,7 +81,7 @@ class FirebaseServices {
     try {
       await _firestore
           .collection('users')
-          .doc(_auth.currentUser?.uid)
+          .doc(userModel.id)
           .set(userModel.toJson());
       return true;
     } catch (e) {
@@ -146,7 +95,7 @@ class FirebaseServices {
     try {
       await _firestore
           .collection('users')
-          .doc(_auth.currentUser?.uid)
+          .doc(userModel.id)
           .update(userModel.toJson());
       return true;
     } catch (e) {
@@ -450,28 +399,28 @@ class FirebaseServices {
   }
 
 /*-----Get User---------*/
-  // static getUser() {
-  //   return _firestore.collection('users').doc(PrefUtils.getId()).snapshots();
-  // }
+// static getUser() {
+//   return _firestore.collection('users').doc(PrefUtils.getId()).snapshots();
+// }
 
 /*---------Delete Chats--------------*/
-  // static deleteChats(String receiverId) async {
-  //   try {
-  //     // Get a reference to the collection
-  //     CollectionReference collectionReference = _firestore
-  //         .collection('chats')
-  //         .doc(createChatRoomId(receiverId))
-  //         .collection('messages');
-  //     // Get all documents from the collection
-  //     QuerySnapshot querySnapshot = await collectionReference.get();
-  //     // Delete each document in the collection
-  //     querySnapshot.docs.forEach((document) async {
-  //       await document.reference.delete();
-  //     });
-  //   } catch (e) {
-  //     log('Error during delete chats', error: e);
-  //   }
-  // }
+// static deleteChats(String receiverId) async {
+//   try {
+//     // Get a reference to the collection
+//     CollectionReference collectionReference = _firestore
+//         .collection('chats')
+//         .doc(createChatRoomId(receiverId))
+//         .collection('messages');
+//     // Get all documents from the collection
+//     QuerySnapshot querySnapshot = await collectionReference.get();
+//     // Delete each document in the collection
+//     querySnapshot.docs.forEach((document) async {
+//       await document.reference.delete();
+//     });
+//   } catch (e) {
+//     log('Error during delete chats', error: e);
+//   }
+// }
 
 // /*-----Voice Message------*/
 //   static Future<bool> sendVoiceChat(
@@ -540,24 +489,24 @@ class FirebaseServices {
 //     }
 //   }
 
-  // static Future<bool> checkEmailExists(String email) async {
-  //   try {
-  //     // Fetch sign-in methods for the email address
-  //     final list =
-  //         await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+// static Future<bool> checkEmailExists(String email) async {
+//   try {
+//     // Fetch sign-in methods for the email address
+//     final list =
+//         await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
 
-  //     // In case list is not empty
-  //     if (list.isNotEmpty) {
-  //       // Return true because there is an existing
-  //       // user using the email address
-  //       return true;
-  //     } else {
-  //       // Return false because email  is not in use
-  //       return false;
-  //     }
-  //   } catch (error) {
-  //     // Handle error
-  //     return true;
-  //   }
-  // }
+//     // In case list is not empty
+//     if (list.isNotEmpty) {
+//       // Return true because there is an existing
+//       // user using the email address
+//       return true;
+//     } else {
+//       // Return false because email  is not in use
+//       return false;
+//     }
+//   } catch (error) {
+//     // Handle error
+//     return true;
+//   }
+// }
 }

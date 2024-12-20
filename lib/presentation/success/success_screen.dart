@@ -1,4 +1,5 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/data/services/firebase_services.dart';
 
 class SuccessScreen extends StatelessWidget {
   const SuccessScreen({super.key});
@@ -46,8 +47,7 @@ class SuccessScreen extends StatelessWidget {
             child: CustomOutlineButton(
               text: 'Close',
               onPressed: () {
-                Navigator.of(context)
-                    .pushReplacementNamed(AppRoutes.bottomBarScreen);
+                FirebaseServices.handleLogOut(context);
               },
             ),
           )

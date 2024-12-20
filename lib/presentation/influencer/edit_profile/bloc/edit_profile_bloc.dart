@@ -11,6 +11,7 @@ part 'edit_profile_state.dart';
 
 class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
   final UserRepository _userRepository;
+
   EditProfileBloc(this._userRepository) : super(EditProfileInitial()) {
     on<ProfileUpdateEvent>(_onProfileUpdate);
     on<ProfilePhotoChangeEvent>(_onProfileChange);
@@ -21,7 +22,7 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
       ProfileUpdateEvent event, Emitter<EditProfileState> emit) async {
     try {
       emit(EditProfileLoadingState());
-      UserModel user = await _userRepository.updateUserProfile(event._user);
+      await _userRepository.updateUserProfile(event._user);
       emit(EditProfileSuccessState());
     } catch (e) {
       emit(EditProfileError(e.toString()));

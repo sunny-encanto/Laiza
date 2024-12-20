@@ -11,6 +11,7 @@ import 'package:laiza/localization/language_cubit.dart';
 import 'core/app_export.dart';
 import 'core/network/connectivity_cubit.dart';
 import 'core/utils/pref_utils.dart';
+import 'data/models/user/user_model.dart';
 import 'data/repositories/auth_repository/auth_repository.dart';
 import 'data/repositories/cart_repository/cart_repository.dart';
 import 'data/repositories/wishlist_repository/wishlist_repository.dart';
@@ -26,14 +27,13 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  await PrefUtils.init();
   await NotificationService.initialize();
   await FirebaseMessagingService.initialize();
-  await PrefUtils.init();
-  await FirebaseMessagingService.generateToken();
   await FirebaseMessagingService.handleInitialMessage();
   await FirebaseMessagingService.onBackgroundMessage();
-
+  await FirebaseMessagingService.generateToken();
+  await getFromCompleteStatus();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]).then((value) {
@@ -91,12 +91,23 @@ class MyApp extends StatelessWidget {
                 title: 'Laiza',
                 theme: AppTheme.theme,
                 onGenerateRoute: AppRoutes.onGenerateRoute,
-                initialRoute: AppRoutes.influencerFormScreen,
+                initialRoute: AppRoutes.splashScreen,
               );
             },
           ),
         ),
       );
     });
+  }
+}
+
+Future<void> getFromCompleteStatus() async {
+  if (PrefUtils.getId().isNotEmpty) {
+    UserRepository userRepository = UserRepository();
+    UserModel userModel = await userRepository.getUserProfile();
+    bool isFormComplete = (userModel.isProfileComplete ?? 0) == 1;
+    bool isUserApprove = (userModel.isApprove ?? 0) == 1;
+    PrefUtils.setIsFormComplete(isFormComplete);
+    PrefUtils.setIsApproved(isUserApprove);
   }
 }
