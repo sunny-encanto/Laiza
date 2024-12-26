@@ -7,8 +7,6 @@ import 'package:laiza/data/blocs/profile_api_bloc/profile_api_bloc.dart';
 import 'package:laiza/data/blocs/state_bloc/state_bloc.dart';
 import 'package:laiza/data/models/city_model/city.dart';
 import 'package:laiza/data/models/user/user_model.dart';
-import 'package:laiza/data/repositories/category_repository/category_repository.dart';
-import 'package:laiza/data/repositories/region_repository/region_repository.dart';
 
 import '../../../../data/blocs/category_bloc/category_bloc.dart';
 import '../../../../data/models/category_model/Category.dart';
@@ -17,6 +15,7 @@ import '../../../../data/models/selectionPopupModel/selection_popup_model.dart';
 import '../../../../widgets/custom_drop_down.dart';
 import '../cubit/stepper_cubit.dart';
 
+// ignore: must_be_immutable
 class InfluencerFormScreen extends StatelessWidget {
   InfluencerFormScreen({super.key});
 

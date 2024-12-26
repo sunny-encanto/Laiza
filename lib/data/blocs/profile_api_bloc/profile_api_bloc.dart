@@ -11,9 +11,13 @@ class ProfileApiBloc extends Bloc<ProfileApiEvent, ProfileApiState> {
 
   ProfileApiBloc(this._userRepository) : super(ProfileApiInitial()) {
     on<FetchProfileApi>((event, emit) async {
-      emit(ProfileApiLoadingState());
-      UserModel userModel = await _userRepository.getUserProfile();
-      emit(ProfileApiLoadedState(userModel));
+      try {
+        emit(ProfileApiLoadingState());
+        UserModel userModel = await _userRepository.getUserProfile();
+        emit(ProfileApiLoadedState(userModel));
+      } catch (e) {
+        emit(ProfileApiError(e.toString()));
+      }
     });
   }
 }

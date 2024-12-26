@@ -13,14 +13,18 @@ final class FollowersLoading extends FollowersState {}
 
 final class FollowersError extends FollowersState {
   final String message;
+
   const FollowersError(this.message);
+
   @override
   List<Object> get props => [message];
 }
 
 final class FollowersLoaded extends FollowersState {
-  final List<ConnectionsModel> followers;
+  final List<Follower> followers;
+
   const FollowersLoaded(this.followers);
+
   @override
   List<Object> get props => [followers];
 }

@@ -9,7 +9,9 @@ sealed class EditProfileState extends Equatable {
 
 final class ProfileFetchedState extends EditProfileState {
   final UserModel user;
+
   const ProfileFetchedState(this.user);
+
   @override
   List<Object> get props => [user];
 }
@@ -22,16 +24,36 @@ final class EditProfileLoadingState extends EditProfileState {}
 
 final class EditProfileError extends EditProfileState {
   final String message;
+
   const EditProfileError(this.message);
+
   @override
   List<Object> get props => [message];
 }
 
-final class EditProfileSuccessState extends EditProfileState {}
+final class EditProfileSuccessState extends EditProfileState {
+  final String message;
+
+  const EditProfileSuccessState(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
 
 final class ProfilePhotoChangedState extends EditProfileState {
   final String imagePath;
+
   const ProfilePhotoChangedState(this.imagePath);
+
+  @override
+  List<Object> get props => [imagePath];
+}
+
+final class BgPhotoChangedState extends EditProfileState {
+  final String imagePath;
+
+  const BgPhotoChangedState(this.imagePath);
+
   @override
   List<Object> get props => [imagePath];
 }

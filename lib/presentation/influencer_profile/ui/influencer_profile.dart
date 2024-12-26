@@ -4,7 +4,8 @@ import 'package:laiza/presentation/influencer_profile/ui/post_view/post_view.dar
 import 'package:laiza/presentation/influencer_profile/ui/product_view/product_view.dart';
 
 class InfluencerProfileScreen extends StatelessWidget {
-  const InfluencerProfileScreen({super.key});
+  final String id;
+  const InfluencerProfileScreen({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {

@@ -3,6 +3,7 @@ import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/data/models/category_model/Category.dart';
 import 'package:laiza/data/models/category_model/Category_model.dart';
 
+import '../../../core/app_export.dart';
 import '../../../core/utils/api_constant.dart';
 import '../../services/apiClient/dio_client.dart';
 
@@ -25,7 +26,8 @@ class CategoryRepository {
       String message = e.response?.data['message'] ?? 'Unknown error';
       throw message;
     } catch (e) {
-      throw Exception('Failed to get user profile');
+      Logger.log('Error during  get categories', e.toString());
+      throw Exception('Failed to get get categories');
     }
   }
 }

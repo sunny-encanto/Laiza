@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:laiza/core/app_export.dart';
 import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/data/models/common_model/common_model.dart';
 import 'package:laiza/data/repositories/auth_repository/auth_repository.dart';
@@ -24,8 +24,10 @@ class OtpScreenBloc extends Bloc<OtpScreenEvent, OtpScreenState> {
     try {
       emit(OtpScreenScreenLoadingState());
       OtpVerificationModel otpVerificationModel =
-          await _authRepository.verifyOtp(email: event.email, otp: event.otp);
+          await _authRepository.verifyOtp(
+              email: event.email, otp: event.otp, authType: event.authType);
       await PrefUtils.setToken(otpVerificationModel.token ?? '');
+      await PrefUtils.setId(otpVerificationModel.userId.toString());
       emit(OtpScreenSuccessState(
           message: otpVerificationModel.message ?? "",
           token: otpVerificationModel.token ?? ""));

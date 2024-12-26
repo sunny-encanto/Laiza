@@ -10,8 +10,10 @@ sealed class OtpScreenEvent extends Equatable {
 class OtpSubmitEvent extends OtpScreenEvent {
   final String email;
   final String otp;
+  final String authType;
 
-  const OtpSubmitEvent({required this.email, required this.otp});
+  const OtpSubmitEvent(
+      {required this.email, required this.otp, required this.authType});
 
   @override
   List<Object> get props => [email, otp];

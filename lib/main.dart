@@ -1,20 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:laiza/data/repositories/category_repository/category_repository.dart';
-import 'package:laiza/data/repositories/post_repository/post_repository.dart';
-import 'package:laiza/data/repositories/region_repository/region_repository.dart';
-import 'package:laiza/data/repositories/user_repository/user_repository.dart';
-import 'package:laiza/firebase_options.dart';
-import 'package:laiza/localization/language_cubit.dart';
+import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
 
 import 'core/app_export.dart';
 import 'core/network/connectivity_cubit.dart';
 import 'core/utils/pref_utils.dart';
 import 'data/models/user/user_model.dart';
-import 'data/repositories/auth_repository/auth_repository.dart';
-import 'data/repositories/cart_repository/cart_repository.dart';
-import 'data/repositories/wishlist_repository/wishlist_repository.dart';
 import 'data/services/firebase_messaging_service.dart';
 import 'data/services/notification_service.dart';
 import 'localization/app_localization.dart';
@@ -24,9 +14,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await PrefUtils.init();
   await NotificationService.initialize();
   await FirebaseMessagingService.initialize();
@@ -34,6 +22,7 @@ void main() async {
   await FirebaseMessagingService.onBackgroundMessage();
   await FirebaseMessagingService.generateToken();
   await getFromCompleteStatus();
+  Logger.init(LogMode.debug);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]).then((value) {
@@ -63,6 +52,8 @@ class MyApp extends StatelessWidget {
               create: (BuildContext context) => CategoryRepository()),
           RepositoryProvider(
               create: (BuildContext context) => RegionRepository()),
+          RepositoryProvider(
+              create: (BuildContext context) => FollowersRepository()),
         ],
         child: MultiBlocProvider(
           providers: [

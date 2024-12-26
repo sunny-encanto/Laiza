@@ -15,8 +15,13 @@ class ApiConstant {
   static String resetPassword = 'api/reset_password';
   static String profile = 'api/profile';
   static String updateProfile = 'api/user/update_profile';
-  static String getCategories = 'api/product/get_categories';
+  static String getCategories = 'api/user/all_influencer_category';
   static String getCountries = 'api/get_countries';
   static String getStates = 'api/get_states';
   static String getCities = 'api/get_cities';
+  static String allInfluencers = 'api/user/get_all_influencers';
+  static String followers = 'api/user/followers';
+  static String following = 'api/user/following';
+  static String unfollow = 'api/user/unfollow';
+  static String follow = 'api/user/follow';
 }

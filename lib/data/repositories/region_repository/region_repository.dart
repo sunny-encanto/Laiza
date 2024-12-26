@@ -6,6 +6,7 @@ import 'package:laiza/data/models/states_model/state.dart';
 import 'package:laiza/data/models/states_model/states_model.dart';
 
 import '../../../core/utils/api_constant.dart';
+import '../../../core/utils/logger.dart';
 import '../../../core/utils/pref_utils.dart';
 import '../../models/city_model/city.dart';
 import '../../services/apiClient/dio_client.dart';
@@ -29,7 +30,8 @@ class RegionRepository {
       String message = e.response?.data['message'] ?? 'Unknown error';
       throw message;
     } catch (e) {
-      throw Exception('Failed to get user profile');
+      Logger.log('Error during get countries', e.toString());
+      throw Exception('Failed to get get countries');
     }
   }
 
@@ -50,7 +52,8 @@ class RegionRepository {
       String message = e.response?.data['message'] ?? 'Unknown error';
       throw message;
     } catch (e) {
-      throw Exception('Failed to get user profile');
+      Logger.log('Error during get states', e.toString());
+      throw Exception('Failed to get get states');
     }
   }
 
@@ -71,7 +74,8 @@ class RegionRepository {
       String message = e.response?.data['message'] ?? 'Unknown error';
       throw message;
     } catch (e) {
-      throw Exception('Failed to get user profile');
+      Logger.log('Error during get cities', e.toString());
+      throw Exception('Failed to get get cities');
     }
   }
 }

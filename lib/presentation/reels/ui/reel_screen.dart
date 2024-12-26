@@ -258,6 +258,7 @@ class ReelScreen extends StatelessWidget {
           SizedBox(width: 20.h),
           CustomImageView(
             onTap: () {
+              //TODO: Add Id in argoument
               Navigator.of(context)
                   .pushNamed(AppRoutes.influencerProfileScreen);
             },

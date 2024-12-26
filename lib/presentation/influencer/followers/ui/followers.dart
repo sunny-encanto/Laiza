@@ -1,8 +1,10 @@
 import '../../../../core/app_export.dart';
-import '../../../../data/models/connections_model/connections_model.dart';
+import '../../../../data/models/followers_model/follower.dart';
+import '../../../empty_pages/no_connections_found/no_connections_found.dart';
 
 class FollowersScreen extends StatelessWidget {
   FollowersScreen({super.key});
+
   final _searchController = TextEditingController();
 
   @override
@@ -28,7 +30,9 @@ class FollowersScreen extends StatelessWidget {
             } else if (state is FollowersError) {
               return Center(child: Text(state.message));
             } else if (state is FollowersLoaded) {
-              return _buildFollowersWidget(context, state.followers);
+              return state.followers.isNotEmpty
+                  ? _buildFollowersWidget(context, state.followers)
+                  : const NoConnectionsFoundScreen();
             }
             return const SizedBox.shrink();
           },
@@ -37,8 +41,7 @@ class FollowersScreen extends StatelessWidget {
     );
   }
 
-  Column _buildFollowersWidget(
-      BuildContext context, List<ConnectionsModel> items) {
+  Column _buildFollowersWidget(BuildContext context, List<Follower> items) {
     return Column(
       children: [
         CustomTextFormField(
@@ -71,7 +74,7 @@ class FollowersScreen extends StatelessWidget {
   }
 
   ListTile _buildFollowersItem(
-      List<ConnectionsModel> items, int index, BuildContext context) {
+      List<Follower> items, int index, BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return ListTile(
       contentPadding: const EdgeInsets.all(0),
@@ -79,7 +82,7 @@ class FollowersScreen extends StatelessWidget {
         height: 50.h,
         width: 50.h,
         radius: BorderRadius.circular(50.h),
-        imagePath: items[index].profile,
+        imagePath: items[index].profileImg,
       ),
       trailing: InkWell(
         onTap: () {

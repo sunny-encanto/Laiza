@@ -2,15 +2,17 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-
-import '../../../../data/models/connections_model/connections_model.dart';
+import 'package:laiza/data/models/followers_model/follower.dart';
+import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
 
 part 'followers_event.dart';
 part 'followers_state.dart';
 
 class FollowersBloc extends Bloc<FollowersEvent, FollowersState> {
-  List<ConnectionsModel> _followersList = connectionsList;
-  FollowersBloc() : super(FollowersInitial()) {
+  final FollowersRepository _followersRepository;
+  List<Follower> _followersList = <Follower>[];
+
+  FollowersBloc(this._followersRepository) : super(FollowersInitial()) {
     on<FollowersFetchEvent>(_onFetchFollowers);
     on<FollowersRemoveEvent>(_onFollowersRemoveEvent);
     on<FollowersSearch>(_onFollowersSearch);
@@ -19,13 +21,13 @@ class FollowersBloc extends Bloc<FollowersEvent, FollowersState> {
   FutureOr<void> _onFetchFollowers(
       FollowersFetchEvent event, Emitter<FollowersState> emit) async {
     emit(FollowersLoading());
-    await Future.delayed(const Duration(seconds: 1));
-    emit(FollowersLoaded(connectionsList));
+    _followersList = await _followersRepository.getFollowers();
+    emit(FollowersLoaded(_followersList));
   }
 
   FutureOr<void> _onFollowersRemoveEvent(
       FollowersRemoveEvent event, Emitter<FollowersState> emit) {
-    final updatedItems = List<ConnectionsModel>.from(_followersList)
+    final updatedItems = List<Follower>.from(_followersList)
       ..removeWhere((item) => item.id == event.id);
     emit(FollowersLoaded(updatedItems));
     // Update the original itemList to reflect the removal

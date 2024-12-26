@@ -1,6 +1,7 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/presentation/influencer/influencer_my_profile/bloc/influencer_my_profile_bloc.dart';
 
+import '../../../../data/blocs/profile_api_bloc/profile_api_bloc.dart';
 import '../../../../data/services/media_services.dart';
 import '../../../../data/services/share.dart';
 import '../../../../widgets/custom_popup_menu_button.dart';
@@ -427,81 +428,101 @@ class InfluencerMyProfileScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(5.h),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(100.h),
-              ),
-              child: CustomImageView(
-                radius: BorderRadius.circular(100.h),
-                width: 90.v,
-                height: 90.v,
-                fit: BoxFit.fill,
-                imagePath:
-                    'https://as2.ftcdn.net/v2/jpg/03/83/25/83/1000_F_383258331_D8imaEMl8Q3lf7EKU2Pi78Cn0R7KkW9o.jpg',
-              ),
-            ),
-            SizedBox(width: 12.h),
-            Column(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        BlocProvider(
+          create: (context) => ProfileApiBloc(context.read<UserRepository>()),
+          child: BlocBuilder<ProfileApiBloc, ProfileApiState>(
+            builder: (context, state) {
+              if (state is ProfileApiInitial) {
+                context.read<ProfileApiBloc>().add(FetchProfileApi());
+                return const SizedBox.shrink();
+              } else if (state is ProfileApiLoadingState) {
+                return const SizedBox.shrink();
+              } else if (state is ProfileApiError) {
+                return Text(state.message);
+              } else if (state is ProfileApiLoadedState) {
+                return Row(
                   children: [
-                    Text(
-                      'Carol Danvers',
-                      style:
-                          textTheme.titleMedium!.copyWith(fontSize: 20.fSize),
+                    Container(
+                      padding: EdgeInsets.all(5.h),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(100.h),
+                      ),
+                      child: CustomImageView(
+                        radius: BorderRadius.circular(100.h),
+                        width: 90.v,
+                        height: 90.v,
+                        fit: BoxFit.fill,
+                        imagePath: state.userModel.profileImg,
+                      ),
                     ),
-                    SizedBox(height: 8.v),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    SizedBox(width: 12.h),
+                    Column(
                       children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context)
-                                .pushNamed(AppRoutes.followersScreen);
-                          },
-                          child: Column(
-                            children: [
-                              Text('Followers', style: textTheme.bodySmall),
-                              SizedBox(height: 4.v),
-                              Text('224.5K', style: textTheme.titleMedium),
-                            ],
-                          ),
-                        ),
-                        SizedBox(width: 8.v),
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Connections', style: textTheme.bodySmall),
-                            SizedBox(height: 4.v),
-                            Text('84', style: textTheme.titleMedium),
+                            Text(
+                              state.userModel.username ?? '',
+                              style: textTheme.titleMedium!
+                                  .copyWith(fontSize: 20.fSize),
+                            ),
+                            SizedBox(height: 8.v),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .pushNamed(AppRoutes.followersScreen);
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Text('Followers',
+                                          style: textTheme.bodySmall),
+                                      SizedBox(height: 4.v),
+                                      Text('224.5K',
+                                          style: textTheme.titleMedium),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: 8.v),
+                                Column(
+                                  children: [
+                                    Text('Connections',
+                                        style: textTheme.bodySmall),
+                                    SizedBox(height: 4.v),
+                                    Text('84', style: textTheme.titleMedium),
+                                  ],
+                                ),
+                                SizedBox(width: 8.v),
+                                Column(
+                                  children: [
+                                    Text('Share Profile',
+                                        style: textTheme.bodySmall),
+                                    SizedBox(height: 4.v),
+                                    CustomImageView(
+                                      onTap: () {
+                                        shareContent('Profile url');
+                                      },
+                                      imagePath: ImageConstant.shareIcon,
+                                      color: Colors.black,
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
                           ],
                         ),
-                        SizedBox(width: 8.v),
-                        Column(
-                          children: [
-                            Text('Share Profile', style: textTheme.bodySmall),
-                            SizedBox(height: 4.v),
-                            CustomImageView(
-                              onTap: () {
-                                shareContent('Profile url');
-                              },
-                              imagePath: ImageConstant.shareIcon,
-                              color: Colors.black,
-                            )
-                          ],
-                        ),
+                        SizedBox(height: 12.v),
                       ],
                     ),
                   ],
-                ),
-                SizedBox(height: 12.v),
-              ],
-            ),
-          ],
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
         ),
       ],
     );

@@ -2,19 +2,19 @@ import 'package:laiza/core/app_export.dart';
 import 'package:laiza/presentation/auth/otp_screen/bloc/otp_screen_bloc.dart';
 import 'package:pinput/pinput.dart';
 
-import '../../../core/utils/pref_utils.dart';
-import '../../select_role/ui/select_role.dart';
-
 class OtpScreen extends StatelessWidget {
   final int userId;
   final String routeName;
   final String email;
+  final String authType;
 
-  OtpScreen(
-      {super.key,
-      required this.userId,
-      required this.routeName,
-      required this.email});
+  OtpScreen({
+    super.key,
+    required this.userId,
+    required this.routeName,
+    required this.email,
+    required this.authType,
+  });
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _otpController = TextEditingController();
@@ -66,19 +66,20 @@ class OtpScreen extends StatelessWidget {
           } else if (state is OtpResentSuccessState) {
             context.showSnackBar(state.message);
           } else if (state is OtpScreenSuccessState) {
-            print('routeName => $routeName  token=> ${state.token}');
-            if (routeName.isEmpty) {
-              if (PrefUtils.getRole() == UserRole.user.name) {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    AppRoutes.bottomBarScreen, (route) => false);
-              } else {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    AppRoutes.homeScreen, (route) => false);
-              }
-            } else {
-              Navigator.of(context)
-                  .pushReplacementNamed(routeName, arguments: email);
-            }
+            Navigator.of(context)
+                .pushReplacementNamed(routeName, arguments: email);
+            // if (routeName.isEmpty) {
+            //   if (PrefUtils.getRole() == UserRole.user.name) {
+            //     Navigator.of(context).pushNamedAndRemoveUntil(
+            //         AppRoutes.bottomBarScreen, (route) => false);
+            //   } else {
+            //     Navigator.of(context).pushNamedAndRemoveUntil(
+            //         AppRoutes.homeScreen, (route) => false);
+            //   }
+            // } else {
+            //   Navigator.of(context)
+            //       .pushReplacementNamed(routeName, arguments: email);
+            // }
           }
         },
         builder: (context, state) {
@@ -92,7 +93,10 @@ class OtpScreen extends StatelessWidget {
                   return;
                 } else {
                   context.read<OtpScreenBloc>().add(OtpSubmitEvent(
-                      email: email, otp: _otpController.text.trim()));
+                        email: email,
+                        otp: _otpController.text.trim(),
+                        authType: authType,
+                      ));
                 }
               },
             ),
@@ -118,8 +122,10 @@ class OtpScreen extends StatelessWidget {
           ),
         ),
         onCompleted: (pin) {
-          context.read<OtpScreenBloc>().add(
-              OtpSubmitEvent(email: email, otp: _otpController.text.trim()));
+          context.read<OtpScreenBloc>().add(OtpSubmitEvent(
+              email: email,
+              otp: _otpController.text.trim(),
+              authType: authType));
         },
         onChanged: (pin) {
           _otpController.text = pin;

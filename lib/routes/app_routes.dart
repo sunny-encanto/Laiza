@@ -1,41 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:laiza/data/blocs/profile_api_bloc/profile_api_bloc.dart';
-import 'package:laiza/data/repositories/auth_repository/auth_repository.dart';
-import 'package:laiza/data/repositories/cart_repository/cart_repository.dart';
-import 'package:laiza/data/repositories/user_repository/user_repository.dart';
-import 'package:laiza/data/repositories/wishlist_repository/wishlist_repository.dart';
-import 'package:laiza/presentation/auth/otp_screen/bloc/otp_screen_bloc.dart';
-import 'package:laiza/presentation/influencer/chats/bloc/chats_bloc.dart';
-import 'package:laiza/presentation/influencer/discover_connections/bloc/discover_connections_bloc.dart';
-import 'package:laiza/presentation/influencer/edit_profile/ui/edit_profile.dart';
-import 'package:laiza/presentation/influencer/home/bloc/home_bloc.dart';
-import 'package:laiza/presentation/influencer/home/ui/home.dart';
-import 'package:laiza/presentation/influencer/influencer_my_profile/bloc/influencer_my_profile_bloc.dart';
-import 'package:laiza/presentation/influencer/influencer_my_profile/ui/influencer_my_profile.dart';
-import 'package:laiza/presentation/influencer/schedule_stream/bloc/schedule_stream_bloc.dart';
-import 'package:laiza/presentation/influencer/seller_info/bloc/seller_info_bloc.dart';
-import 'package:laiza/presentation/live_page/ui/live_page.dart';
+import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
 
 import '../core/app_export.dart';
-import '../presentation/all_products/ui/all_products.dart';
-import '../presentation/auth/login_with_phone/login_with_phone.dart';
-import '../presentation/auth/otp_screen/otp_screen.dart';
-import '../presentation/influencer/chat_box/ui/chat_box_ui.dart';
-import '../presentation/influencer/chat_box/ui/image_message_widget/image_message_widget.dart';
-import '../presentation/influencer/chats/ui/chats.dart';
-import '../presentation/influencer/connections_request/bloc/connection_request_bloc.dart';
-import '../presentation/influencer/connections_request/ui/connections_request.dart';
-import '../presentation/influencer/dashboard/ui/dashboard.dart';
-import '../presentation/influencer/discover_connections/ui/discover_connections.dart';
-import '../presentation/influencer/earnings/ui/earnings_screen.dart';
-import '../presentation/influencer/edit_profile/bloc/edit_profile_bloc.dart';
-import '../presentation/influencer/order_management/ui/order_management.dart';
-import '../presentation/influencer/recent_transactions/ui/recent_transactions.dart';
-import '../presentation/influencer/return_product/ui/return_product.dart';
-import '../presentation/influencer/schedule_stream/ui/schedule_stream.dart';
-import '../presentation/influencer/seller_info/ui/seller_info.dart';
-import '../presentation/notifications/bloc/notifications_bloc.dart';
-import '../presentation/select_role/ui/select_role.dart';
 
 class AppRoutes {
   static const String splashScreen = '/splash_screen';
@@ -192,6 +158,7 @@ class AppRoutes {
                     userId: data['id'],
                     routeName: data['routeName'],
                     email: data['email'],
+                    authType: data['authType'],
                   ),
                 ));
 
@@ -255,8 +222,9 @@ class AppRoutes {
         return CupertinoPageRoute(builder: (context) => const CheckOutScreen());
 
       case influencerProfileScreen:
+        String id = settings.arguments as String;
         return CupertinoPageRoute(
-            builder: (context) => const InfluencerProfileScreen());
+            builder: (context) => InfluencerProfileScreen(id: id));
 
       case collectionViewScreen:
         return CupertinoPageRoute(
@@ -387,7 +355,8 @@ class AppRoutes {
       case followersScreen:
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => FollowersBloc(),
+                  create: (context) =>
+                      FollowersBloc(context.read<FollowersRepository>()),
                   child: FollowersScreen(),
                 ));
 

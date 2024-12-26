@@ -2,8 +2,10 @@ import '../../../../core/app_export.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   ForgotPasswordScreen({super.key});
+
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -55,7 +57,8 @@ class ForgotPasswordScreen extends StatelessWidget {
                         .pushNamed(AppRoutes.otpScreen, arguments: {
                       'id': state.userId,
                       'routeName': AppRoutes.changePasswordScreen,
-                      'email': _emailController.text.trim()
+                      'email': _emailController.text.trim(),
+                      'authType': 'forgotPassword'
                     });
                   } else if (state is ForgotPasswordErrorState) {
                     context.showSnackBar(state.message);

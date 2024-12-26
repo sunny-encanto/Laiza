@@ -152,6 +152,7 @@ class SearchScreen extends StatelessWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
     return ListTile(
       onTap: () {
+        //TODO: Add Id in argoument
         Navigator.of(context).pushNamed(AppRoutes.influencerProfileScreen);
       },
       contentPadding: const EdgeInsets.all(0),

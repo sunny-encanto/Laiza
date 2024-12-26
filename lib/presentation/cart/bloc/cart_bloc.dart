@@ -37,7 +37,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   FutureOr<void> _onCheckOutEvent(event, emit) {
-    final selectedItems = state.items.where((item) => item.isSelected).toList();
+    final List<CartModel> selectedItems =
+        state.items.where((item) => item.isSelected).toList();
 
     if (selectedItems.isEmpty) {
       emit(state.copyWith(errorMessage: 'No items selected for checkout.'));
@@ -47,7 +48,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   FutureOr<void> _onToggleSelection(event, emit) {
-    final updatedItems = state.items.map((item) {
+    final List<CartModel> updatedItems = state.items.map((item) {
       if (item.id == event.id) {
         return item.copyWith(isSelected: !item.isSelected);
       }
@@ -57,7 +58,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   FutureOr<void> _onDecreaseQuantity(event, emit) {
-    final updatedItems = state.items.map((item) {
+    final List<CartModel> updatedItems = state.items.map((item) {
       if (item.id == event.id && item.quantity > 1) {
         return item.copyWith(quantity: item.quantity - 1);
       }
@@ -67,7 +68,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   FutureOr<void> _onIncreaseQuantity(event, emit) {
-    final updatedItems = state.items.map((item) {
+    final List<CartModel> updatedItems = state.items.map((item) {
       if (item.id == event.id) {
         return item.copyWith(quantity: item.quantity + 1);
       }
@@ -78,18 +79,19 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   FutureOr<void> _onRemoveItem(event, emit) {
-    final updatedItems = List<CartModel>.from(state.items)
+    final List<CartModel> updatedItems = List<CartModel>.from(state.items)
       ..removeWhere((item) => item.id == event.id);
     emit(_calculateCart(updatedItems));
   }
 
   FutureOr<void> _onAddItem(event, emit) {
-    final updatedItems = List<CartModel>.from(state.items)..add(event.item);
+    final List<CartModel> updatedItems = List<CartModel>.from(state.items)
+      ..add(event.item);
     emit(_calculateCart(updatedItems));
   }
 
   CartState _calculateCart(List<CartModel> updatedItems) {
-    final selectedItems =
+    final List<CartModel> selectedItems =
         updatedItems.where((item) => item.isSelected).toList();
     final totalPrice = selectedItems.fold(
         0.0, (total, item) => total + (item.price * item.quantity));

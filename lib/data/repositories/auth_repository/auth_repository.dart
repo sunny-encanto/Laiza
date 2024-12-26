@@ -5,6 +5,7 @@ import 'package:laiza/data/models/otp_verification_model/otp_verification_model.
 import 'package:laiza/data/models/signup_model/signup_model.dart';
 
 import '../../../core/utils/api_constant.dart';
+import '../../../core/utils/logger.dart';
 import '../../models/common_model/common_model.dart';
 import '../../services/apiClient/dio_client.dart';
 
@@ -35,6 +36,7 @@ class AuthRepository {
       }
       throw message;
     } catch (e) {
+      Logger.log('Error during Login', e.toString());
       throw Exception('Failed to login');
     }
   }
@@ -52,15 +54,13 @@ class AuthRepository {
       if (response.statusCode == 200) {
         return LoginModel.fromJson(response.data);
       } else {
-        print('else=> ${response.data}');
         return LoginModel.fromJson(response.data);
       }
     } on DioException catch (e) {
-      print('catch=> ${e}');
       String message = e.response?.data['message'] ?? 'Unknown error';
       throw message;
     } catch (e) {
-      print('Errror=> ${e}');
+      Logger.log('Error during social Login', e.toString());
       throw Exception('Failed to  social Login ');
     }
   }
@@ -92,6 +92,7 @@ class AuthRepository {
       String message = e.response?.data['message'] ?? 'Unknown error';
       throw message;
     } catch (e) {
+      Logger.log('Error during Sign up', e.toString());
       throw Exception('Failed to Sign up');
     }
   }
@@ -99,14 +100,18 @@ class AuthRepository {
   Future<OtpVerificationModel> verifyOtp({
     required String email,
     required String otp,
+    required String authType,
   }) async {
     Map<String, dynamic> data = {
       'email': email,
       'otp': otp,
     };
     try {
-      Response response = await _apiClient
-          .post(ApiConstant.verifyForgotPasswordOtp, data: data);
+      Response response = await _apiClient.post(
+          authType == 'forgotPassword'
+              ? ApiConstant.verifyForgotPasswordOtp
+              : ApiConstant.verifyOtp,
+          data: data);
       if (response.statusCode == 200) {
         var responseData = await response.data;
         return OtpVerificationModel.fromJson(responseData);
@@ -118,7 +123,8 @@ class AuthRepository {
       String message = e.response?.data['message'] ?? 'Unknown error';
       throw message;
     } catch (e) {
-      throw Exception('Failed to login');
+      Logger.log('Error during verify Otp', e.toString());
+      throw Exception('Failed to verify Otp');
     }
   }
 
@@ -140,7 +146,8 @@ class AuthRepository {
       String message = e.response?.data['message'] ?? 'Unknown error';
       throw message;
     } catch (e) {
-      throw Exception('Failed to login');
+      Logger.log('Error during resend otp', e.toString());
+      throw Exception('Failed to resend otp');
     }
   }
 
@@ -162,7 +169,8 @@ class AuthRepository {
       String message = e.response?.data['message'] ?? 'Unknown error';
       throw message;
     } catch (e) {
-      throw Exception('Failed to login');
+      Logger.log('Error during forgot password', e.toString());
+      throw Exception('Failed forgot password');
     }
   }
 
@@ -189,7 +197,8 @@ class AuthRepository {
       String message = e.response?.data['message'] ?? 'Unknown error';
       throw message;
     } catch (e) {
-      throw Exception('Failed to login');
+      Logger.log('Error during reset password', e.toString());
+      throw Exception('Failed to reset password');
     }
   }
 }

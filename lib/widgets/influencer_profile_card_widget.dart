@@ -1,7 +1,11 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/data/blocs/all_influencer_bloc/bloc/all_influencer_bloc.dart';
+import 'package:laiza/data/models/user/user_model.dart';
 
 class InfluencerProfileCardWidget extends StatelessWidget {
-  const InfluencerProfileCardWidget({super.key});
+  final UserModel userModel;
+
+  const InfluencerProfileCardWidget({super.key, required this.userModel});
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +32,14 @@ class InfluencerProfileCardWidget extends StatelessWidget {
               width: 100.v,
               fit: BoxFit.fill,
               radius: BorderRadius.circular(200.h),
-              imagePath:
-                  'https://farm2.staticflickr.com/1533/26541536141_41abe98db3_z_d.jpg',
+              imagePath: userModel.profileImg,
             ),
           ),
           SizedBox(height: 8.h),
           Text(
-            'Kiara Kapoor',
-            style: textTheme.titleLarge!.copyWith(fontSize: 16.fSize),
+            userModel.name ?? '',
+            style: textTheme.titleLarge!
+                .copyWith(fontSize: 16.fSize, overflow: TextOverflow.ellipsis),
           ),
           SizedBox(height: 3.h),
           Row(
@@ -72,16 +76,21 @@ class InfluencerProfileCardWidget extends StatelessWidget {
             child: CustomElevatedButton(
               height: 33.v,
               width: 122.h,
-              text: 'Follow Now',
+              text:
+                  (userModel.isFollowed ?? false) ? 'Following' : 'Follow Now',
               buttonTextStyle: textTheme.titleSmall,
-              onPressed: () {},
+              onPressed: () {
+                context
+                    .read<AllInfluencerBloc>()
+                    .add(MakeFollowRequestEvent(userModel.id ?? ''));
+              },
             ),
           ),
           SizedBox(height: 8.h),
           InkWell(
             onTap: () {
-              Navigator.of(context)
-                  .pushNamed(AppRoutes.influencerProfileScreen);
+              Navigator.of(context).pushNamed(AppRoutes.influencerProfileScreen,
+                  arguments: userModel.id);
             },
             child: Text(
               'View Profile',

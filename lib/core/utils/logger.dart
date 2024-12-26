@@ -1,3 +1,5 @@
+import 'dart:developer' as consol;
+
 class Logger {
   static LogMode _logMode = LogMode.debug;
 
@@ -5,9 +7,9 @@ class Logger {
     Logger._logMode = mode;
   }
 
-  static void log(dynamic data, {StackTrace? stackTrace}) {
+  static void log(String message, String error) {
     if (_logMode == LogMode.debug) {
-      print("Error: $data$stackTrace");
+      consol.log(message, error: error);
     }
   }
 }

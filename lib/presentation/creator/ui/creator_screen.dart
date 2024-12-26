@@ -1,11 +1,16 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/data/blocs/all_influencer_bloc/bloc/all_influencer_bloc.dart';
+import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
 import 'package:laiza/presentation/creator/bloc/creator_bloc.dart';
+import 'package:laiza/presentation/shimmers/loading_grid.dart';
 import 'package:laiza/widgets/influencer_card_widget.dart';
 
 import '../../../widgets/influencer_profile_card_widget.dart';
 
+// ignore: must_be_immutable
 class CreatorScreen extends StatelessWidget {
   CreatorScreen({super.key});
+
   int _selectedChip = 1;
 
   @override
@@ -104,16 +109,40 @@ class CreatorScreen extends StatelessWidget {
                   style: textTheme.titleMedium,
                 ),
                 SizedBox(height: 20.v),
-                MasonryGridView.count(
-                  shrinkWrap: true,
-                  itemCount: 12,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 5.v,
-                  crossAxisSpacing: 5.h,
-                  itemBuilder: (context, index) {
-                    return const InfluencerProfileCardWidget();
-                  },
+                BlocProvider(
+                  create: (context) => AllInfluencerBloc(
+                      context.read<UserRepository>(),
+                      context.read<FollowersRepository>()),
+                  child: BlocBuilder<AllInfluencerBloc, AllInfluencerState>(
+                    builder: (context, state) {
+                      if (state is AllInfluencerInitial) {
+                        context
+                            .read<AllInfluencerBloc>()
+                            .add(FetchAllInfluencer());
+                      }
+                      if (state is AllInfluencerLoading) {
+                        return const LoadingGridScreen();
+                      } else if (state is AllInfluencerError) {
+                        return Center(
+                          child: Text(state.message),
+                        );
+                      } else if (state is AllInfluencerLoaded) {
+                        return MasonryGridView.count(
+                          shrinkWrap: true,
+                          itemCount: state.influencers.length,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 5.v,
+                          crossAxisSpacing: 5.h,
+                          itemBuilder: (context, index) {
+                            return InfluencerProfileCardWidget(
+                                userModel: state.influencers[index]);
+                          },
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
                 ),
               ],
             ),

@@ -9,6 +9,7 @@ class InfluencerCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        //TODO: Add Id in argoument
         Navigator.of(context).pushNamed(AppRoutes.influencerProfileScreen);
       },
       child: Container(
@@ -17,7 +18,7 @@ class InfluencerCardWidget extends StatelessWidget {
         decoration: BoxDecoration(
             image: DecorationImage(
                 fit: BoxFit.fill, image: NetworkImage(imagesList[index])),
-            color: Colors.blueAccent,
+            color: Colors.grey,
             borderRadius: BorderRadius.circular(12.h)),
         child: Padding(
           padding: EdgeInsets.all(8.0.h),

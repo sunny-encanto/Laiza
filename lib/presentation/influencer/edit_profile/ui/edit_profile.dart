@@ -2,24 +2,25 @@ import 'package:laiza/data/models/user/user_model.dart';
 
 import '../../../../core/app_export.dart';
 import '../../../../data/blocs/category_bloc/category_bloc.dart';
+import '../../../../data/models/category_model/Category.dart';
 import '../../../../data/models/selectionPopupModel/selection_popup_model.dart';
-import '../../../../data/repositories/category_repository/category_repository.dart';
 import '../../../../widgets/custom_drop_down.dart';
-import '../bloc/edit_profile_bloc.dart';
 
 class EditProfileScreen extends StatelessWidget {
   EditProfileScreen({super.key});
 
-  final _nameController = TextEditingController();
-  final _bioController = TextEditingController();
-  final _instagramController = TextEditingController();
-  final _xController = TextEditingController();
-  final _facebookController = TextEditingController();
-  final _snapChatController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _instagramController = TextEditingController();
+  final TextEditingController _xController = TextEditingController();
+  final TextEditingController _facebookController = TextEditingController();
+  final TextEditingController _snapChatController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   UserModel? _userModel;
   String _selectedImage = '';
+  String _selectedBgImage = '';
   SelectionPopupModel? selectedCategory;
+  List<Category> categories = <Category>[];
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +32,10 @@ class EditProfileScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
-        reverse: true,
         child: BlocBuilder<EditProfileBloc, EditProfileState>(
-          buildWhen: (previous, current) => current is ProfileFetchedState,
-          builder: (context, state) {
+          buildWhen: (EditProfileState previous, EditProfileState current) =>
+              current is ProfileFetchedState,
+          builder: (BuildContext context, EditProfileState state) {
             if (state is EditProfileInitial) {
               context.read<EditProfileBloc>().add(FetchProfileEvent());
             } else if (state is ProfileFetchLoadingState) {
@@ -42,13 +43,81 @@ class EditProfileScreen extends StatelessWidget {
             }
             if (state is ProfileFetchedState) {
               _nameController.text = state.user.name ?? "";
+              // _bioController.text =state.user.bio
+              _instagramController.text = state.user.instagramLink ?? '';
+              _facebookController.text = state.user.facebookLink ?? '';
+              _snapChatController.text = state.user.snapchatLink ?? '';
+              _xController.text = state.user.xComLink ?? '';
+              _bioController.text = state.user.bio ?? '';
+              _selectedImage = state.user.profileImg ?? '';
               _userModel = state.user;
               return Column(
                 children: [
-                  CustomImageView(
-                    width: SizeUtils.width,
-                    height: 150.v,
-                    imagePath: ImageConstant.profileBg,
+                  BlocBuilder<EditProfileBloc, EditProfileState>(
+                    buildWhen:
+                        (EditProfileState previous, EditProfileState current) =>
+                            current is BgPhotoChangedState,
+                    builder: (BuildContext context, EditProfileState state) {
+                      if (state is BgPhotoChangedState) {
+                        _selectedBgImage = state.imagePath;
+                        return Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            CustomImageView(
+                              width: SizeUtils.width,
+                              height: 150.v,
+                              imagePath: state.imagePath,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                context
+                                    .read<EditProfileBloc>()
+                                    .add(BgPhotoChangeEvent());
+                              },
+                              child: Container(
+                                margin: EdgeInsets.all(5.h),
+                                padding: EdgeInsets.all(5.h),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5.h),
+                                    color: Colors.white),
+                                child: CustomImageView(
+                                  imagePath: ImageConstant.editIcon,
+                                ),
+                              ),
+                            )
+                          ],
+                        );
+                      }
+                      return Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          CustomImageView(
+                            width: SizeUtils.width,
+                            height: 150.v,
+                            imagePath: _selectedBgImage.isEmpty
+                                ? ImageConstant.profileBg
+                                : _selectedBgImage,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              context
+                                  .read<EditProfileBloc>()
+                                  .add(BgPhotoChangeEvent());
+                            },
+                            child: Container(
+                              margin: EdgeInsets.all(5.h),
+                              padding: EdgeInsets.all(5.h),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.h),
+                                  color: Colors.white),
+                              child: CustomImageView(
+                                imagePath: ImageConstant.editIcon,
+                              ),
+                            ),
+                          )
+                        ],
+                      );
+                    },
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20.h),
@@ -90,6 +159,17 @@ class EditProfileScreen extends StatelessWidget {
                                 } else if (state is CategoryLoading) {
                                   return const SizedBox.shrink();
                                 } else if (state is CategoryLoaded) {
+                                  categories.clear();
+                                  categories.addAll(state.category);
+                                  if (_userModel?.productCategory != null) {
+                                    Category category = categories.firstWhere(
+                                        (Category category) =>
+                                            category.id ==
+                                            _userModel?.productCategory!);
+                                    selectedCategory = SelectionPopupModel(
+                                        title: category.categoryName ?? '',
+                                        value: category.id);
+                                  }
                                   return CustomDropDown(
                                     value: selectedCategory,
                                     hintText: 'Select Category',
@@ -196,13 +276,24 @@ class EditProfileScreen extends StatelessWidget {
       ),
       bottomSheet: Padding(
         padding: EdgeInsets.all(20.h),
-        child: BlocBuilder<EditProfileBloc, EditProfileState>(
+        child: BlocConsumer<EditProfileBloc, EditProfileState>(
+          listener: (context, state) {
+            if (state is EditProfileSuccessState) {
+              context.showSnackBar(state.message);
+            }
+          },
           builder: (context, state) {
             return CustomElevatedButton(
               isLoading: state is EditProfileLoadingState,
               text: 'Update',
               onPressed: () {
                 _userModel?.name = _nameController.text;
+                _userModel?.productCategory = selectedCategory?.value ?? 0;
+                _userModel?.instagramLink = _instagramController.text;
+                _userModel?.xComLink = _xController.text;
+                _userModel?.facebookLink = _facebookController.text;
+                _userModel?.snapchatLink = _snapChatController.text;
+
                 if (_selectedImage.isNotEmpty) {
                   _userModel?.profileImg = _selectedImage;
                 }
@@ -230,9 +321,10 @@ class EditProfileScreen extends StatelessWidget {
         Row(
           children: [
             BlocBuilder<EditProfileBloc, EditProfileState>(
-              buildWhen: (previous, current) =>
-                  current is ProfilePhotoChangedState,
-              builder: (context, state) {
+              buildWhen:
+                  (EditProfileState previous, EditProfileState current) =>
+                      current is ProfilePhotoChangedState,
+              builder: (BuildContext context, EditProfileState state) {
                 if (state is ProfilePhotoChangedState) {
                   _selectedImage = state.imagePath;
                   return Container(
@@ -273,7 +365,7 @@ class EditProfileScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Carol Danvers',
+                      user.username ?? '',
                       style:
                           textTheme.titleMedium!.copyWith(fontSize: 20.fSize),
                     ),

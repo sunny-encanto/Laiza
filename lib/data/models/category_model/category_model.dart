@@ -14,10 +14,10 @@ class CategoryModel {
   factory CategoryModel.fromJson(Map<String, dynamic> json) => CategoryModel(
         success: json['success'] ?? false,
         message: json['message'] ?? '',
-        category: json["category"] == null
+        category: json["data"] == null
             ? <Category>[]
             : List<Category>.from(
-                json["category"].map((x) => Category.fromJson(x))),
+                json["data"].map((x) => Category.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() {
@@ -25,7 +25,7 @@ class CategoryModel {
     map['success'] = success;
     map['message'] = message;
     if (category != null) {
-      map['category'] = category?.map((v) => v.toJson()).toList();
+      map['data'] = category?.map((v) => v.toJson()).toList();
     }
     return map;
   }

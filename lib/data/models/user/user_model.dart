@@ -16,7 +16,7 @@ class UserModel {
   num? country;
   num? state;
   num? city;
-  String? productCategory;
+  int? productCategory;
   String? instagramFollowers;
 
   String? userType;
@@ -37,42 +37,91 @@ class UserModel {
   String? accountHolderName;
   String? aadharNumber;
   String? bankVerification;
+  String? bio;
+  bool? isFollowed;
 
-  UserModel(
-      {this.id,
-      this.name,
-      this.email,
-      this.profile,
-      this.token,
-      this.role,
-      this.profileImg,
-      this.username,
-      this.emailVerifiedAt,
-      this.phoneNumber,
-      this.brandName,
-      this.companyName,
-      this.country,
-      this.state,
-      this.city,
-      this.productCategory,
-      this.instagramFollowers,
-      this.instagramLink,
-      this.userType,
-      this.isLogin,
-      this.isDelete,
-      this.isApprove,
-      this.isVerified,
-      this.isProfileComplete,
-      this.facebookLink,
-      this.snapchatLink,
-      this.xComLink,
-      this.accountNumber,
-      this.iFCCode,
-      this.branchName,
-      this.accountHolderName,
-      this.aadharNumber,
-      this.bankVerification,
-      this.instagramUserName});
+  UserModel({
+    this.id,
+    this.name,
+    this.email,
+    this.profile,
+    this.token,
+    this.role,
+    this.profileImg,
+    this.username,
+    this.emailVerifiedAt,
+    this.phoneNumber,
+    this.brandName,
+    this.companyName,
+    this.country,
+    this.state,
+    this.city,
+    this.productCategory,
+    this.instagramFollowers,
+    this.instagramLink,
+    this.userType,
+    this.isLogin,
+    this.isDelete,
+    this.isApprove,
+    this.isVerified,
+    this.isProfileComplete,
+    this.facebookLink,
+    this.snapchatLink,
+    this.xComLink,
+    this.accountNumber,
+    this.iFCCode,
+    this.branchName,
+    this.accountHolderName,
+    this.aadharNumber,
+    this.bankVerification,
+    this.instagramUserName,
+    this.bio,
+    this.isFollowed,
+  });
+
+// CopyWith function
+  UserModel copyWith({
+    bool? isFollowed,
+  }) {
+    return UserModel(
+      id: id,
+      name: name,
+      email: email,
+      profile: profile,
+      token: token,
+      role: role,
+      profileImg: profileImg,
+      username: username,
+      emailVerifiedAt: emailVerifiedAt,
+      phoneNumber: phoneNumber,
+      brandName: brandName,
+      companyName: companyName,
+      country: country,
+      state: state,
+      city: city,
+      productCategory: productCategory,
+      instagramFollowers: instagramFollowers,
+      instagramLink: instagramLink,
+      userType: userType,
+      isLogin: isLogin,
+      isDelete: isDelete,
+      isApprove: isApprove,
+      isVerified: isVerified,
+      isProfileComplete: isProfileComplete,
+      facebookLink: facebookLink,
+      snapchatLink: snapchatLink,
+      xComLink: xComLink,
+      accountNumber: accountNumber,
+      iFCCode: iFCCode,
+      branchName: branchName,
+      accountHolderName: accountHolderName,
+      aadharNumber: aadharNumber,
+      bankVerification: bankVerification,
+      instagramUserName: instagramUserName,
+      bio: bio,
+      isFollowed: isFollowed ?? this.isFollowed,
+    );
+  }
 
   factory UserModel.fromJson(
           {required Map<String, dynamic> json, required String id}) =>
@@ -92,7 +141,7 @@ class UserModel {
         country: json['country'],
         state: json['state'],
         city: json['city'],
-        productCategory: json['product_category'],
+        productCategory: json['category'],
         instagramFollowers: json['instagram_followers'],
         instagramLink: json['instagram_link'],
         xComLink: json['x_account_link'],
@@ -105,6 +154,8 @@ class UserModel {
         isVerified: json['is_verified'],
         isProfileComplete: json['is_profile_complete'],
         instagramUserName: json['insta_username'],
+        bio: json['bio'],
+        isFollowed: json['is_follow'],
       );
 
   Map<String, dynamic> toJson() {
@@ -124,7 +175,7 @@ class UserModel {
     if (country != null) data['country'] = country;
     if (state != null) data['state'] = state;
     if (city != null) data['city'] = city;
-    if (productCategory != null) data['product_category'] = productCategory;
+    if (productCategory != null) data['category'] = productCategory;
     if (instagramFollowers != null)
       data['instagram_followers'] = instagramFollowers;
     if (instagramLink != null) data['instagram_link'] = instagramLink;
@@ -133,9 +184,13 @@ class UserModel {
     if (isDelete != null) data['is_delete'] = isDelete;
     if (isApprove != null) data['is_approve'] = isApprove;
     if (isVerified != null) data['is_verified'] = isVerified;
+    if (xComLink != null) data['x_account_link'] = xComLink;
+    if (snapchatLink != null) data['snapchat_link'] = snapchatLink;
+    if (facebookLink != null) data['facebook_link'] = facebookLink;
+    if (bio != null) data['bio'] = bio;
+    if (isFollowed != null) data['is_follow'] = isFollowed;
     if (isProfileComplete != null)
       data['is_profile_complete'] = isProfileComplete;
-
     if (instagramUserName != null) data['insta_username'] = instagramUserName;
     return data;
   }

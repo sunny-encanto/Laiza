@@ -1,4 +1,5 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/data/blocs/profile_api_bloc/profile_api_bloc.dart';
 import 'package:laiza/data/services/firebase_services.dart';
 
 class SideBar extends StatelessWidget {
@@ -18,48 +19,67 @@ class SideBar extends StatelessWidget {
                 child: CustomImageView(
                     width: 150.h, imagePath: ImageConstant.logo)),
             SizedBox(height: 43.v),
-            InkWell(
-              onTap: () {
-                Navigator.of(context).pushNamed(AppRoutes.influencerMyProfile);
-              },
-              child: Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(5.h),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(100.h),
-                    ),
-                    child: CustomImageView(
-                      radius: BorderRadius.circular(100.h),
-                      width: 68.v,
-                      height: 68.v,
-                      fit: BoxFit.fill,
-                      imagePath:
-                          'https://as2.ftcdn.net/v2/jpg/03/83/25/83/1000_F_383258331_D8imaEMl8Q3lf7EKU2Pi78Cn0R7KkW9o.jpg',
-                    ),
-                  ),
-                  SizedBox(width: 4.v),
-                  Column(
-                    children: [
-                      Text(
-                        'Carol Danvers',
-                        style: textTheme.titleMedium,
+            BlocProvider(
+              create: (context) =>
+                  ProfileApiBloc(context.read<UserRepository>()),
+              child: BlocBuilder<ProfileApiBloc, ProfileApiState>(
+                builder: (context, state) {
+                  if (state is ProfileApiInitial) {
+                    context.read<ProfileApiBloc>().add(FetchProfileApi());
+                    return const SizedBox.shrink();
+                  } else if (state is ProfileApiLoadingState) {
+                    return const SizedBox.shrink();
+                  } else if (state is ProfileApiError) {
+                    return Text(state.message);
+                  } else if (state is ProfileApiLoadedState) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(AppRoutes.influencerMyProfile);
+                      },
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(5.h),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(100.h),
+                            ),
+                            child: CustomImageView(
+                                radius: BorderRadius.circular(100.h),
+                                width: 68.v,
+                                height: 68.v,
+                                fit: BoxFit.fill,
+                                imagePath: state.userModel.profileImg
+                                // 'https://as2.ftcdn.net/v2/jpg/03/83/25/83/1000_F_383258331_D8imaEMl8Q3lf7EKU2Pi78Cn0R7KkW9o.jpg',
+                                ),
+                          ),
+                          SizedBox(width: 4.v),
+                          Column(
+                            children: [
+                              Text(
+                                state.userModel.username ?? '',
+                                style: textTheme.titleMedium,
+                              ),
+                              SizedBox(height: 4.v),
+                              Text(
+                                '425K Followers',
+                                style: textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.black87,
+                            size: 20.h,
+                          )
+                        ],
                       ),
-                      SizedBox(height: 4.v),
-                      Text(
-                        '425K Followers',
-                        style: textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.black87,
-                    size: 20.h,
-                  )
-                ],
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
               ),
             ),
             SizedBox(height: 24.v),

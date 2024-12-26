@@ -11,9 +11,13 @@ class FetchProfileEvent extends EditProfileEvent {}
 
 class ProfilePhotoChangeEvent extends EditProfileEvent {}
 
+class BgPhotoChangeEvent extends EditProfileEvent {}
+
 class ProfileUpdateEvent extends EditProfileEvent {
   final UserModel _user;
+
   const ProfileUpdateEvent(this._user);
+
   @override
   List<Object> get props => [_user];
 }

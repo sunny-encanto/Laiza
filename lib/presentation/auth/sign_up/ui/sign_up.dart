@@ -2,7 +2,6 @@
 
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/presentation/auth/sign_up/bloc/sign_up_states.dart';
-import 'package:laiza/presentation/select_role/ui/select_role.dart';
 
 import '../../../../core/utils/pref_utils.dart';
 import '../../../../data/repositories/auth_repository/auth_repository.dart';
@@ -40,8 +39,9 @@ class SignUpScreen extends StatelessWidget {
                   'id': state.userId,
                   'routeName': PrefUtils.getRole() == UserRole.influencer.name
                       ? AppRoutes.influencerFormScreen
-                      : AppRoutes.signInScreen,
-                  'email': emailController.text.trim()
+                      : AppRoutes.bottomBarScreen,
+                  'email': emailController.text.trim(),
+                  'authType': 'signUp'
                 });
               }
             },
