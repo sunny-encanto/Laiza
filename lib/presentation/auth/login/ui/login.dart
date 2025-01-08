@@ -3,16 +3,15 @@ import 'package:laiza/presentation/auth/login/bloc/login_state.dart';
 import 'package:laiza/presentation/auth/login/ui/socail_login_widget.dart';
 
 import '../../../../core/utils/pref_utils.dart';
-import '../../../../data/repositories/auth_repository/auth_repository.dart';
 import '../bloc/login_event.dart';
 
 // ignore: must_be_immutable
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
-  final _formKey = GlobalKey<FormState>();
-  final _passwordController = TextEditingController();
-  final _emailController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   bool _isPasswordVisible = false;
 
   @override
@@ -22,7 +21,8 @@ class LoginScreen extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: BlocProvider(
-          create: (context) => LoginBloc(context.read<AuthRepository>()),
+          create: (BuildContext context) =>
+              LoginBloc(context.read<AuthRepository>()),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.h),
             child: Form(
@@ -51,7 +51,7 @@ class LoginScreen extends StatelessWidget {
                   CustomTextFormField(
                     controller: _emailController,
                     hintText: context.translate('example@gmail.com'),
-                    validator: (value) {
+                    validator: (String? value) {
                       return validateEmail(value!);
                     },
                   ),
@@ -65,12 +65,12 @@ class LoginScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 8.v),
                   BlocConsumer<LoginBloc, LoginState>(
-                    listener: (context, state) {
+                    listener: (BuildContext context, LoginState state) {
                       if (state is LoginPasswordToggleState) {
                         _isPasswordVisible = state.isVisible;
                       }
                     },
-                    builder: (context, state) {
+                    builder: (BuildContext context, state) {
                       return CustomTextFormField(
                         controller: _passwordController,
                         obscureText: !_isPasswordVisible,
@@ -88,7 +88,7 @@ class LoginScreen extends StatelessWidget {
                                 TogglePasswordVisibility(_isPasswordVisible));
                           },
                         ),
-                        validator: (value) {
+                        validator: (String? value) {
                           return validatePassword(value!);
                         },
                       );
@@ -111,7 +111,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 28.v),
                   BlocConsumer<LoginBloc, LoginState>(
-                    listener: (context, state) {
+                    listener: (BuildContext context, state) {
                       if (state is LoginError) {
                         context.showSnackBar(state.message);
                       } else if (state is LoginSuccessState) {
@@ -120,16 +120,20 @@ class LoginScreen extends StatelessWidget {
                           Navigator.of(context)
                               .pushReplacementNamed(AppRoutes.bottomBarScreen);
                         } else {
-                          //TODO:Need to add Condition based on profile complete status
-                          Navigator.of(context)
-                              .pushReplacementNamed(AppRoutes.homeScreen);
+                          if (state.isProfileComplete) {
+                            Navigator.of(context)
+                                .pushReplacementNamed(AppRoutes.homeScreen);
+                          } else {
+                            Navigator.of(context).pushReplacementNamed(
+                                AppRoutes.influencerFormScreen);
+                          }
                         }
                       } else if (state is LoginUserNotApproved) {
                         Navigator.of(context)
                             .pushReplacementNamed(AppRoutes.successScreen);
                       }
                     },
-                    builder: (context, state) {
+                    builder: (BuildContext context, state) {
                       return CustomElevatedButton(
                           text: context.translate('sign_in'),
                           isLoading: state is LoginLoading,

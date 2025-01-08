@@ -12,6 +12,7 @@ class ProfileScreen extends StatelessWidget {
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
+              automaticallyImplyLeading: false,
               elevation: 0,
               backgroundColor: AppColor.blackColor,
               titleSpacing: 0,

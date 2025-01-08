@@ -1,5 +1,3 @@
-import 'package:laiza/presentation/notifications/bloc/notifications_bloc.dart';
-
 import '../../../core/app_export.dart';
 import '../../shimmers/loading_list.dart';
 
@@ -16,18 +14,18 @@ class NotificationsScreen extends StatelessWidget {
             style: textTheme.titleMedium!.copyWith(fontSize: 20.fSize)),
       ),
       body: BlocBuilder<NotificationsBloc, NotificationsState>(
-        builder: (context, state) {
+        builder: (BuildContext context, NotificationsState state) {
           if (state is NotificationsInitial) {
             context.read<NotificationsBloc>().add(NotificationFetchEvent());
           } else if (state is NotificationsLoadingState) {
-            return const Center(child: LoadingListPage());
+            return const LoadingListPage();
           } else if (state is NotificationsLoaded) {
             // return const EmptyNotificationsScreen();
             //TODO: Add Condition here to show empty screen
             return ListView.builder(
                 itemCount: 3,
                 padding: EdgeInsets.all(20.h),
-                itemBuilder: (context, index) =>
+                itemBuilder: (BuildContext context, int index) =>
                     _buildItem(textTheme, context));
           }
           return const SizedBox.shrink();

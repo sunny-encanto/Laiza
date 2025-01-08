@@ -13,7 +13,7 @@ class CheckOutScreen extends StatelessWidget {
         centerTitle: true,
         backgroundColor: AppColor.offWhite,
         title: Text(
-          'Checkout',
+          'Delivery Address',
           style: textTheme.titleMedium!.copyWith(fontSize: 20.fSize),
         ),
       ),

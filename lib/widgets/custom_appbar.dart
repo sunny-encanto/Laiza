@@ -4,6 +4,9 @@ PreferredSize customAppBar(BuildContext context) {
   return PreferredSize(
     preferredSize: Size(SizeUtils.width, 60.h),
     child: AppBar(
+      systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.white,
+          statusBarIconBrightness: Brightness.dark),
       elevation: 5,
       automaticallyImplyLeading: false,
       toolbarHeight: 50.h,

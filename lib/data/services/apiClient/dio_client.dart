@@ -86,8 +86,7 @@ class ApiClient {
   }
 
   // DELETE request
-  Future<Response> delete(String path,
-      {Map<String, dynamic>? data, Options? options}) async {
+  Future<Response> delete(String path, {dynamic data, Options? options}) async {
     try {
       return await _dio.delete(path, data: data, options: options);
     } catch (e) {

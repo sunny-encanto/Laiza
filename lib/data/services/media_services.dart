@@ -37,6 +37,33 @@ class MediaServices {
     }
   }
 
+  static Future<Media?> pickVideoPathAndExtension() async {
+    try {
+      const int maxSizeBytes = 20 * 1024 * 1024; // 10 MB
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowCompression: true,
+        compressionQuality: maxSizeBytes,
+        type: FileType.video, // Restrict to video files
+      );
+      if (result != null) {
+        String? filePath = result.files.single.path;
+        String? fileName = result.files.single.name;
+        String? fileExtension = p.extension(filePath ?? "");
+        if (result.files.single.size > maxSizeBytes) {
+          Fluttertoast.showToast(msg: 'Size more Then 20 Mb Cant be Selected');
+        } else {
+          return Media.fromJson(
+              {'path': filePath, 'extension': fileExtension, 'name': fileName});
+        }
+        return null;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
   static Future<String> recordVideo() async {
     final pickVideo = await ImagePicker().pickVideo(
         source: ImageSource.camera, maxDuration: const Duration(seconds: 30));
@@ -52,6 +79,7 @@ class Media {
   final String name;
 
   final String fileExtension;
+
   Media({required this.path, required this.name, required this.fileExtension});
 
   factory Media.fromJson(Map<String, dynamic> json) => Media(

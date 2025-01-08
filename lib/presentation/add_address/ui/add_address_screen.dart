@@ -7,18 +7,21 @@ import '../../../widgets/custom_drop_down.dart';
 
 class AddAddressScreen extends StatelessWidget {
   AddAddressScreen({super.key});
-  final _formkey = GlobalKey<FormState>();
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final phoneNumberController = TextEditingController();
-  final flatHouseNumberController = TextEditingController();
-  final areaController = TextEditingController();
-  final landMarkController = TextEditingController();
-  final pinCodeController = TextEditingController();
-  final cityController = TextEditingController();
-  final stateController = TextEditingController();
+
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController flatHouseNumberController =
+      TextEditingController();
+  final TextEditingController areaController = TextEditingController();
+  final TextEditingController landMarkController = TextEditingController();
+  final TextEditingController pinCodeController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
+  final TextEditingController stateController = TextEditingController();
 
   bool _isDefault = false;
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -30,7 +33,7 @@ class AddAddressScreen extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black),
         title: Text(
           'Delivery Address',
-          style: textTheme.titleMedium,
+          style: textTheme.titleMedium!.copyWith(fontSize: 20.fSize),
         ),
       ),
       body: SingleChildScrollView(

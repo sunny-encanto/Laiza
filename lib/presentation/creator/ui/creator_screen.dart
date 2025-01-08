@@ -20,7 +20,7 @@ class CreatorScreen extends StatelessWidget {
       appBar: customAppBar(context),
       body: SingleChildScrollView(
         child: BlocProvider(
-          create: (context) => CreatorBloc(),
+          create: (BuildContext context) => CreatorBloc(),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.h),
             child: Column(
@@ -37,7 +37,7 @@ class CreatorScreen extends StatelessWidget {
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: 5,
-                      itemBuilder: (context, index) => Padding(
+                      itemBuilder: (BuildContext context, int index) => Padding(
                         padding: EdgeInsets.only(left: 8.h),
                         child: profileWidget(textTheme),
                       ),
@@ -47,20 +47,21 @@ class CreatorScreen extends StatelessWidget {
                   height: 36.v,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) => InkWell(
+                    itemBuilder: (BuildContext context, int index) => InkWell(
                       onTap: () {
                         context
                             .read<CreatorBloc>()
                             .add(CreatorsCategoryChipSelectedEvent(index));
                       },
                       child: BlocConsumer<CreatorBloc, CreatorState>(
-                        listener: (context, state) {
+                        listener: (BuildContext context, state) {
                           if (state is CreatorsCategoryChipSelectedState) {
                             _selectedChip = state.categoryId;
                           }
                         },
-                        builder: (context, state) {
-                          return Container(
+                        builder: (BuildContext context, state) {
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 400),
                             margin: EdgeInsets.only(right: 12.h),
                             height: 36.v,
                             width: 89.h,
@@ -71,11 +72,16 @@ class CreatorScreen extends StatelessWidget {
                                     ? Colors.black
                                     : Colors.white,
                                 borderRadius: BorderRadius.circular(24.h)),
-                            child: Text('Fashion',
-                                style: textTheme.labelSmall!.copyWith(
-                                    color: _selectedChip == index
-                                        ? Colors.white
-                                        : null)),
+                            child: AnimatedDefaultTextStyle(
+                              duration: const Duration(milliseconds: 400),
+                              style: textTheme.labelSmall!.copyWith(
+                                  color: _selectedChip == index
+                                      ? Colors.white
+                                      : null),
+                              child: const Text(
+                                'Fashion',
+                              ),
+                            ),
                           );
                         },
                       ),
@@ -98,7 +104,7 @@ class CreatorScreen extends StatelessWidget {
                     child: ListView.builder(
                       itemCount: imagesList.length,
                       scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) => Padding(
+                      itemBuilder: (BuildContext context, index) => Padding(
                         padding: EdgeInsets.only(right: 5.h),
                         child: InfluencerCardWidget(index: index),
                       ),
@@ -110,11 +116,11 @@ class CreatorScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20.v),
                 BlocProvider(
-                  create: (context) => AllInfluencerBloc(
+                  create: (BuildContext context) => AllInfluencerBloc(
                       context.read<UserRepository>(),
                       context.read<FollowersRepository>()),
                   child: BlocBuilder<AllInfluencerBloc, AllInfluencerState>(
-                    builder: (context, state) {
+                    builder: (BuildContext context, AllInfluencerState state) {
                       if (state is AllInfluencerInitial) {
                         context
                             .read<AllInfluencerBloc>()
@@ -134,7 +140,7 @@ class CreatorScreen extends StatelessWidget {
                           crossAxisCount: 2,
                           mainAxisSpacing: 5.v,
                           crossAxisSpacing: 5.h,
-                          itemBuilder: (context, index) {
+                          itemBuilder: (BuildContext context, index) {
                             return InfluencerProfileCardWidget(
                                 userModel: state.influencers[index]);
                           },

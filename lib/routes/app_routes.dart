@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
+import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 
 import '../core/app_export.dart';
 
@@ -361,10 +362,14 @@ class AppRoutes {
                 ));
 
       case uploadReelScreen:
+        String mediaPtah = settings.arguments as String;
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => UploadReelBloc(),
-                  child: const UploadReelScreen(),
+                  create: (context) =>
+                      UploadReelBloc(context.read<ReelRepository>()),
+                  child: UploadReelScreen(
+                    mediaPath: mediaPtah,
+                  ),
                 ));
 
       case homeScreen:

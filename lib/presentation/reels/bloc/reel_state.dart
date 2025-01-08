@@ -12,17 +12,12 @@ final class ReelInitial extends ReelState {}
 class ReelLoading extends ReelState {}
 
 class ReelLoaded extends ReelState {
-  final List<String> reels;
-  final VideoPlayerController videoController;
-  final int currentPage;
+  final List<Reel> reels;
 
-  const ReelLoaded(
-      {required this.reels,
-      required this.videoController,
-      required this.currentPage});
+  const ReelLoaded(this.reels);
 
   @override
-  List<Object> get props => [reels, videoController, currentPage];
+  List<Object> get props => [reels];
 }
 
 class ReelError extends ReelState {
@@ -36,7 +31,9 @@ class ReelError extends ReelState {
 
 class ReelFollowRequestState extends ReelState {
   final bool isFollowed;
+
   const ReelFollowRequestState(this.isFollowed);
+
   @override
   List<Object> get props => [isFollowed];
 }

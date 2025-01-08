@@ -7,14 +7,7 @@ sealed class ReelEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadReels extends ReelEvent {
-  final List<String> reelUrls;
-
-  const LoadReels(this.reelUrls);
-
-  @override
-  List<Object> get props => [reelUrls];
-}
+class LoadReelEvent extends ReelEvent {}
 
 class ChangeReelPage extends ReelEvent {
   final int page;
@@ -27,7 +20,9 @@ class ChangeReelPage extends ReelEvent {
 
 class ReelFollowRequestEvent extends ReelEvent {
   final bool isFollowed;
+
   const ReelFollowRequestEvent(this.isFollowed);
+
   @override
   List<Object> get props => [isFollowed];
 }

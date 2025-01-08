@@ -3,7 +3,6 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/blocs/city_bloc/city_bloc.dart';
 import 'package:laiza/data/blocs/country_bloc/country_bloc.dart';
-import 'package:laiza/data/blocs/profile_api_bloc/profile_api_bloc.dart';
 import 'package:laiza/data/blocs/state_bloc/state_bloc.dart';
 import 'package:laiza/data/models/city_model/city.dart';
 import 'package:laiza/data/models/user/user_model.dart';
@@ -319,7 +318,7 @@ class InfluencerFormScreen extends StatelessWidget {
               hintText: 'Eg. 88xxxx565',
               maxLength: 10,
               counter: const Visibility(visible: false, child: Text('')),
-              validator: (value) {
+              validator: (String? value) {
                 return validatePhoneNumber(value!);
               },
             ),
@@ -331,8 +330,8 @@ class InfluencerFormScreen extends StatelessWidget {
             SizedBox(height: 8.v),
             CustomTextFormField(
               controller: emailController,
-              hintText: 'Eg. example@gmail.com',
-              validator: (value) {
+              hintText: 'Eg.example@gmail.com',
+              validator: (String? value) {
                 return validateEmail(value!);
               },
             ),
@@ -380,17 +379,17 @@ class InfluencerFormScreen extends StatelessWidget {
             ),
             SizedBox(height: 8.v),
             BlocBuilder<StateBloc, StateState>(
-              builder: (context, state) {
+              builder: (BuildContext context, state) {
                 if (state is StateInitial) {
                   return CustomDropDown(
                     value: selectedState,
                     hintText: 'Select State',
                     items: const <SelectionPopupModel>[],
-                    validator: (value) {
+                    validator: (SelectionPopupModel? value) {
                       return validateField(
                           value: value?.title ?? '', title: 'state');
                     },
-                    onChanged: (val) {
+                    onChanged: (SelectionPopupModel val) {
                       selectedState = val;
                       selectedCity = null;
 
@@ -432,7 +431,7 @@ class InfluencerFormScreen extends StatelessWidget {
             ),
             SizedBox(height: 8.v),
             BlocBuilder<CityBloc, CityState>(
-              builder: (context, state) {
+              builder: (BuildContext context, CityState state) {
                 if (state is CityInitial) {
                   return CustomDropDown(
                     value: selectedCity,
@@ -492,7 +491,7 @@ class InfluencerFormScreen extends StatelessWidget {
           CustomTextFormField(
             controller: instagramUserNameController,
             hintText: 'Eg. abc_xyz',
-            validator: (value) {
+            validator: (String? value) {
               return validateField(value: value!, title: ' instagram username');
             },
           ),
@@ -504,7 +503,6 @@ class InfluencerFormScreen extends StatelessWidget {
           SizedBox(height: 8.v),
           CustomTextFormField(
             controller: followersCountController,
-            textInputType: TextInputType.number,
             hintText: 'Eg.50K',
             validator: (value) {
               return validateField(value: value!, title: 'followers count');
@@ -607,36 +605,6 @@ class InfluencerFormScreen extends StatelessWidget {
     );
   }
 
-  GestureDetector _buildStepIndication(
-      int stepIndex, int currentStep, BuildContext context) {
-    final stepperCubit = context.read<StepperCubit>();
-    _currentStep = currentStep;
-    return GestureDetector(
-      onTap: () {
-        if (!_formKey1.currentState!.validate()) {
-          return;
-        } else {
-          stepperCubit.goToStep(stepIndex);
-        }
-      },
-      child: Container(
-        width: 26.h,
-        height: 26.v,
-        decoration: currentStep <= stepIndex
-            ? BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                border: Border.all(color: AppColor.primary))
-            : BoxDecoration(shape: BoxShape.circle, color: AppColor.primary),
-        child: Icon(
-          Icons.done,
-          color: Colors.white,
-          size: 15.fSize,
-        ),
-      ),
-    );
-  }
-
   Form _buildBankingDetailsStep(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Form(
@@ -729,6 +697,36 @@ class InfluencerFormScreen extends StatelessWidget {
             },
           ),
         ],
+      ),
+    );
+  }
+
+  GestureDetector _buildStepIndication(
+      int stepIndex, int currentStep, BuildContext context) {
+    final stepperCubit = context.read<StepperCubit>();
+    _currentStep = currentStep;
+    return GestureDetector(
+      onTap: () {
+        if (!_formKey1.currentState!.validate()) {
+          return;
+        } else {
+          stepperCubit.goToStep(stepIndex);
+        }
+      },
+      child: Container(
+        width: 26.h,
+        height: 26.v,
+        decoration: currentStep <= stepIndex
+            ? BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                border: Border.all(color: AppColor.primary))
+            : BoxDecoration(shape: BoxShape.circle, color: AppColor.primary),
+        child: Icon(
+          Icons.done,
+          color: Colors.white,
+          size: 15.fSize,
+        ),
       ),
     );
   }

@@ -8,8 +8,10 @@ sealed class LikeButtonEvent extends Equatable {
 }
 
 class LikeButtonPressEvent extends LikeButtonEvent {
-  final bool isLIked;
-  const LikeButtonPressEvent(this.isLIked);
+  final bool isLiked;
+
+  const LikeButtonPressEvent(this.isLiked);
+
   @override
-  List<Object> get props => [isLIked];
+  List<Object> get props => [isLiked];
 }

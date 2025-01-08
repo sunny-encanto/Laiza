@@ -11,9 +11,9 @@ class IntroScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => PageViewCubit(itemCount: 3),
-      child: Scaffold(
-        body: SafeArea(
-          child: BlocBuilder<PageViewCubit, int>(
+      child: SafeArea(
+        child: Scaffold(
+          body: BlocBuilder<PageViewCubit, int>(
             builder: (context, currentIndex) {
               return Stack(
                 clipBehavior: Clip.none,
@@ -36,8 +36,8 @@ class IntroScreen extends StatelessWidget {
                           fontSize: 19.fSize,
                           fontWeight: FontWeight.w400,
                           height: 1.2,
-                          letterSpacing:
-                              0.02 * 22.0, // Letter-spacing is absolute
+                          letterSpacing: 0.02 * 22.0,
+                          // Letter-spacing is absolute
 
                           decorationStyle: TextDecorationStyle.solid,
 
@@ -59,8 +59,8 @@ class IntroScreen extends StatelessWidget {
                           fontSize: 15.fSize,
                           fontWeight: FontWeight.w400,
                           height: 1.2,
-                          letterSpacing:
-                              0.02 * 22.0, // Letter-spacing is absolute
+                          letterSpacing: 0.02 * 22.0,
+                          // Letter-spacing is absolute
 
                           decorationStyle: TextDecorationStyle.solid,
 
@@ -82,8 +82,8 @@ class IntroScreen extends StatelessWidget {
                           fontSize: 15.fSize,
                           fontWeight: FontWeight.w400,
                           height: 1.2,
-                          letterSpacing:
-                              0.02 * 22.0, // Letter-spacing is absolute
+                          letterSpacing: 0.02 * 22.0,
+                          // Letter-spacing is absolute
 
                           decorationStyle: TextDecorationStyle.solid,
 
@@ -105,8 +105,8 @@ class IntroScreen extends StatelessWidget {
                           fontSize: 19.fSize,
                           fontWeight: FontWeight.w400,
                           height: 1.2,
-                          letterSpacing:
-                              0.02 * 22.0, // Letter-spacing is absolute
+                          letterSpacing: 0.02 * 22.0,
+                          // Letter-spacing is absolute
 
                           decorationStyle: TextDecorationStyle.solid,
 
@@ -155,8 +155,8 @@ class IntroScreen extends StatelessWidget {
                         );
                       },
                       child: CustomImageView(
-                        key: ValueKey<int>(
-                            currentIndex), // Key to ensure proper widget rebuild
+                        key: ValueKey<int>(currentIndex),
+                        // Key to ensure proper widget rebuild
                         fit: BoxFit.contain,
                         width: SizeUtils.width,
                         height: SizeUtils.height - 250.h,
@@ -195,8 +195,8 @@ class IntroScreen extends StatelessWidget {
                                       fontSize: 22.0.fSize,
                                       fontWeight: FontWeight.w400,
                                       height: 1.2,
-                                      letterSpacing: 0.02 *
-                                          22.0, // Letter-spacing is absolute
+                                      letterSpacing: 0.02 * 22.0,
+                                      // Letter-spacing is absolute
                                       decorationStyle:
                                           TextDecorationStyle.solid,
 

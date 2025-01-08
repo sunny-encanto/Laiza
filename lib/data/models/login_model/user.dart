@@ -18,6 +18,7 @@ class User {
   int? isApprove;
   DateTime? createdAt;
   DateTime? updatedAt;
+  int? isProfileComplete;
 
   User({
     this.id,
@@ -39,6 +40,7 @@ class User {
     this.isApprove,
     this.createdAt,
     this.updatedAt,
+    this.isProfileComplete,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -59,6 +61,7 @@ class User {
         isLogin: json['is_login'] as int?,
         isDelete: json['is_delete'] as int?,
         isApprove: json['is_approve'] as int?,
+        isProfileComplete: json['is_profile_complete'] as int?,
         createdAt: json['created_at'] == null
             ? null
             : DateTime.parse(json['created_at'] as String),
@@ -85,6 +88,7 @@ class User {
         'is_login': isLogin,
         'is_delete': isDelete,
         'is_approve': isApprove,
+        'is_profile_complete': isProfileComplete,
         'created_at': createdAt?.toIso8601String(),
         'updated_at': updatedAt?.toIso8601String(),
       };

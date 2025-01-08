@@ -24,4 +24,9 @@ class ApiConstant {
   static String following = 'api/user/following';
   static String unfollow = 'api/user/unfollow';
   static String follow = 'api/user/follow';
+  static String reel = 'api/user/influencer_reel';
+  static String addReel = 'api/user/influencer_reel/add';
+  static String likeReel = 'api/user/influencer_reel/add_like';
+  static String removeReelLike = 'api/user/influencer_reel/remove_like';
+  static String deleteReel = 'api/user/influencer_reel/delete';
 }

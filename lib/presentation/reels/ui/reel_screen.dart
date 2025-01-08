@@ -1,70 +1,87 @@
-import 'package:laiza/data/models/reels_model/reels_model.dart';
+import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 import 'package:laiza/presentation/reels/bloc/reel_bloc.dart';
 import 'package:laiza/widgets/slider_widget.dart';
 import 'package:whitecodel_reels/whitecodel_reels.dart';
 
 import '../../../core/app_export.dart';
-import '../../../data/services/share.dart';
 import '../../../widgets/like_button/bloc/like_button_bloc.dart';
 
 class ReelScreen extends StatelessWidget {
   ReelScreen({super.key});
+
   bool _isFollowed = false;
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: BlocProvider(
-        create: (context) => ReelBloc(),
-        child: Column(
-          children: [
-            Expanded(
-              child: WhiteCodelReels(
-                  key: UniqueKey(),
-                  context: context,
-                  loader: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                  isCaching: true,
-                  videoList: List.generate(
-                      realList.length, (index) => realList[index].url),
-                  builder: (context, index, child, videoPlayerController,
-                      pageController) {
-                    pageController.addListener(() {
-                      if (pageController.page != index.toDouble()) {
-                        videoPlayerController.pause();
-                      } else {
-                        videoPlayerController.play();
-                      }
-                    });
-                    return Stack(
-                      children: [
-                        child,
-                        _buildViewCountWidget(textTheme),
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              _buildRightControl(index, context),
-                              SizedBox(height: 54.v),
-                              customSlider(
-                                height: 100.h,
-                                childList: [_buildSliderItem(context)],
+          create: (context) => ReelBloc(context.read<ReelRepository>()),
+          child: BlocBuilder<ReelBloc, ReelState>(builder: (context, state) {
+            if (state is ReelInitial) {
+              context.read<ReelBloc>().add(LoadReelEvent());
+            } else if (state is ReelLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is ReelError) {
+              return Center(
+                child: Text(state.message),
+              );
+            } else if (state is ReelLoaded) {
+              return Column(
+                children: [
+                  state.reels.isNotEmpty
+                      ? Expanded(
+                          child: WhiteCodelReels(
+                              key: UniqueKey(),
+                              context: context,
+                              loader: const Center(
+                                child: CircularProgressIndicator(),
                               ),
-                              SizedBox(height: 36.h),
-                              _buildFollowBanner(context),
-                              SizedBox(height: 12.h),
-                            ],
-                          ),
+                              isCaching: true,
+                              videoList: List.generate(state.reels.length,
+                                  (index) => state.reels[index].reelPath),
+                              builder: (context, index, child,
+                                  videoPlayerController, pageController) {
+                                pageController.addListener(() {
+                                  if (pageController.page != index.toDouble()) {
+                                    videoPlayerController.pause();
+                                  } else {
+                                    videoPlayerController.play();
+                                  }
+                                });
+                                return Stack(
+                                  children: [
+                                    child,
+                                    _buildViewCountWidget(textTheme),
+                                    Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          _buildRightControl(index, context),
+                                          SizedBox(height: 54.v),
+                                          customSlider(
+                                            height: 100.h,
+                                            childList: [
+                                              _buildSliderItem(context)
+                                            ],
+                                          ),
+                                          SizedBox(height: 36.h),
+                                          _buildFollowBanner(context),
+                                          SizedBox(height: 12.h),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                );
+                              }),
                         )
-                      ],
-                    );
-                  }),
-            ),
-          ],
-        ),
-      ),
+                      : const SizedBox.shrink(),
+                ],
+              );
+            }
+            return const SizedBox.shrink();
+          })),
     );
   }
 
@@ -103,25 +120,28 @@ class ReelScreen extends StatelessWidget {
                           )),
                     );
                   }
-                  return Container(
-                    decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(12)),
-                    child: IconButton(
-                        onPressed: () {
-                          context.read<LikeButtonBloc>().add(
-                              LikeButtonPressEvent(
-                                  !realList[index].likeStatus));
-                        },
-                        icon: Icon(
-                          realList[index].likeStatus
-                              ? Icons.favorite
-                              : Icons.favorite_border_outlined,
-                          color: realList[index].likeStatus
-                              ? Colors.red
-                              : Colors.white,
-                        )),
-                  );
+                  return Container();
+                  //   Container(
+                  //   decoration: BoxDecoration(
+                  //       color: Colors.black,
+                  //       borderRadius: BorderRadius.circular(12)),
+                  //   child: IconButton(
+                  //       onPressed: () {
+                  //         context.read<LikeButtonBloc>().add(
+                  //             LikeButtonPressEvent(
+                  //                 realList[index].likeStatus == 1
+                  //                     ? false
+                  //                     : true));
+                  //       },
+                  //       icon: Icon(
+                  //         realList[index].likeStatus == 1
+                  //             ? Icons.favorite
+                  //             : Icons.favorite_border_outlined,
+                  //         color: realList[index].likeStatus == 1
+                  //             ? Colors.red
+                  //             : Colors.white,
+                  //       )),
+                  // );
                 },
               ),
             ),
@@ -145,7 +165,7 @@ class ReelScreen extends StatelessWidget {
                 icon: ImageConstant.shareIcon,
                 color: Colors.black,
                 onTap: () async {
-                  await shareContent(realList[index].url);
+                  //await shareContent(realList[index].reelPath);
                 }),
             SizedBox(height: 24.h),
             //Wish list button

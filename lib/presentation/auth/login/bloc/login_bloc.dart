@@ -3,12 +3,10 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/data/models/login_model/login_model.dart';
-import 'package:laiza/data/repositories/auth_repository/auth_repository.dart';
 import 'package:laiza/data/services/firebase_services.dart';
 
 import '../../../../core/app_export.dart';
 import '../../../../data/models/user/user_model.dart';
-import '../../../../data/repositories/user_repository/user_repository.dart';
 import '../../../../data/services/firebase_messaging_service.dart';
 import 'login_event.dart';
 import 'login_state.dart';
@@ -37,8 +35,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           email: event.email, password: event.password);
       PrefUtils.setToken(loginModel.data?.token ?? '');
       PrefUtils.setId(loginModel.data?.user?.id.toString() ?? "");
+      bool isFormComplete =
+          (loginModel.data?.user?.isProfileComplete ?? 0) == 1;
+      PrefUtils.setIsFormComplete(isFormComplete);
       emit(LoginSuccessState(
-          userId: loginModel.data?.user?.id ?? 0, isProfileComplete: true));
+          userId: loginModel.data?.user?.id ?? 0,
+          isProfileComplete: isFormComplete));
     } catch (e) {
       if (e.toString() == 'Account not approved') {
         emit(LoginUserNotApproved());

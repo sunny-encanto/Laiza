@@ -8,6 +8,7 @@ import '../../reels/ui/reel_screen.dart';
 // ignore: must_be_immutable
 class BottomBar extends StatelessWidget {
   BottomBar({super.key});
+
   int _selectedIndex = 0;
 
   @override
@@ -16,7 +17,7 @@ class BottomBar extends StatelessWidget {
       listener: (BuildContext context, BottomBarState state) {
         _selectedIndex = state.selectedIndex;
       },
-      builder: (context, state) {
+      builder: (BuildContext context, BottomBarState state) {
         return Scaffold(
           body: _getBodyWidget(state.selectedIndex),
           bottomNavigationBar: BottomNavigationBar(
@@ -54,7 +55,7 @@ class BottomBar extends StatelessWidget {
             ],
             currentIndex: state.selectedIndex,
             selectedItemColor: AppColor.primary,
-            onTap: (index) {
+            onTap: (int index) {
               context.read<BottomBarCubit>().selectTab(index);
             },
           ),
@@ -83,7 +84,8 @@ class BottomBar extends StatelessWidget {
   // Build custom icon with background color and radius on selection
   Widget _buildIcon(String imagePath, int index) {
     bool isSelected = _selectedIndex == index;
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 500),
       width: 64.h,
       padding: EdgeInsets.all(5.h),
       margin: EdgeInsets.only(bottom: 3.v),

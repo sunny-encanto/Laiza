@@ -1,10 +1,12 @@
 import 'package:laiza/core/app_export.dart';
-import 'package:laiza/presentation/influencer/influencer_my_profile/bloc/influencer_my_profile_bloc.dart';
+import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
+import 'package:laiza/presentation/shimmers/loading_grid.dart';
 
-import '../../../../data/blocs/profile_api_bloc/profile_api_bloc.dart';
+import '../../../../data/blocs/my_reel_bloc/my_reel_bloc.dart';
 import '../../../../data/services/media_services.dart';
 import '../../../../data/services/share.dart';
 import '../../../../widgets/custom_popup_menu_button.dart';
+import '../../../video_player/ui/video_player.dart';
 
 class InfluencerMyProfileScreen extends StatelessWidget {
   const InfluencerMyProfileScreen({super.key});
@@ -171,7 +173,7 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                             CustomOutlineButton(
                                 onPressed: () async {
                                   Media? media = await MediaServices
-                                      .pickFilePathAndExtension();
+                                      .pickVideoPathAndExtension();
                                   if (media != null) {
                                     Navigator.of(context).pushNamed(
                                         AppRoutes.uploadReelScreen,
@@ -235,82 +237,143 @@ class InfluencerMyProfileScreen extends StatelessWidget {
 
   Widget _postView(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          mainAxisSpacing: 5.v,
-          crossAxisSpacing: 5.h,
-          childAspectRatio: 140.h / 269.v,
-          crossAxisCount: 2),
-      itemBuilder: (context, index) => Column(
-        children: [
-          CustomImageView(
-            height: 261.v,
-            fit: BoxFit.fill,
-            radius: BorderRadius.only(
-                topRight: Radius.circular(12.h),
-                topLeft: Radius.circular(12.h)),
-            imagePath: ImageConstant.productImage,
-          ),
-          SizedBox(height: 7.v),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  children: [
-                    CustomImageView(
-                      imagePath: ImageConstant.favIcon,
-                      color: Colors.grey,
+    return BlocProvider(
+      create: (context) => MyReelBloc(context.read<ReelRepository>()),
+      child: BlocBuilder<MyReelBloc, MyReelState>(
+        builder: (context, state) {
+          if (state is MyReelInitial) {
+            context.read<MyReelBloc>().add(LoadMyReelEvent());
+          } else if (state is MyReelLoading) {
+            return const LoadingGridScreen();
+          } else if (state is MyReelError) {
+            return Center(
+              child: Text(state.message),
+            );
+          } else if (state is MyReelLoaded) {
+            return GridView.builder(
+              itemCount: state.reels.length,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  mainAxisSpacing: 5.v,
+                  crossAxisSpacing: 5.h,
+                  childAspectRatio: 140.h / 269.v,
+                  crossAxisCount: 2),
+              itemBuilder: (context, index) => Column(
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      CustomImageView(
+                        height: 261.v,
+                        fit: BoxFit.fill,
+                        radius: BorderRadius.only(
+                            topRight: Radius.circular(12.h),
+                            topLeft: Radius.circular(12.h)),
+                        imagePath: state.reels[index].reelCoverPath,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => VideoPlayerWidget(
+                              videoUrl: state.reels[index].reelPath,
+                            ),
+                          ));
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(5.h),
+                          decoration: const BoxDecoration(
+                              color: Colors.white, shape: BoxShape.circle),
+                          child: const Icon(Icons.play_arrow),
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 7.v),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5.h),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            state.reels[index].likeStatus == 1
+                                ? InkWell(
+                                    onTap: () {
+                                      context.read<MyReelBloc>().add(
+                                          ToggleMyReelLikeButtonEvent(
+                                              state.reels[index].id));
+                                    },
+                                    child: const Icon(
+                                      Icons.favorite,
+                                      color: Colors.red,
+                                    ),
+                                  )
+                                : CustomImageView(
+                                    onTap: () {
+                                      context.read<MyReelBloc>().add(
+                                          ToggleMyReelLikeButtonEvent(
+                                              state.reels[index].id));
+                                    },
+                                    imagePath: ImageConstant.favIcon,
+                                    color: Colors.grey,
+                                  ),
+                            SizedBox(height: 8.v),
+                            Text(
+                              state.reels[index].likesCount.toString(),
+                              style: textTheme.bodySmall!.copyWith(
+                                  fontSize: 12.fSize,
+                                  color: const Color(0xFF232323),
+                                  fontWeight: FontWeight.w300),
+                            )
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            CustomImageView(
+                              imagePath: ImageConstant.commentIcon,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: 8.v),
+                            Text(
+                              state.reels[index].commentsCount.toString(),
+                              style: textTheme.bodySmall!.copyWith(
+                                  fontSize: 12.fSize,
+                                  color: const Color(0xFF232323),
+                                  fontWeight: FontWeight.w300),
+                            )
+                          ],
+                        ),
+                        InkWell(
+                          onTap: () async {
+                            await shareContent(state.reels[index].reelPath);
+                          },
+                          child: Column(
+                            children: [
+                              CustomImageView(
+                                imagePath: ImageConstant.shareIcon,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 8.v),
+                              Text(
+                                'Share',
+                                style: textTheme.bodySmall!.copyWith(
+                                    fontSize: 12.fSize,
+                                    color: const Color(0xFF232323),
+                                    fontWeight: FontWeight.w300),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 8.v),
-                    Text(
-                      '52.3K',
-                      style: textTheme.bodySmall!.copyWith(
-                          fontSize: 12.fSize,
-                          color: const Color(0xFF232323),
-                          fontWeight: FontWeight.w300),
-                    )
-                  ],
-                ),
-                Column(
-                  children: [
-                    CustomImageView(
-                      imagePath: ImageConstant.commentIcon,
-                      color: Colors.grey,
-                    ),
-                    SizedBox(height: 8.v),
-                    Text(
-                      '380',
-                      style: textTheme.bodySmall!.copyWith(
-                          fontSize: 12.fSize,
-                          color: const Color(0xFF232323),
-                          fontWeight: FontWeight.w300),
-                    )
-                  ],
-                ),
-                Column(
-                  children: [
-                    CustomImageView(
-                      imagePath: ImageConstant.shareIcon,
-                      color: Colors.grey,
-                    ),
-                    SizedBox(height: 8.v),
-                    Text(
-                      'Share',
-                      style: textTheme.bodySmall!.copyWith(
-                          fontSize: 12.fSize,
-                          color: const Color(0xFF232323),
-                          fontWeight: FontWeight.w300),
-                    )
-                  ],
-                ),
-              ],
-            ),
-          )
-        ],
+                  )
+                ],
+              ),
+            );
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
   }

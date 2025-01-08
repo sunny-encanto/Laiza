@@ -7,7 +7,7 @@ part 'like_button_state.dart';
 class LikeButtonBloc extends Bloc<LikeButtonEvent, LikeButtonState> {
   LikeButtonBloc() : super(LikeButtonInitial()) {
     on<LikeButtonPressEvent>((event, emit) {
-      emit(LikeButtonPressState(event.isLIked));
+      emit(LikeButtonPressState(event.isLiked));
     });
   }
 }

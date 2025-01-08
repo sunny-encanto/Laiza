@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:laiza/data/models/common_model/common_model.dart';
+import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 
 import '../../../../core/app_export.dart';
 import '../../../../data/services/media_services.dart';
@@ -9,7 +11,9 @@ part 'upload_reel_event.dart';
 part 'upload_reel_state.dart';
 
 class UploadReelBloc extends Bloc<UploadReelEvent, UploadReelState> {
-  UploadReelBloc()
+  final ReelRepository _reelRepository;
+
+  UploadReelBloc(this._reelRepository)
       : super(UploadReelInitial(
             controllers: [TextEditingController()],
             focusNodes: [FocusNode()])) {
@@ -40,9 +44,22 @@ class UploadReelBloc extends Bloc<UploadReelEvent, UploadReelState> {
 
   FutureOr<void> _onSubmitRequest(
       UploadReelSubmitRequestEvent event, Emitter<UploadReelState> emit) async {
-    emit(UploadReelLoadingSate());
-    await Future.delayed(const Duration(seconds: 1));
-    emit(UploadReelSuccessState());
+    try {
+      emit(UploadReelLoadingSate());
+      CommonModel responseData = await _reelRepository.addReel(
+        productId: event.productId,
+        reelTitle: event.reelTitle,
+        reelPath: event.reelPath,
+        categoryId: event.categoryId,
+        reelDes: event.reelDes,
+        coverPath: event.coverPath,
+        hashTag: event.hashTag,
+      );
+
+      emit(UploadReelSuccessState(responseData.message ?? ""));
+    } catch (e) {
+      emit(UploadReelErrorState(e.toString()));
+    }
   }
 
   FutureOr<void> _onAddCoverPhotoAdded(

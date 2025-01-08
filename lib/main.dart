@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
+import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 
 import 'core/app_export.dart';
 import 'core/network/connectivity_cubit.dart';
@@ -54,6 +55,8 @@ class MyApp extends StatelessWidget {
               create: (BuildContext context) => RegionRepository()),
           RepositoryProvider(
               create: (BuildContext context) => FollowersRepository()),
+          RepositoryProvider(
+              create: (BuildContext context) => ReelRepository()),
         ],
         child: MultiBlocProvider(
           providers: [

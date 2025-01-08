@@ -12,7 +12,7 @@ class DiscoverScreen extends StatelessWidget {
     return Scaffold(
       appBar: customAppBar(context),
       body: BlocProvider(
-        create: (context) => DiscoverBloc(),
+        create: (BuildContext context) => DiscoverBloc(),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.0.h),
           child: SingleChildScrollView(
@@ -27,37 +27,41 @@ class DiscoverScreen extends StatelessWidget {
                         Divider(height: 2.v),
                     scrollDirection: Axis.horizontal,
                     itemCount: 5,
-                    itemBuilder: (context, index) =>
+                    itemBuilder: (BuildContext context, index) =>
                         BlocConsumer<DiscoverBloc, DiscoverState>(
                       listener: (BuildContext context, DiscoverState state) {
                         if (state is DiscoverChipSelectState) {
                           selectedIndex = state.selectedIndex;
                         }
                       },
-                      builder: (context, state) {
+                      builder: (BuildContext context, DiscoverState state) {
                         return InkWell(
                           onTap: () {
                             context
                                 .read<DiscoverBloc>()
                                 .add(DiscoverChipSelectEvent(index));
                           },
-                          child: Container(
-                            margin: EdgeInsets.only(right: 12.h),
-                            height: 36.v,
-                            width: 89.h,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black),
-                                color: selectedIndex == index
-                                    ? Colors.black
-                                    : Colors.white,
-                                borderRadius: BorderRadius.circular(24.h)),
-                            child: Text('Following',
+                          child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 400),
+                              margin: EdgeInsets.only(right: 12.h),
+                              height: 36.v,
+                              width: 89.h,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.black),
+                                  color: selectedIndex == index
+                                      ? Colors.black
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(24.h)),
+                              child: AnimatedDefaultTextStyle(
+                                duration: const Duration(milliseconds: 400),
                                 style: textTheme.labelSmall!.copyWith(
-                                    color: selectedIndex == index
-                                        ? Colors.white
-                                        : null)),
-                          ),
+                                  color: selectedIndex == index
+                                      ? Colors.white
+                                      : null,
+                                ),
+                                child: const Text('Following'),
+                              )),
                         );
                       },
                     ),
@@ -100,7 +104,7 @@ class DiscoverScreen extends StatelessWidget {
                     crossAxisCount: 3,
                     mainAxisSpacing: 0,
                     crossAxisSpacing: 0,
-                    itemBuilder: (context, index) {
+                    itemBuilder: (BuildContext context, index) {
                       return TrendingCardWidget(
                         index: index,
                         extent: (index % 2 + 1) * 100,
@@ -155,7 +159,7 @@ class DiscoverScreen extends StatelessWidget {
                     ),
                     childrenDelegate: SliverChildBuilderDelegate(
                       childCount: imagesList.length,
-                      (context, int index) =>
+                      (BuildContext context, int index) =>
                           InfluencerCardWidget(index: index),
                     ),
                   ),
@@ -178,7 +182,7 @@ class DiscoverScreen extends StatelessWidget {
                   crossAxisCount: 2,
                   mainAxisSpacing: 15.v,
                   crossAxisSpacing: 10.h,
-                  itemBuilder: (context, index) {
+                  itemBuilder: (BuildContext context, int index) {
                     return ProductCardWidget(image: imagesList[index]);
                   },
                 ),

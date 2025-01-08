@@ -14,7 +14,6 @@ class SocialLoginWidgets extends StatelessWidget {
           context.showSnackBar(state.message);
         } else if (state is SocialLoginSuccessState) {
           context.showSnackBar('Login Success');
-
           if (PrefUtils.getRole() == UserRole.user.name) {
             Navigator.of(context)
                 .pushReplacementNamed(AppRoutes.bottomBarScreen);

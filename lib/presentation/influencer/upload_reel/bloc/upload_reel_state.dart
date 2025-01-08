@@ -9,7 +9,9 @@ sealed class UploadReelState extends Equatable {
 
 final class UploadReelCoverPhotoSelectedSate extends UploadReelState {
   final String imagePath;
+
   const UploadReelCoverPhotoSelectedSate(this.imagePath);
+
   @override
   List<Object> get props => [imagePath];
 }
@@ -17,6 +19,7 @@ final class UploadReelCoverPhotoSelectedSate extends UploadReelState {
 final class UploadReelInitial extends UploadReelState {
   final List<TextEditingController> controllers;
   final List<FocusNode> focusNodes;
+
   const UploadReelInitial(
       {required this.controllers, required this.focusNodes});
 
@@ -28,9 +31,18 @@ final class UploadReelLoadingSate extends UploadReelState {}
 
 final class UploadReelErrorState extends UploadReelState {
   final String message;
+
   const UploadReelErrorState(this.message);
+
   @override
   List<Object> get props => [message];
 }
 
-final class UploadReelSuccessState extends UploadReelState {}
+final class UploadReelSuccessState extends UploadReelState {
+  final String message;
+
+  const UploadReelSuccessState(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
