@@ -2,6 +2,7 @@ class Reel {
   int id;
   int userId;
   int productId;
+  int catId;
   String reelTitle;
   String reelPath;
   int likeStatus;
@@ -15,6 +16,7 @@ class Reel {
     required this.id,
     required this.userId,
     required this.productId,
+    required this.catId,
     required this.reelTitle,
     required this.reelPath,
     required this.likeStatus,
@@ -30,6 +32,7 @@ class Reel {
       id: id,
       userId: userId,
       productId: productId,
+      catId: catId,
       reelTitle: reelTitle,
       reelPath: reelPath,
       likeStatus: likeStatus ?? this.likeStatus,
@@ -45,6 +48,7 @@ class Reel {
         id: json["id"],
         userId: json["user_id"],
         productId: json["product_id"],
+        catId: json["category_id"],
         reelTitle: json["reel_title"],
         reelPath: json["reel_path"],
         likeStatus: json['is_like'],
@@ -67,5 +71,6 @@ class Reel {
         "reel_hashtag": reelHashtag,
         "likes_count": likesCount,
         "comments_count": commentsCount,
+        "category_id": catId
       };
 }

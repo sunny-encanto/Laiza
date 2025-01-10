@@ -136,4 +136,37 @@ class ReelRepository {
       throw Exception('Failed to like Reels');
     }
   }
+
+  Future<CommonModel> updateReel(Reel reel) async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+      final Map<String, dynamic> data = reel.toJson();
+
+      // Conditionally add the image key if the profile image is available
+      if (!reel.reelCoverPath.contains('https:')) {
+        data['reel_cover_path'] = await MultipartFile.fromFile(
+          reel.reelCoverPath,
+          filename: reel.reelCoverPath.split('/').last,
+        );
+      } else {
+        data['reel_cover_path'] = null;
+      }
+      // Create FormData from the map
+      FormData formData = FormData.fromMap(data);
+      Response response = await _apiClient
+          .post('${ApiConstant.updateReel}/${reel.id}', data: formData);
+      if (response.statusCode == 200) {
+        return CommonModel.fromJson(response.data);
+      } else {
+        return CommonModel.fromJson(response.data);
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during update Reels', e.toString());
+      throw Exception('Failed to update Reels');
+    }
+  }
 }

@@ -37,3 +37,21 @@ class ToggleMyReelLikeButton extends MyReelState {
   @override
   List<Object> get props => [isLiked];
 }
+
+class MyReelDeleteError extends MyReelState {
+  final String message;
+
+  const MyReelDeleteError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class MyReelDeleteSuccess extends MyReelState {
+  final String message;
+
+  const MyReelDeleteSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

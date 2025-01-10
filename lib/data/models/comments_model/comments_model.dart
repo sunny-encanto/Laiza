@@ -1,56 +1,34 @@
-import 'package:equatable/equatable.dart';
-import 'package:laiza/core/app_export.dart';
+import 'comment.dart';
 
-class CommentModel extends Equatable {
-  final int id;
-  final String name;
-  final String comment;
-  final String profile;
-  final int commentCount;
-  final bool isLiked;
-  const CommentModel({
-    required this.id,
-    required this.name,
-    required this.comment,
-    required this.profile,
+class CommentModel {
+  String message;
+  int status;
+  bool error;
+  int commentCount;
+  List<Comment> comment;
+
+  CommentModel({
+    required this.message,
+    required this.status,
+    required this.error,
     required this.commentCount,
-    required this.isLiked,
+    required this.comment,
   });
 
-  CommentModel copyWith({
-    bool? isLiked,
-    int? commentCount,
-  }) {
-    return CommentModel(
-      id: id,
-      isLiked: isLiked ?? this.isLiked,
-      name: name,
-      comment: comment,
-      profile: profile,
-      commentCount: commentCount ?? this.commentCount,
-    );
-  }
+  factory CommentModel.fromJson(Map<String, dynamic> json) => CommentModel(
+        message: json["message"],
+        status: json["status"],
+        error: json["error"],
+        commentCount: json["comment_count"],
+        comment:
+            List<Comment>.from(json["comment"].map((x) => Comment.fromJson(x))),
+      );
 
-  @override
-  List<Object?> get props =>
-      [id, name, comment, profile, commentCount, isLiked];
+  Map<String, dynamic> toJson() => {
+        "message": message,
+        "status": status,
+        "error": error,
+        "comment_count": commentCount,
+        "comment": List<dynamic>.from(comment.map((x) => x.toJson())),
+      };
 }
-
-List<CommentModel> commentList = <CommentModel>[
-  CommentModel(
-    id: 1,
-    name: 'Isha Thapar',
-    comment: 'Wow, Classic & Elegant I am definitely going to buy',
-    profile: ImageConstant.profileBg,
-    commentCount: 12,
-    isLiked: false,
-  ),
-  CommentModel(
-    id: 2,
-    name: 'Isha Thapar',
-    comment: 'Wow, Classic & Elegant I am definitely going to buy',
-    profile: ImageConstant.profileBg,
-    commentCount: 12,
-    isLiked: false,
-  )
-];

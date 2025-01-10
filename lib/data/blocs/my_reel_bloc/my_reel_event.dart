@@ -17,3 +17,12 @@ class ToggleMyReelLikeButtonEvent extends MyReelEvent {
   @override
   List<Object?> get props => [id];
 }
+
+class MyReelDeleteEvent extends MyReelEvent {
+  final int id;
+
+  const MyReelDeleteEvent(this.id);
+
+  @override
+  List<Object?> get props => [id];
+}

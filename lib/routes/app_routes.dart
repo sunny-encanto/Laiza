@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:laiza/data/repositories/comments_repository/comments_repository.dart';
 import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 
@@ -321,8 +322,9 @@ class AppRoutes {
       case commentsScreen:
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => CommentsBloc(),
-                  child: const CommentsScreen(),
+                  create: (context) =>
+                      CommentsBloc(context.read<CommentsRepository>()),
+                  child: CommentsScreen(reelId: 0),
                 ));
       case viewImageWidget:
         final String url = settings.arguments as String;
@@ -362,13 +364,14 @@ class AppRoutes {
                 ));
 
       case uploadReelScreen:
-        String mediaPtah = settings.arguments as String;
+        Map<String, dynamic> data = settings.arguments as Map<String, dynamic>;
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) =>
                       UploadReelBloc(context.read<ReelRepository>()),
                   child: UploadReelScreen(
-                    mediaPath: mediaPtah,
+                    mediaPath: data['path'],
+                    reel: data['reel'],
                   ),
                 ));
 
@@ -397,7 +400,7 @@ class AppRoutes {
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => InfluencerMyProfileBloc(),
-                  child: const InfluencerMyProfileScreen(),
+                  child: InfluencerMyProfileScreen(),
                 ));
 
       case dashboardScreen:

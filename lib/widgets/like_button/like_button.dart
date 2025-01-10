@@ -1,3 +1,4 @@
+import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 import 'package:laiza/widgets/like_button/bloc/like_button_bloc.dart';
 
 import '../../core/app_export.dart';
@@ -5,11 +6,13 @@ import '../../core/app_export.dart';
 class LikeButton extends StatelessWidget {
   final bool isLiked;
   final VoidCallback onTap;
+
   const LikeButton({super.key, required this.isLiked, required this.onTap});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LikeButtonBloc(),
+      create: (context) => LikeButtonBloc(context.read<ReelRepository>()),
       child: BlocConsumer<LikeButtonBloc, LikeButtonState>(
         listener: (context, state) {},
         builder: (context, state) {
@@ -19,9 +22,9 @@ class LikeButton extends StatelessWidget {
                   color: Colors.black, borderRadius: BorderRadius.circular(12)),
               child: IconButton(
                   onPressed: () {
-                    context
-                        .read<LikeButtonBloc>()
-                        .add(LikeButtonPressEvent(!state.isLIked));
+                    // context
+                    //     .read<LikeButtonBloc>()
+                    //     .add(LikeButtonPressEvent(!state.isLIked));
                   },
                   icon: Icon(
                     state.isLIked
@@ -36,9 +39,9 @@ class LikeButton extends StatelessWidget {
                 color: Colors.black, borderRadius: BorderRadius.circular(12)),
             child: IconButton(
                 onPressed: () {
-                  context
-                      .read<LikeButtonBloc>()
-                      .add(LikeButtonPressEvent(!isLiked));
+                  // context
+                  //     .read<LikeButtonBloc>()
+                  //     .add(LikeButtonPressEvent(!isLiked));
                 },
                 icon: Icon(
                   isLiked ? Icons.favorite : Icons.favorite_border_outlined,

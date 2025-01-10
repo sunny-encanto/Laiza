@@ -6,6 +6,7 @@ import 'core/app_export.dart';
 import 'core/network/connectivity_cubit.dart';
 import 'core/utils/pref_utils.dart';
 import 'data/models/user/user_model.dart';
+import 'data/repositories/comments_repository/comments_repository.dart';
 import 'data/services/firebase_messaging_service.dart';
 import 'data/services/notification_service.dart';
 import 'localization/app_localization.dart';
@@ -57,6 +58,8 @@ class MyApp extends StatelessWidget {
               create: (BuildContext context) => FollowersRepository()),
           RepositoryProvider(
               create: (BuildContext context) => ReelRepository()),
+          RepositoryProvider(
+              create: (BuildContext context) => CommentsRepository()),
         ],
         child: MultiBlocProvider(
           providers: [

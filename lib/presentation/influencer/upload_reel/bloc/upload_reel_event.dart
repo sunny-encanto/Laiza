@@ -34,3 +34,12 @@ final class UploadReelSubmitRequestEvent extends UploadReelEvent {
   @override
   List<Object> get props => [reelTitle, productId, reelDes, reelPath];
 }
+
+class UpdateReelRequestEvent extends UploadReelEvent {
+  final Reel reel;
+
+  const UpdateReelRequestEvent(this.reel);
+
+  @override
+  List<Object> get props => [reel];
+}

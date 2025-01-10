@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:laiza/data/models/common_model/common_model.dart';
+import 'package:laiza/data/models/reels_model/reel.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 
 import '../../../../core/app_export.dart';
@@ -20,6 +21,7 @@ class UploadReelBloc extends Bloc<UploadReelEvent, UploadReelState> {
     on<UploadReelSubmitRequestEvent>(_onSubmitRequest);
     on<AddMoreProductLinkEvent>(_onAddMoreProductLink);
     on<AddCoverPhotoEvent>(_onAddCoverPhotoAdded);
+    on<UpdateReelRequestEvent>(_onUpdateReel);
   }
 
   FutureOr<void> _onAddMoreProductLink(
@@ -67,6 +69,17 @@ class UploadReelBloc extends Bloc<UploadReelEvent, UploadReelState> {
     String? imagePath = await MediaServices.pickImageFromGallery();
     if (imagePath != null) {
       emit(UploadReelCoverPhotoSelectedSate(imagePath));
+    }
+  }
+
+  FutureOr<void> _onUpdateReel(
+      UpdateReelRequestEvent event, Emitter<UploadReelState> emit) async {
+    try {
+      emit(UploadReelLoadingSate());
+      CommonModel responseData = await _reelRepository.updateReel(event.reel);
+      emit(UploadReelSuccessState(responseData.message ?? ""));
+    } catch (e) {
+      emit(UploadReelErrorState(e.toString()));
     }
   }
 }

@@ -99,6 +99,7 @@ class CustomTextFormField extends StatelessWidget {
   Widget get textFormFieldWidget => SizedBox(
         width: width ?? double.maxFinite,
         child: TextFormField(
+          focusNode: focusNode,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           maxLength: maxLength,
           onTap: onTap,

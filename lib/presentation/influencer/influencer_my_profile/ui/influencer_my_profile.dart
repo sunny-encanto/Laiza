@@ -1,4 +1,6 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/data/models/user/user_model.dart';
+import 'package:laiza/data/repositories/comments_repository/comments_repository.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 import 'package:laiza/presentation/shimmers/loading_grid.dart';
 
@@ -6,10 +8,12 @@ import '../../../../data/blocs/my_reel_bloc/my_reel_bloc.dart';
 import '../../../../data/services/media_services.dart';
 import '../../../../data/services/share.dart';
 import '../../../../widgets/custom_popup_menu_button.dart';
-import '../../../video_player/ui/video_player.dart';
+import '../../my_reel_view/my_reel_view.dart';
 
 class InfluencerMyProfileScreen extends StatelessWidget {
-  const InfluencerMyProfileScreen({super.key});
+  InfluencerMyProfileScreen({super.key});
+
+  UserModel _userModel = UserModel();
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +63,7 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                           ]),
                     )),
                 backgroundColor: Colors.white,
-                expandedHeight: SizeUtils.height - 100.v,
+                expandedHeight: SizeUtils.height - 60.v,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,7 +181,10 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                                   if (media != null) {
                                     Navigator.of(context).pushNamed(
                                         AppRoutes.uploadReelScreen,
-                                        arguments: media.path);
+                                        arguments: {
+                                          'reel': null,
+                                          'path': media.path
+                                        });
                                   }
                                 },
                                 leftIcon: CustomImageView(
@@ -274,11 +281,15 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                       ),
                       InkWell(
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => VideoPlayerWidget(
-                              videoUrl: state.reels[index].reelPath,
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(
+                            builder: (context) => MyReelViewScreen(
+                              reelId: state.reels[index].id,
                             ),
-                          ));
+                          ))
+                              .then((_) {
+                            context.read<MyReelBloc>().add(LoadMyReelEvent());
+                          });
                         },
                         child: Container(
                           padding: EdgeInsets.all(5.h),
@@ -297,27 +308,30 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                       children: [
                         Column(
                           children: [
-                            state.reels[index].likeStatus == 1
-                                ? InkWell(
-                                    onTap: () {
-                                      context.read<MyReelBloc>().add(
-                                          ToggleMyReelLikeButtonEvent(
-                                              state.reels[index].id));
-                                    },
-                                    child: const Icon(
-                                      Icons.favorite,
-                                      color: Colors.red,
-                                    ),
-                                  )
-                                : CustomImageView(
-                                    onTap: () {
-                                      context.read<MyReelBloc>().add(
-                                          ToggleMyReelLikeButtonEvent(
-                                              state.reels[index].id));
-                                    },
-                                    imagePath: ImageConstant.favIcon,
-                                    color: Colors.grey,
-                                  ),
+                            Visibility(
+                              visible: state.reels[index].likeStatus == 0,
+                              replacement: InkWell(
+                                onTap: () {
+                                  context.read<MyReelBloc>().add(
+                                      ToggleMyReelLikeButtonEvent(
+                                          state.reels[index].id));
+                                },
+                                child: const Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                ),
+                              ),
+                              child: CustomImageView(
+                                margin: EdgeInsets.only(top: 6.v, left: 2.h),
+                                onTap: () {
+                                  context.read<MyReelBloc>().add(
+                                      ToggleMyReelLikeButtonEvent(
+                                          state.reels[index].id));
+                                },
+                                imagePath: ImageConstant.favIcon,
+                                color: Colors.grey,
+                              ),
+                            ),
                             SizedBox(height: 8.v),
                             Text(
                               state.reels[index].likesCount.toString(),
@@ -331,6 +345,27 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                         Column(
                           children: [
                             CustomImageView(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (context) => BlocProvider(
+                                    create: (context) => CommentsBloc(
+                                        context.read<CommentsRepository>()),
+                                    child: SizedBox(
+                                      height: SizeUtils.height * 0.8,
+                                      child: CommentsScreen(
+                                          reelId: state.reels[index].id),
+                                    ),
+                                  ),
+                                ).then(
+                                  (value) {
+                                    context
+                                        .read<MyReelBloc>()
+                                        .add(LoadMyReelEvent());
+                                  },
+                                );
+                              },
                               imagePath: ImageConstant.commentIcon,
                               color: Colors.grey,
                             ),
@@ -503,6 +538,7 @@ class InfluencerMyProfileScreen extends StatelessWidget {
               } else if (state is ProfileApiError) {
                 return Text(state.message);
               } else if (state is ProfileApiLoadedState) {
+                _userModel = state.userModel;
                 return Row(
                   children: [
                     Container(

@@ -2,6 +2,7 @@ class ImageConstant {
   // Image folder path
 
   static String imagePath = 'assets/images';
+
   //intro Screen Images
   static String influencer = '$imagePath/Onbaodingn_ifluencer.png';
   static String buyer = '$imagePath/Onbaoding Buyer.png';
@@ -20,8 +21,10 @@ class ImageConstant {
   static String phoneAuth = '$imagePath/phone_auth.svg';
   static String googleAuth = '$imagePath/google_auth.svg';
   static String appleAuth = '$imagePath/apple_auth.png';
+
   //Thank you Screen
   static String success = '$imagePath/Success_img.svg';
+
   // Bottom Bar Screen Image
   static String liveIcon = '$imagePath/Iconlive.svg';
   static String reelIcon = '$imagePath/Iconreel.svg';
@@ -39,6 +42,7 @@ class ImageConstant {
   static String shoeImg = '$imagePath/shoe.png';
   static String reelImg = '$imagePath/Reels.png';
   static String profileImg = '$imagePath/profile_img.svg';
+
   //live Screen Image
   static String cartIcon = '$imagePath/cart.svg';
   static String bannerGirl = '$imagePath/sharvari.png';
@@ -47,20 +51,26 @@ class ImageConstant {
   static String discoverBannerImage = '$imagePath/unsplash_VMeHP3mNJL4.png';
   static String sliderImageGreen = '$imagePath/slider_image_green.png';
   static String sliderImageRed = '$imagePath/Banner_red.png';
+
   // Discover Screen Images
   static String groupIcon = '$imagePath/group_icon.svg';
+
   // Product Details Screen Images
   static String productImage = '$imagePath/product_image.png';
   static String shippingIcon = '$imagePath/shippingIcon.svg';
   static String shippingIcon1 = '$imagePath/shippingicon1.svg';
   static String checkOut = '$imagePath/cheakout.svg';
   static String cartBlackIcon = '$imagePath/cart_black.svg';
+
   //Profile Screen Images
   static String notificationIcon = '$imagePath/notification.svg';
+
   //Influencer Profile Screen Images
   static String profileBg = '$imagePath/profile_bg.png';
+
   //Track Order Screen
   static String locationIcon = '$imagePath/locationIcon.svg';
+
   //Oder Placed Screen
   static String orderPlaced = '$imagePath/order_palced.png';
   static String recentIcon = '$imagePath/recent_icon.svg';
@@ -87,6 +97,7 @@ class ImageConstant {
   static String businessIcon = '$imagePath/business.svg';
 
   static String locationIcon1 = '$imagePath/location.svg';
+
   //Side bar Screen images
   static String dashboard = '$imagePath/dashboard.svg';
 
@@ -101,6 +112,7 @@ class ImageConstant {
   static String logout = '$imagePath/logout.svg';
 
   static String request = '$imagePath/request.svg';
+
   // Connection request Images
   static String accept = '$imagePath/accept.svg';
 
@@ -157,4 +169,8 @@ class ImageConstant {
 
   static String xIcon =
       '$imagePath/transparent-x-icon-black-and-white-x-in-the-1710889063979 1.png';
+
+  //Reel Page
+  static String share__ = '$imagePath/Vector-2.svg';
+  static String commnet__ = '$imagePath/Group 1000003113.svg';
 }

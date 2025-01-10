@@ -1,5 +1,4 @@
 import 'package:laiza/core/app_export.dart';
-import 'package:laiza/data/blocs/profile_api_bloc/profile_api_bloc.dart';
 import 'package:laiza/data/services/firebase_services.dart';
 
 class SideBar extends StatelessWidget {
@@ -34,6 +33,7 @@ class SideBar extends StatelessWidget {
                   } else if (state is ProfileApiLoadedState) {
                     return InkWell(
                       onTap: () {
+                        Navigator.of(context).pop();
                         Navigator.of(context)
                             .pushNamed(AppRoutes.influencerMyProfile);
                       },
@@ -105,6 +105,7 @@ class SideBar extends StatelessWidget {
               imagePath: ImageConstant.payments,
               tittle: 'Payments',
               onTap: () {
+                Navigator.of(context).pop();
                 Navigator.of(context).pushNamed(AppRoutes.earningsScreen);
               },
               textTheme: textTheme,
@@ -113,6 +114,7 @@ class SideBar extends StatelessWidget {
               imagePath: ImageConstant.orders,
               tittle: 'Orders',
               onTap: () {
+                Navigator.of(context).pop();
                 Navigator.of(context)
                     .pushNamed(AppRoutes.orderManagementScreen);
               },

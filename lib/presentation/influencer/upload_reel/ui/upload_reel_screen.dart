@@ -4,11 +4,13 @@ import 'package:laiza/widgets/custom_drop_down.dart';
 
 import '../../../../data/blocs/category_bloc/category_bloc.dart';
 import '../../../../data/models/category_model/Category.dart';
+import '../../../../data/models/reels_model/reel.dart';
 
 class UploadReelScreen extends StatelessWidget {
   final String mediaPath;
+  final Reel? reel;
 
-  UploadReelScreen({super.key, required this.mediaPath});
+  UploadReelScreen({super.key, required this.mediaPath, this.reel});
 
   SelectionPopupModel? selectedCategory;
   final tittleController = TextEditingController();
@@ -20,6 +22,13 @@ class UploadReelScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
+    if (reel != null) {
+      tittleController.text = reel?.reelTitle ?? '';
+      desController.text = reel?.reelDescription ?? '';
+      hashTagController.text = reel?.reelHashtag ?? '';
+      coverImage = reel?.reelCoverPath ?? '';
+      print('CateId ${reel?.catId}');
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -53,6 +62,37 @@ class UploadReelScreen extends StatelessWidget {
                                 bottomRight: Radius.circular(12.h),
                                 bottomLeft: Radius.circular(12.h)),
                             imagePath: state.imagePath,
+                          ),
+                          InkWell(
+                            onTap: () {},
+                            child: Container(
+                              padding: EdgeInsets.all(10.h),
+                              decoration: const BoxDecoration(
+                                  shape: BoxShape.circle, color: Colors.white),
+                              child: Icon(
+                                Icons.play_arrow,
+                                color: Colors.black,
+                                size: 30.h,
+                              ),
+                            ),
+                          )
+                        ],
+                      );
+                    }
+
+                    if (coverImage.isNotEmpty) {
+                      return Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CustomImageView(
+                            onTap: () {},
+                            height: 470.v,
+                            width: SizeUtils.width,
+                            fit: BoxFit.fill,
+                            radius: BorderRadius.only(
+                                bottomRight: Radius.circular(12.h),
+                                bottomLeft: Radius.circular(12.h)),
+                            imagePath: coverImage,
                           ),
                           InkWell(
                             onTap: () {},
@@ -165,6 +205,14 @@ class UploadReelScreen extends StatelessWidget {
                       } else if (state is CategoryLoading) {
                         return const SizedBox.shrink();
                       } else if (state is CategoryLoaded) {
+                        if (reel != null) {
+                          Category category = state.category
+                              .where((item) => item.id == reel?.catId)
+                              .first;
+                          selectedCategory = SelectionPopupModel(
+                              title: category.categoryName ?? '',
+                              value: category.id);
+                        }
                         return CustomDropDown(
                           value: selectedCategory,
                           hintText: 'Select Category',
@@ -241,6 +289,7 @@ class UploadReelScreen extends StatelessWidget {
             if (state is UploadReelErrorState) {
               context.showSnackBar(state.message);
             } else if (state is UploadReelSuccessState) {
+              Navigator.of(context).pop();
               context.showSnackBar(state.message);
             }
           },
@@ -255,17 +304,30 @@ class UploadReelScreen extends StatelessWidget {
                   if (coverImage.isEmpty) {
                     context.showSnackBar('Please select cover image');
                   } else {
-                    context
-                        .read<UploadReelBloc>()
-                        .add(UploadReelSubmitRequestEvent(
-                          reelPath: mediaPath,
-                          reelTitle: tittleController.text,
-                          productId: 2,
-                          reelDes: desController.text,
-                          categoryId: selectedCategory?.value ?? 0,
-                          coverPath: coverImage,
-                          hashTag: hashTagController.text,
-                        ));
+                    if (reel != null) {
+                      Reel newReel = reel!;
+                      newReel.catId = selectedCategory?.value;
+                      newReel.reelCoverPath = coverImage;
+                      newReel.reelTitle = tittleController.text;
+                      newReel.reelDescription = desController.text;
+                      newReel.reelHashtag = hashTagController.text;
+
+                      context
+                          .read<UploadReelBloc>()
+                          .add(UpdateReelRequestEvent(newReel));
+                    } else {
+                      context
+                          .read<UploadReelBloc>()
+                          .add(UploadReelSubmitRequestEvent(
+                            reelPath: mediaPath,
+                            reelTitle: tittleController.text,
+                            productId: 2,
+                            reelDes: desController.text,
+                            categoryId: selectedCategory?.value ?? 0,
+                            coverPath: coverImage,
+                            hashTag: hashTagController.text,
+                          ));
+                    }
                   }
                 }
               },

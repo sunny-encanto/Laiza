@@ -26,7 +26,14 @@ class ApiConstant {
   static String follow = 'api/user/follow';
   static String reel = 'api/user/influencer_reel';
   static String addReel = 'api/user/influencer_reel/add';
+  static String updateReel = 'api/user/influencer_reel/update';
   static String likeReel = 'api/user/influencer_reel/add_like';
   static String removeReelLike = 'api/user/influencer_reel/remove_like';
   static String deleteReel = 'api/user/influencer_reel/delete';
+  static String addComment = 'api/user/influencer_reel/add_comment';
+  static String updateComment = 'api/user/influencer_reel/update_comment';
+  static String deleteComment = 'api/user/influencer_reel/delete_comment';
+  static String allComment = 'api/user/influencer_reel/get_all_comment';
+  static String commentReply = 'api/user/influencer_reel/get_all_comment_reply';
+  static String addCommentReply = 'api/user/influencer_reel/add_comment_reply';
 }
