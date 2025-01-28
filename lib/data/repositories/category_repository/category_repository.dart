@@ -4,8 +4,8 @@ import 'package:laiza/data/models/category_model/Category.dart';
 import 'package:laiza/data/models/category_model/Category_model.dart';
 
 import '../../../core/app_export.dart';
+import '../../../core/network/dio_client.dart';
 import '../../../core/utils/api_constant.dart';
-import '../../services/apiClient/dio_client.dart';
 
 class CategoryRepository {
   final ApiClient _apiClient = ApiClient();

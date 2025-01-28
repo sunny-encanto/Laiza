@@ -2,8 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
-import '../../../core/errors/exceptions.dart';
-import '../../../core/utils/api_constant.dart';
+import '../errors/exceptions.dart';
+import '../utils/api_constant.dart';
 
 class ApiClient {
   late Dio _dio;

@@ -15,14 +15,21 @@ class SocialLoginWidgets extends StatelessWidget {
         } else if (state is SocialLoginSuccessState) {
           context.showSnackBar('Login Success');
           if (PrefUtils.getRole() == UserRole.user.name) {
-            Navigator.of(context)
-                .pushReplacementNamed(AppRoutes.bottomBarScreen);
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              AppRoutes.bottomBarScreen,
+              (route) => false,
+            );
           } else {
             if (state.isSignUp) {
-              Navigator.of(context)
-                  .pushReplacementNamed(AppRoutes.influencerFormScreen);
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                AppRoutes.influencerFormScreen,
+                (route) => false,
+              );
             } else {
-              Navigator.of(context).pushReplacementNamed(AppRoutes.homeScreen);
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                AppRoutes.homeScreen,
+                (route) => false,
+              );
             }
           }
         }

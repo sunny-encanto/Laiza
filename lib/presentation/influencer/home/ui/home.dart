@@ -1,6 +1,12 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/data/blocs/all_seller_bloc/all_seller_bloc.dart';
+import 'package:laiza/data/models/product_model/product.dart';
+import 'package:laiza/data/models/user/user_model.dart';
 
+import '../../../../data/blocs/product_bloc/product_bloc.dart';
 import '../../../../data/models/connections_model/connections_model.dart';
+import '../../../../data/repositories/product_repository/product_repository.dart';
+import '../../../shimmers/loading_list.dart';
 import '../../side_bar/ui/side_bar.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -115,14 +121,31 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 12.v),
-                SizedBox(
-                  height: 330.v,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) => Padding(
-                      padding: EdgeInsets.only(right: 10.h),
-                      child: _buildProductCart(textTheme),
-                    ),
+                BlocProvider(
+                  create: (_) => ProductBloc(context.read<ProductRepository>())
+                    ..add(LoadProducts()),
+                  child: BlocBuilder<ProductBloc, ProductState>(
+                    builder: (context, state) {
+                      if (state is ProductLoading) {
+                        return const HorizontalLoadingListPage();
+                      } else if (state is ProductError) {
+                        return Center(child: Text('Error: ${state.message}'));
+                      } else if (state is ProductLoaded) {
+                        return SizedBox(
+                          height: 330.v,
+                          child: ListView.builder(
+                            itemCount: state.products.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) => Padding(
+                              padding: EdgeInsets.only(right: 10.h),
+                              child: PromotionProductCard(
+                                  product: state.products[index]),
+                            ),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
                   ),
                 ),
                 Row(
@@ -158,14 +181,31 @@ class HomeScreen extends StatelessWidget {
                   style: textTheme.titleMedium!.copyWith(fontSize: 16.fSize),
                 ),
                 SizedBox(height: 12.v),
-                SizedBox(
-                  height: 330.v,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) => Padding(
-                      padding: EdgeInsets.only(right: 10.h),
-                      child: _buildProductCart(textTheme),
-                    ),
+                BlocProvider(
+                  create: (_) => ProductBloc(context.read<ProductRepository>())
+                    ..add(LoadProducts()),
+                  child: BlocBuilder<ProductBloc, ProductState>(
+                    builder: (context, state) {
+                      if (state is ProductLoading) {
+                        return const HorizontalLoadingListPage();
+                      } else if (state is ProductError) {
+                        return Center(child: Text('Error: ${state.message}'));
+                      } else if (state is ProductLoaded) {
+                        return SizedBox(
+                          height: 330.v,
+                          child: ListView.builder(
+                            itemCount: state.products.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) => Padding(
+                              padding: EdgeInsets.only(right: 10.h),
+                              child: PromotionProductCard(
+                                  product: state.products[index]),
+                            ),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
                   ),
                 ),
                 SizedBox(height: 20.v),
@@ -190,53 +230,85 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 12.v),
-                SizedBox(
-                  height: 250.v,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) => Padding(
-                      padding: EdgeInsets.only(right: 10.h),
-                      child: Container(
-                        width: 185.h,
-                        decoration: BoxDecoration(
-                            color: AppColor.offWhite,
-                            borderRadius: BorderRadius.circular(12.h)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CustomImageView(
-                              height: 100.h,
-                              width: 100.h,
-                              radius: BorderRadius.circular(100.h),
-                              imagePath: ImageConstant.bannerGirl,
-                            ),
-                            Text(
-                              'Amrita Ghosh',
-                              style: textTheme.titleMedium!
-                                  .copyWith(fontSize: 16.fSize),
-                            ),
-                            SizedBox(height: 4.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                CustomImageView(
-                                    imagePath: ImageConstant.categoryIcon),
-                                SizedBox(width: 5.h),
-                                Text('Cosmetics', style: textTheme.bodySmall),
-                              ],
-                            ),
-                            SizedBox(height: 16.h),
-                            CustomElevatedButton(
-                              width: 122.h,
-                              height: 33.v,
-                              text: 'View Profile',
-                              buttonTextStyle: textTheme.titleSmall,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                BlocProvider(
+                  create: (context) =>
+                      AllSellerBloc(context.read<UserRepository>()),
+                  child: BlocBuilder<AllSellerBloc, AllSellerState>(
+                    builder: (context, state) {
+                      if (state is AllSellerInitial) {
+                        context
+                            .read<AllSellerBloc>()
+                            .add(FetchAllSellerEvent());
+                      } else if (state is AllSellerLoading) {
+                        return const HorizontalLoadingListPage();
+                      } else if (state is AllSellerError) {
+                        return Center(child: Text(state.message));
+                      } else if (state is AllSellerLoaded) {
+                        return SizedBox(
+                          height: 250.v,
+                          child: ListView.builder(
+                              itemCount: state.sellers.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                UserModel seller = state.sellers[index];
+                                return Padding(
+                                  padding: EdgeInsets.only(right: 10.h),
+                                  child: Container(
+                                    width: 185.h,
+                                    decoration: BoxDecoration(
+                                        color: AppColor.offWhite,
+                                        borderRadius:
+                                            BorderRadius.circular(12.h)),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        CustomImageView(
+                                          height: 100.h,
+                                          width: 100.h,
+                                          radius: BorderRadius.circular(100.h),
+                                          imagePath: seller.profileImg,
+                                        ),
+                                        SizedBox(height: 8.v),
+                                        Text(
+                                          seller.name ?? '',
+                                          style: textTheme.titleMedium!
+                                              .copyWith(fontSize: 16.fSize),
+                                        ),
+                                        // SizedBox(height: 4.h),
+                                        // Row(
+                                        //   mainAxisAlignment:
+                                        //       MainAxisAlignment.center,
+                                        //   children: [
+                                        //     CustomImageView(
+                                        //         imagePath:
+                                        //             ImageConstant.categoryIcon),
+                                        //     SizedBox(width: 5.h),
+                                        //     Text(
+                                        //         seller.productCategory
+                                        //             .toString(),
+                                        //         //'Cosmetics',
+                                        //         style: textTheme.bodySmall),
+                                        //   ],
+                                        // ),
+                                        SizedBox(height: 16.h),
+                                        CustomElevatedButton(
+                                          width: 122.h,
+                                          height: 33.v,
+                                          text: 'View Profile',
+                                          buttonTextStyle: textTheme.titleSmall,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
                   ),
                 ),
               ],
@@ -254,70 +326,6 @@ class HomeScreen extends StatelessWidget {
       default:
         return '';
     }
-  }
-
-  Container _buildProductCart(TextTheme textTheme) {
-    return Container(
-      decoration: BoxDecoration(
-          color: AppColor.offWhite, borderRadius: BorderRadius.circular(12.h)),
-      width: 200.h,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomImageView(
-            height: 185.v,
-            radius: BorderRadius.circular(12.h),
-            imagePath: ImageConstant.productImage,
-          ),
-          SizedBox(height: 4.v),
-          Text(
-            'Classic White Sneakers',
-            style: textTheme.titleMedium,
-          ),
-          SizedBox(height: 8.v),
-          Text(
-            'by Shubham Deep',
-            style: textTheme.bodySmall,
-          ),
-          SizedBox(height: 4.v),
-          Row(
-            children: [
-              Text(
-                'Category- ',
-                style: textTheme.bodySmall,
-              ),
-              Text(
-                'Footwear',
-                style: textTheme.titleMedium!.copyWith(fontSize: 12.fSize),
-              ),
-            ],
-          ),
-          SizedBox(height: 4.v),
-          Row(
-            children: [
-              Text(
-                'Promotion Pricing- ',
-                style: textTheme.bodySmall,
-              ),
-              Expanded(
-                child: Text(
-                  '₹4K-8K',
-                  style: textTheme.titleMedium!.copyWith(fontSize: 12.fSize),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.v),
-          Center(
-            child: CustomElevatedButton(
-              height: 26.v,
-              text: 'Ask for Promotion',
-              buttonTextStyle: textTheme.titleSmall,
-            ),
-          )
-        ],
-      ),
-    );
   }
 
   ListTile _buildConnectionItem(ConnectionsModel items, TextTheme textTheme) {
@@ -396,6 +404,83 @@ class HomeScreen extends StatelessWidget {
             },
           ),
           SizedBox(width: 8.h),
+        ],
+      ),
+    );
+  }
+}
+
+class PromotionProductCard extends StatelessWidget {
+  final Product product;
+
+  const PromotionProductCard({super.key, required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
+    return Container(
+      decoration: BoxDecoration(
+          color: AppColor.offWhite, borderRadius: BorderRadius.circular(12.h)),
+      width: 200.h,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomImageView(
+            height: 185.v,
+            width: SizeUtils.width,
+            radius: BorderRadius.circular(12.h),
+            imagePath: product.images.isEmpty
+                ? ImageConstant.productImage
+                : product.images[0].imagePath,
+            fit: BoxFit.fill,
+          ),
+          SizedBox(height: 4.v),
+          Text(
+            product.productName,
+            style: textTheme.titleMedium,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: 8.v),
+          Text(
+            'by ${product.user.name}',
+            style: textTheme.bodySmall,
+          ),
+          SizedBox(height: 4.v),
+          Row(
+            children: [
+              Text(
+                'Category- ',
+                style: textTheme.bodySmall,
+              ),
+              Text(
+                "${product.category.name}",
+                style: textTheme.titleMedium!.copyWith(fontSize: 12.fSize),
+              ),
+            ],
+          ),
+          SizedBox(height: 4.v),
+          Row(
+            children: [
+              Text(
+                'Promotion Pricing- ',
+                style: textTheme.bodySmall,
+              ),
+              Expanded(
+                child: Text(
+                  '₹${product.price}',
+                  style: textTheme.titleMedium!.copyWith(fontSize: 12.fSize),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.v),
+          Center(
+            child: CustomElevatedButton(
+              height: 26.v,
+              text: 'Ask for Promotion',
+              buttonTextStyle: textTheme.titleSmall,
+            ),
+          )
         ],
       ),
     );

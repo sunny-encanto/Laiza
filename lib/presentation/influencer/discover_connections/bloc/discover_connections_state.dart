@@ -13,14 +13,27 @@ final class DiscoverConnectionsLoading extends DiscoverConnectionsState {}
 
 final class DiscoverConnectionsError extends DiscoverConnectionsState {
   final String message;
+
   const DiscoverConnectionsError(this.message);
+
   @override
   List<Object> get props => [message];
 }
 
 final class DiscoverConnectionsLoaded extends DiscoverConnectionsState {
   final List<ConnectionsModel> connections;
+
   const DiscoverConnectionsLoaded(this.connections);
+
+  @override
+  List<Object> get props => [connections];
+}
+
+final class DiscoverConnectionsFilterLoaded extends DiscoverConnectionsState {
+  final List<ConnectionsModel> connections;
+
+  const DiscoverConnectionsFilterLoaded(this.connections);
+
   @override
   List<Object> get props => [connections];
 }

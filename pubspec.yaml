@@ -60,6 +60,9 @@ dependencies:
   fl_chart: ^0.69.0
   pinput: ^5.0.0
   pull_down_button: ^0.10.2
+  firebase_dynamic_links:
+
+
 
 
 

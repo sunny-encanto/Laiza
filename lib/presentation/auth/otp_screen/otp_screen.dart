@@ -1,5 +1,4 @@
 import 'package:laiza/core/app_export.dart';
-import 'package:laiza/presentation/auth/otp_screen/bloc/otp_screen_bloc.dart';
 import 'package:pinput/pinput.dart';
 
 class OtpScreen extends StatelessWidget {
@@ -66,20 +65,8 @@ class OtpScreen extends StatelessWidget {
           } else if (state is OtpResentSuccessState) {
             context.showSnackBar(state.message);
           } else if (state is OtpScreenSuccessState) {
-            Navigator.of(context)
-                .pushReplacementNamed(routeName, arguments: email);
-            // if (routeName.isEmpty) {
-            //   if (PrefUtils.getRole() == UserRole.user.name) {
-            //     Navigator.of(context).pushNamedAndRemoveUntil(
-            //         AppRoutes.bottomBarScreen, (route) => false);
-            //   } else {
-            //     Navigator.of(context).pushNamedAndRemoveUntil(
-            //         AppRoutes.homeScreen, (route) => false);
-            //   }
-            // } else {
-            //   Navigator.of(context)
-            //       .pushReplacementNamed(routeName, arguments: email);
-            // }
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                routeName, arguments: email, (route) => false);
           }
         },
         builder: (context, state) {

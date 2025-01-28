@@ -1,11 +1,14 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/models/connections_model/connections_model.dart';
+import 'package:laiza/presentation/shimmers/loading_list.dart';
 
 import '../../../empty_pages/no_connections_found/no_connections_found.dart';
 
 class ConnectionsScreen extends StatelessWidget {
   ConnectionsScreen({super.key});
-  final _searchController = TextEditingController();
+
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -15,24 +18,22 @@ class ConnectionsScreen extends StatelessWidget {
         'My Connections',
         style: textTheme.titleMedium!.copyWith(fontSize: 20.fSize),
       )),
-      body: Padding(
-        padding: EdgeInsets.all(20.0.h),
-        child: BlocBuilder<ConnectionsBloc, ConnectionsState>(
-          builder: (context, state) {
-            if (state is ConnectionsInitial) {
-              context.read<ConnectionsBloc>().add(FetchConnectionsEvent());
-            } else if (state is ConnectionsLoadingSate) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (state is ConnectionsErrorState) {
-              return Center(child: Text(state.message));
-            } else if (state is ConnectionsLoadedState) {
-              return _buildConnectionsWidget(context, state.connections);
-            }
-            return const SizedBox.shrink();
-          },
-        ),
+      body: BlocBuilder<ConnectionsBloc, ConnectionsState>(
+        builder: (context, state) {
+          if (state is ConnectionsInitial) {
+            context.read<ConnectionsBloc>().add(FetchConnectionsEvent());
+          } else if (state is ConnectionsLoadingSate) {
+            return const LoadingListPage();
+          } else if (state is ConnectionsErrorState) {
+            return Center(child: Text(state.message));
+          } else if (state is ConnectionsLoadedState) {
+            return Padding(
+              padding: EdgeInsets.all(20.0.h),
+              child: _buildConnectionsWidget(context, state.connections),
+            );
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
   }

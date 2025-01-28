@@ -11,6 +11,15 @@ final class VideoPlayerInitial extends VideoPlayerState {}
 
 class VideoPlayerLoading extends VideoPlayerState {}
 
+class VideoPlayerError extends VideoPlayerState {
+  final String message;
+
+  const VideoPlayerError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
 class VideoPlayerReady extends VideoPlayerState {
   final VideoPlayerController controller;
 

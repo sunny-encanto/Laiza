@@ -20,6 +20,7 @@ class CartScreen extends StatelessWidget {
         ),
       ),
       body: BlocBuilder<CartBloc, CartState>(
+        buildWhen: (previous, current) => previous != current,
         builder: (context, state) {
           if (state.isLoading!) {
             context.read<CartBloc>().add(FetchCartEvent());
@@ -102,7 +103,7 @@ class CartScreen extends StatelessWidget {
                         style: textTheme.bodySmall,
                       ),
                       Text(
-                        '₹ ${state.totalPrice.toStringAsFixed(2)}',
+                        '₹${state.totalPrice.toStringAsFixed(2)}',
                         style: textTheme.titleMedium,
                       )
                     ],
@@ -140,7 +141,8 @@ class CartScreen extends StatelessWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
     return InkWell(
       onTap: () {
-        Navigator.of(context).pushNamed(AppRoutes.productDetailScreen);
+        Navigator.of(context)
+            .pushNamed(AppRoutes.productDetailScreen, arguments: item.id);
       },
       child: SizedBox(
         width: SizeUtils.width,

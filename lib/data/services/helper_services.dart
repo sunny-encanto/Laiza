@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 class Helpers {
   static String formatTime(String timestamp) {
     DateTime dateTime = DateTime.parse(timestamp);
@@ -13,4 +15,18 @@ class Helpers {
     String formattedTime = '$hour:${minute.toString().padLeft(2, '0')} $period';
     return formattedTime;
   }
+}
+
+Color hexToColor(String hexString) {
+  // Remove the '#' if it exists
+  final buffer = StringBuffer();
+  if (hexString.startsWith('#')) {
+    hexString = hexString.substring(1);
+  }
+  // Add 'FF' for full opacity if not provided
+  if (hexString.length == 6) {
+    buffer.write('FF');
+  }
+  buffer.write(hexString);
+  return Color(int.parse(buffer.toString(), radix: 16));
 }

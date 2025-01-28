@@ -22,6 +22,7 @@ class UploadReelBloc extends Bloc<UploadReelEvent, UploadReelState> {
     on<AddMoreProductLinkEvent>(_onAddMoreProductLink);
     on<AddCoverPhotoEvent>(_onAddCoverPhotoAdded);
     on<UpdateReelRequestEvent>(_onUpdateReel);
+    on<AddReelEvent>(_onReelAdd);
   }
 
   FutureOr<void> _onAddMoreProductLink(
@@ -80,6 +81,14 @@ class UploadReelBloc extends Bloc<UploadReelEvent, UploadReelState> {
       emit(UploadReelSuccessState(responseData.message ?? ""));
     } catch (e) {
       emit(UploadReelErrorState(e.toString()));
+    }
+  }
+
+  FutureOr<void> _onReelAdd(
+      AddReelEvent event, Emitter<UploadReelState> emit) async {
+    Media? media = await MediaServices.pickFilePathAndExtension();
+    if (media != null) {
+      emit(ReelSelectedState(media.path));
     }
   }
 }

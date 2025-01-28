@@ -5,9 +5,9 @@ import 'package:laiza/data/models/followers_model/follower.dart';
 import 'package:laiza/data/models/followers_model/followers_model.dart';
 
 import '../../../core/app_export.dart';
+import '../../../core/network/dio_client.dart';
 import '../../../core/utils/api_constant.dart';
 import '../../models/following_model/following_model.dart';
-import '../../services/apiClient/dio_client.dart';
 
 class FollowersRepository {
   final ApiClient _apiClient = ApiClient();

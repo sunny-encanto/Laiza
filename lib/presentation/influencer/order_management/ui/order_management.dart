@@ -1,4 +1,7 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/presentation/shimmers/loading_list.dart';
+
+import '../bloc/influencer_orders_bloc.dart';
 
 class OrderManagementScreen extends StatelessWidget {
   const OrderManagementScreen({super.key});
@@ -68,12 +71,25 @@ class OrderManagementScreen extends StatelessWidget {
                 style: textTheme.titleMedium,
               ),
               SizedBox(height: 20.h),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: 3,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return _buildItem(textTheme, context);
+              BlocBuilder<InfluencerOrdersBloc, InfluencerOrdersState>(
+                builder: (context, state) {
+                  if (state is InfluencerOrdersInitial) {
+                    context
+                        .read<InfluencerOrdersBloc>()
+                        .add(FetchInfluencerOrdersEvent());
+                  } else if (state is InfluencerOrdersLoading) {
+                    return const LoadingListPage();
+                  } else if (state is InfluencerOrdersLoaded) {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: 3,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return _buildItem(textTheme, context);
+                      },
+                    );
+                  }
+                  return const SizedBox.shrink();
                 },
               ),
               Text(

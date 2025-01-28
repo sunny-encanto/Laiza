@@ -1,14 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
+import 'package:laiza/data/repositories/product_repository/product_repository.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
+import 'package:laiza/data/services/notification_service.dart';
 
 import 'core/app_export.dart';
 import 'core/network/connectivity_cubit.dart';
 import 'core/utils/pref_utils.dart';
 import 'data/models/user/user_model.dart';
 import 'data/repositories/comments_repository/comments_repository.dart';
+import 'data/services/deeplink_service.dart';
 import 'data/services/firebase_messaging_service.dart';
-import 'data/services/notification_service.dart';
 import 'localization/app_localization.dart';
 import 'theme/theme.dart';
 
@@ -24,6 +26,7 @@ void main() async {
   await FirebaseMessagingService.onBackgroundMessage();
   await FirebaseMessagingService.generateToken();
   await getFromCompleteStatus();
+
   Logger.init(LogMode.debug);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -32,12 +35,32 @@ void main() async {
   });
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    DeepLinkService.handleDynamicLinks();
+    // DeepLinkService.handleIncomingLinks();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    DeepLinkService.dispose();
+    // DeepLinkService.linkSubscription?.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Sizer(builder: (context, orientation, deviceType) {
+    return Sizer(builder:
+        (BuildContext context, Orientation orientation, DeviceType deviceType) {
       return MultiRepositoryProvider(
         providers: [
           RepositoryProvider(
@@ -60,6 +83,8 @@ class MyApp extends StatelessWidget {
               create: (BuildContext context) => ReelRepository()),
           RepositoryProvider(
               create: (BuildContext context) => CommentsRepository()),
+          RepositoryProvider(
+              create: (BuildContext context) => ProductRepository()),
         ],
         child: MultiBlocProvider(
           providers: [

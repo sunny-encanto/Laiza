@@ -1,23 +1,31 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/data/models/product_model/product.dart';
 import 'package:laiza/data/models/selectionPopupModel/selection_popup_model.dart';
+import 'package:laiza/data/repositories/product_repository/product_repository.dart';
+import 'package:laiza/presentation/user/video_player/ui/video_player.dart';
 import 'package:laiza/widgets/custom_drop_down.dart';
 
 import '../../../../data/blocs/category_bloc/category_bloc.dart';
+import '../../../../data/blocs/product_bloc/product_bloc.dart';
 import '../../../../data/models/category_model/Category.dart';
 import '../../../../data/models/reels_model/reel.dart';
+import '../../../../widgets/custom_searchable_dropdown.dart';
 
 class UploadReelScreen extends StatelessWidget {
-  final String mediaPath;
+  final String? mediaPath;
   final Reel? reel;
 
-  UploadReelScreen({super.key, required this.mediaPath, this.reel});
+  UploadReelScreen({super.key, this.mediaPath, this.reel});
 
   SelectionPopupModel? selectedCategory;
+  SelectionPopupModel? selectedProduct;
   final tittleController = TextEditingController();
   final desController = TextEditingController();
+  final productController = TextEditingController();
   final hashTagController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   String coverImage = '';
+  String reelPath = '';
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +35,6 @@ class UploadReelScreen extends StatelessWidget {
       desController.text = reel?.reelDescription ?? '';
       hashTagController.text = reel?.reelHashtag ?? '';
       coverImage = reel?.reelCoverPath ?? '';
-      print('CateId ${reel?.catId}');
     }
     return Scaffold(
       appBar: AppBar(
@@ -46,103 +53,198 @@ class UploadReelScreen extends StatelessWidget {
               children: [
                 BlocBuilder<UploadReelBloc, UploadReelState>(
                   buildWhen: (previous, current) =>
-                      current is UploadReelCoverPhotoSelectedSate,
+                      current is ReelSelectedState,
                   builder: (context, state) {
-                    if (state is UploadReelCoverPhotoSelectedSate) {
-                      coverImage = state.imagePath;
+                    if (state is ReelSelectedState) {
+                      reelPath = state.path;
                       return Stack(
                         alignment: Alignment.center,
                         children: [
-                          CustomImageView(
-                            onTap: () {},
-                            height: 470.v,
-                            width: SizeUtils.width,
-                            fit: BoxFit.fill,
-                            radius: BorderRadius.only(
-                                bottomRight: Radius.circular(12.h),
-                                bottomLeft: Radius.circular(12.h)),
-                            imagePath: state.imagePath,
-                          ),
-                          InkWell(
-                            onTap: () {},
-                            child: Container(
-                              padding: EdgeInsets.all(10.h),
-                              decoration: const BoxDecoration(
-                                  shape: BoxShape.circle, color: Colors.white),
-                              child: Icon(
-                                Icons.play_arrow,
-                                color: Colors.black,
-                                size: 30.h,
-                              ),
-                            ),
-                          )
+                          VideoPlayerFromFile(path: reelPath),
+
+                          // CustomImageView(
+                          //   onTap: () {},
+                          //   height: 470.v,
+                          //   width: SizeUtils.width,
+                          //   fit: BoxFit.fill,
+                          //   radius: BorderRadius.only(
+                          //       bottomRight: Radius.circular(12.h),
+                          //       bottomLeft: Radius.circular(12.h)),
+                          //   imagePath: state.path,
+                          // ),
+                          // const PlayButton(isVisible: true)
                         ],
                       );
                     }
 
-                    if (coverImage.isNotEmpty) {
+                    if (reelPath.isNotEmpty) {
                       return Stack(
                         alignment: Alignment.center,
                         children: [
-                          CustomImageView(
-                            onTap: () {},
-                            height: 470.v,
-                            width: SizeUtils.width,
-                            fit: BoxFit.fill,
-                            radius: BorderRadius.only(
-                                bottomRight: Radius.circular(12.h),
-                                bottomLeft: Radius.circular(12.h)),
-                            imagePath: coverImage,
+                          VideoPlayerFromFile(
+                            path: reelPath,
                           ),
-                          InkWell(
-                            onTap: () {},
-                            child: Container(
-                              padding: EdgeInsets.all(10.h),
-                              decoration: const BoxDecoration(
-                                  shape: BoxShape.circle, color: Colors.white),
-                              child: Icon(
-                                Icons.play_arrow,
-                                color: Colors.black,
-                                size: 30.h,
-                              ),
-                            ),
-                          )
+                          // CustomImageView(
+                          //   onTap: () {},
+                          //   height: 470.v,
+                          //   width: SizeUtils.width,
+                          //   fit: BoxFit.fill,
+                          //   radius: BorderRadius.only(
+                          //       bottomRight: Radius.circular(12.h),
+                          //       bottomLeft: Radius.circular(12.h)),
+                          //   imagePath: coverImage,
+                          // ),
                         ],
                       );
                     }
                     return const SizedBox.shrink();
                   },
                 ),
+
                 SizedBox(height: 20.v),
-                InkWell(
-                  onTap: () {
-                    context.read<UploadReelBloc>().add(AddCoverPhotoEvent());
-                  },
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 92.h,
-                        width: 92.h,
-                        padding: EdgeInsets.all(30.h),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6.h),
-                          border: Border.all(color: Colors.grey),
-                        ),
-                        child: CustomImageView(
-                          height: 32.h,
-                          width: 32.h,
-                          imagePath: ImageConstant.uploadIcon,
-                        ),
-                      ),
-                      SizedBox(width: 32.h),
-                      Text(
-                        'Choose Cover Photo',
-                        style:
-                            textTheme.titleLarge!.copyWith(fontSize: 16.fSize),
-                      )
-                    ],
+                if (reel == null)
+                  InkWell(
+                    onTap: () {
+                      context.read<UploadReelBloc>().add(AddReelEvent());
+                    },
+                    child: BlocBuilder<UploadReelBloc, UploadReelState>(
+                      buildWhen: (previous, current) =>
+                          current is UploadReelCoverPhotoSelectedSate,
+                      builder: (context, state) {
+                        return Row(
+                          children: [
+                            Container(
+                              height: 92.h,
+                              width: 92.h,
+                              padding: EdgeInsets.all(30.h),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6.h),
+                                border: Border.all(color: Colors.grey),
+                              ),
+                              child: CustomImageView(
+                                height: 32.h,
+                                width: 32.h,
+                                imagePath: ImageConstant.uploadReel,
+                              ),
+                            ),
+                            SizedBox(width: 32.h),
+                            Text(
+                              'Add Your POP',
+                              style: textTheme.titleLarge!
+                                  .copyWith(fontSize: 16.fSize),
+                            )
+                          ],
+                        );
+                      },
+                    ),
                   ),
+                SizedBox(height: 20.v),
+                BlocBuilder<UploadReelBloc, UploadReelState>(
+                  buildWhen: (previous, current) =>
+                      current is UploadReelCoverPhotoSelectedSate,
+                  builder: (context, state) {
+                    if (state is UploadReelCoverPhotoSelectedSate) {
+                      coverImage = state.imagePath;
+                      return InkWell(
+                        onTap: () {
+                          context
+                              .read<UploadReelBloc>()
+                              .add(AddCoverPhotoEvent());
+                        },
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 92.h,
+                              width: 92.h,
+                              padding: EdgeInsets.all(10.h),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6.h),
+                                border: Border.all(color: Colors.grey),
+                              ),
+                              child: CustomImageView(
+                                height: 32.h,
+                                width: 32.h,
+                                imagePath: coverImage,
+                              ),
+                            ),
+                            SizedBox(width: 32.h),
+                            Text(
+                              'Choose Cover Photo',
+                              style: textTheme.titleLarge!
+                                  .copyWith(fontSize: 16.fSize),
+                            )
+                          ],
+                        ),
+                      );
+                    }
+
+                    if (coverImage.isNotEmpty) {
+                      return InkWell(
+                        onTap: () {
+                          context
+                              .read<UploadReelBloc>()
+                              .add(AddCoverPhotoEvent());
+                        },
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 92.h,
+                              width: 92.h,
+                              padding: EdgeInsets.all(10.h),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6.h),
+                                border: Border.all(color: Colors.grey),
+                              ),
+                              child: CustomImageView(
+                                height: 92.h,
+                                width: 92.h,
+                                imagePath: coverImage,
+                              ),
+                            ),
+                            SizedBox(width: 32.h),
+                            Text(
+                              'Choose Cover Photo',
+                              style: textTheme.titleLarge!
+                                  .copyWith(fontSize: 16.fSize),
+                            )
+                          ],
+                        ),
+                      );
+                    }
+                    return InkWell(
+                      onTap: () {
+                        context
+                            .read<UploadReelBloc>()
+                            .add(AddCoverPhotoEvent());
+                      },
+                      child: Row(
+                        children: [
+                          Container(
+                            height: 92.h,
+                            width: 92.h,
+                            padding: EdgeInsets.all(30.h),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6.h),
+                              border: Border.all(color: Colors.grey),
+                            ),
+                            child: CustomImageView(
+                              height: 32.h,
+                              width: 32.h,
+                              imagePath: ImageConstant.uploadIcon,
+                            ),
+                          ),
+                          SizedBox(width: 32.h),
+                          Text(
+                            'Choose Cover Photo',
+                            style: textTheme.titleLarge!
+                                .copyWith(fontSize: 16.fSize),
+                          )
+                        ],
+                      ),
+                    );
+                  },
                 ),
+
                 SizedBox(height: 20.v),
                 Text(
                   'Add a Title',
@@ -157,6 +259,50 @@ class UploadReelScreen extends StatelessWidget {
                         value: value ?? '', title: 'product title');
                   },
                 ),
+                SizedBox(height: 20.v),
+                Text(
+                  'Product',
+                  style: textTheme.titleMedium,
+                ),
+                SizedBox(height: 8.v),
+                BlocProvider(
+                  create: (context) =>
+                      ProductBloc(context.read<ProductRepository>()),
+                  child: BlocBuilder<ProductBloc, ProductState>(
+                    builder: (context, state) {
+                      if (state is ProductInitial) {
+                        context.read<ProductBloc>().add(LoadProducts());
+                        return const SizedBox.shrink();
+                      } else if (state is ProductLoading) {
+                        return const SizedBox.shrink();
+                      } else if (state is ProductLoaded) {
+                        if (reel != null) {
+                          Product product = state.products
+                              .where((item) => item.id == reel?.productId)
+                              .first;
+                          selectedProduct = SelectionPopupModel(
+                              title: product.productName, value: product.id);
+                          productController.text = selectedProduct?.title ?? '';
+                        }
+                        return SearchableDropdown(
+                          controller: productController,
+                          items: state.products
+                              .map((Product product) => SelectionPopupModel(
+                                  value: product.id.toInt(),
+                                  title: product.productName))
+                              .toList(),
+                          hint: 'Select Product',
+                          onChanged: (value) {
+                            selectedProduct = value;
+                          },
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    },
+                  ),
+                ),
+
                 SizedBox(height: 20.v),
                 Text(
                   'Description',
@@ -210,8 +356,7 @@ class UploadReelScreen extends StatelessWidget {
                               .where((item) => item.id == reel?.catId)
                               .first;
                           selectedCategory = SelectionPopupModel(
-                              title: category.categoryName ?? '',
-                              value: category.id);
+                              title: category.name ?? '', value: category.id);
                         }
                         return CustomDropDown(
                           value: selectedCategory,
@@ -219,7 +364,7 @@ class UploadReelScreen extends StatelessWidget {
                           items: state.category
                               .map((Category category) => SelectionPopupModel(
                                   value: category.id!.toInt(),
-                                  title: category.categoryName ?? ''))
+                                  title: category.name ?? ''))
                               .toList(),
                           validator: (SelectionPopupModel? value) {
                             return validateField(
@@ -311,7 +456,6 @@ class UploadReelScreen extends StatelessWidget {
                       newReel.reelTitle = tittleController.text;
                       newReel.reelDescription = desController.text;
                       newReel.reelHashtag = hashTagController.text;
-
                       context
                           .read<UploadReelBloc>()
                           .add(UpdateReelRequestEvent(newReel));
@@ -319,9 +463,9 @@ class UploadReelScreen extends StatelessWidget {
                       context
                           .read<UploadReelBloc>()
                           .add(UploadReelSubmitRequestEvent(
-                            reelPath: mediaPath,
+                            reelPath: reelPath,
                             reelTitle: tittleController.text,
-                            productId: 2,
+                            productId: selectedProduct?.value ?? 0,
                             reelDes: desController.text,
                             categoryId: selectedCategory?.value ?? 0,
                             coverPath: coverImage,

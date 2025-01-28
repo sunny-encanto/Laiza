@@ -40,70 +40,75 @@ class WishlistScreen extends StatelessWidget {
     );
   }
 
-  SizedBox _buildItems(Wishlist item, BuildContext context) {
+  InkWell _buildItems(WishlistData item, BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return SizedBox(
-      width: SizeUtils.width,
-      child: Padding(
-        padding: EdgeInsets.only(bottom: 20.v),
-        child: Row(
-          children: [
-            CustomImageView(
-              width: 135.h,
-              height: 135.v,
-              fit: BoxFit.fill,
-              radius: BorderRadius.only(
-                  topLeft: Radius.circular(12.h),
-                  bottomLeft: Radius.circular(12.h)),
-              imagePath: item.thumbnail,
-            ),
-            SizedBox(width: 5.h),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.title,
-                    style: textTheme.bodySmall,
-                  ),
-                  SizedBox(height: 8.v),
-                  Text(
-                    '₹${item.price}',
-                    style: textTheme.titleMedium,
-                  ),
-                  SizedBox(height: 12.v),
-                  Row(
-                    children: [
-                      CustomElevatedButton(
-                        width: 104.h,
-                        height: 28.h,
-                        text: 'Buy Now',
-                        buttonTextStyle:
-                            textTheme.titleSmall!.copyWith(fontSize: 12.fSize),
-                        onPressed: () {
-                          Navigator.of(context).pushNamed(
-                              AppRoutes.productDetailScreen,
-                              arguments: item.id);
-                        },
-                      ),
-                      const Spacer(),
-                      TextButton(
-                          onPressed: () {
-                            context
-                                .read<WishlistBloc>()
-                                .add(RemoveWishListsItemEvent(item.id));
-                          },
-                          child: Text(
-                            'Remove',
-                            style: textTheme.bodySmall!
-                                .copyWith(color: AppColor.redColor),
-                          ))
-                    ],
-                  )
-                ],
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).pushNamed(AppRoutes.productDetailScreen,
+            arguments: item.productId);
+      },
+      child: SizedBox(
+        width: SizeUtils.width,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 20.v),
+          child: Row(
+            children: [
+              CustomImageView(
+                width: 135.h,
+                height: 135.v,
+                fit: BoxFit.fill,
+                radius: BorderRadius.only(
+                    topLeft: Radius.circular(12.h),
+                    bottomLeft: Radius.circular(12.h)),
+                imagePath: item.product.images[0].imagePath,
               ),
-            )
-          ],
+              SizedBox(width: 5.h),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.product.productName,
+                      style: textTheme.bodySmall,
+                    ),
+                    SizedBox(height: 8.v),
+                    Text(
+                      '₹${item.product.price}',
+                      style: textTheme.titleMedium,
+                    ),
+                    SizedBox(height: 12.v),
+                    Row(
+                      children: [
+                        CustomElevatedButton(
+                          width: 104.h,
+                          height: 28.h,
+                          text: 'Buy Now',
+                          buttonTextStyle: textTheme.titleSmall!
+                              .copyWith(fontSize: 12.fSize),
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(
+                                AppRoutes.productDetailScreen,
+                                arguments: item.product.id);
+                          },
+                        ),
+                        const Spacer(),
+                        TextButton(
+                            onPressed: () {
+                              context.read<WishlistBloc>().add(
+                                  RemoveWishListsItemEvent(item.product.id));
+                            },
+                            child: Text(
+                              'Remove',
+                              style: textTheme.bodySmall!
+                                  .copyWith(color: AppColor.redColor),
+                            ))
+                      ],
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

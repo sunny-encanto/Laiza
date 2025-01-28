@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/data/models/login_model/login_model.dart';
+import 'package:laiza/data/services/firebase_messaging_service.dart';
 import 'package:laiza/data/services/firebase_services.dart';
 
 import '../../../../core/app_export.dart';
 import '../../../../data/models/user/user_model.dart';
-import '../../../../data/services/firebase_messaging_service.dart';
 import 'login_event.dart';
 import 'login_state.dart';
 

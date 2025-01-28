@@ -491,9 +491,9 @@ class InfluencerFormScreen extends StatelessWidget {
           CustomTextFormField(
             controller: instagramUserNameController,
             hintText: 'Eg. abc_xyz',
-            validator: (String? value) {
-              return validateField(value: value!, title: ' instagram username');
-            },
+            // validator: (String? value) {
+            //   return validateField(value: value!, title: ' instagram username');
+            // },
           ),
           SizedBox(height: 16.v),
           Text(
@@ -504,9 +504,9 @@ class InfluencerFormScreen extends StatelessWidget {
           CustomTextFormField(
             controller: followersCountController,
             hintText: 'Eg.50K',
-            validator: (value) {
-              return validateField(value: value!, title: 'followers count');
-            },
+            // validator: (value) {
+            //   return validateField(value: value!, title: 'followers count');
+            // },
           ),
           SizedBox(height: 16.v),
           Text(
@@ -517,9 +517,9 @@ class InfluencerFormScreen extends StatelessWidget {
           CustomTextFormField(
             controller: instagramLinkController,
             hintText: 'Paste link',
-            validator: (value) {
-              return validateField(value: value!, title: ' instagram account');
-            },
+            // validator: (value) {
+            //   return validateField(value: value!, title: ' instagram account');
+            // },
           ),
           SizedBox(height: 16.v),
           Text(
@@ -530,9 +530,9 @@ class InfluencerFormScreen extends StatelessWidget {
           CustomTextFormField(
             controller: xAccountController,
             hintText: 'Paste link',
-            validator: (value) {
-              return validateField(value: value!, title: 'X.com account');
-            },
+            // validator: (value) {
+            //   return validateField(value: value!, title: 'X.com account');
+            // },
           ),
           SizedBox(height: 16.v),
           Text(
@@ -543,9 +543,9 @@ class InfluencerFormScreen extends StatelessWidget {
           CustomTextFormField(
             controller: facebookAccountController,
             hintText: 'Paste link',
-            validator: (value) {
-              return validateField(value: value!, title: 'facebook account');
-            },
+            // validator: (value) {
+            //   return validateField(value: value!, title: 'facebook account');
+            // },
           ),
           SizedBox(height: 16.v),
           Text(
@@ -556,9 +556,9 @@ class InfluencerFormScreen extends StatelessWidget {
           CustomTextFormField(
             controller: snapchatController,
             hintText: 'Paste link',
-            validator: (value) {
-              return validateField(value: value!, title: 'snapchat  account ');
-            },
+            // validator: (value) {
+            //   return validateField(value: value!, title: 'snapchat  account ');
+            // },
           ),
           SizedBox(height: 16.v),
           Text(
@@ -583,12 +583,12 @@ class InfluencerFormScreen extends StatelessWidget {
                     items: state.category
                         .map((Category category) => SelectionPopupModel(
                             value: category.id!.toInt(),
-                            title: category.categoryName ?? ''))
+                            title: category.name ?? ''))
                         .toList(),
-                    // validator: (SelectionPopupModel? value) {
-                    //   return validateField(
-                    //       value: value?.title ?? '', title: 'product category');
-                    // },
+                    validator: (SelectionPopupModel? value) {
+                      return validateField(
+                          value: value?.title ?? '', title: 'product category');
+                    },
                     onChanged: (SelectionPopupModel? val) {
                       selectedCategory = val;
                     },

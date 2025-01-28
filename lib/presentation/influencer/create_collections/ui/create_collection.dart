@@ -1,4 +1,5 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/presentation/shimmers/loading_grid.dart';
 
 import '../../../../widgets/post_card_widget.dart';
 
@@ -20,9 +21,7 @@ class CreateCollectionScreen extends StatelessWidget {
           if (state is CreateCollectionInitial) {
             context.read<CreateCollectionBloc>().add(CollectionFetchEvent());
           } else if (state is CreateCollectionLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const LoadingGridScreen();
           } else if (state is CreateCollectionLoaded) {
             return GridView.builder(
                 padding: EdgeInsets.all(20.h),

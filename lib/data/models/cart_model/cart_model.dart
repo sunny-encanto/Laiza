@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class CartModel extends Equatable {
+  final int cartId;
   final int id;
   final String url;
   final double price;
@@ -9,6 +10,7 @@ class CartModel extends Equatable {
   final bool isSelected;
 
   const CartModel({
+    required this.cartId,
     required this.id,
     required this.url,
     required this.price,
@@ -22,6 +24,7 @@ class CartModel extends Equatable {
     bool? isSelected,
   }) =>
       CartModel(
+        cartId: cartId,
         id: id,
         url: url,
         price: price,
@@ -31,35 +34,6 @@ class CartModel extends Equatable {
       );
 
   @override
-  List<Object?> get props => [id, url, price, quantity, name, isSelected];
+  List<Object?> get props =>
+      [id, url, price, quantity, name, isSelected, cartId];
 }
-
-List<CartModel> cartItemsList = <CartModel>[
-  const CartModel(
-    id: 1,
-    name: 'Classic  Sneakers – Minimalist Design, Maximum Comfort',
-    url:
-        'https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350',
-    price: 123,
-    quantity: 1,
-    isSelected: false,
-  ),
-  const CartModel(
-    id: 2,
-    name: 'Classic  Sneakers – Minimalist Design, Maximum Comfort',
-    url:
-        'https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350',
-    price: 123,
-    quantity: 1,
-    isSelected: false,
-  ),
-  const CartModel(
-    id: 3,
-    name: 'Classic  Sneakers – Minimalist Design, Maximum Comfort',
-    url:
-        'https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350',
-    price: 123,
-    quantity: 1,
-    isSelected: false,
-  ),
-];

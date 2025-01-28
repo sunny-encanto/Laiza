@@ -29,15 +29,6 @@ final class CommentsLoaded extends CommentsState {
   List<Object> get props => [comments];
 }
 
-final class CommentsReplyLoaded extends CommentsState {
-  final List<Comment> comments;
-
-  const CommentsReplyLoaded(this.comments);
-
-  @override
-  List<Object> get props => [comments];
-}
-
 final class CommentDeletedState extends CommentsState {
   final String message;
 

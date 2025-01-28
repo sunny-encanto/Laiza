@@ -1,8 +1,10 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/models/post_model/post_model.dart';
+import 'package:laiza/widgets/play_button.dart';
 
 class PostCardWidget extends StatelessWidget {
   final Post post;
+
   const PostCardWidget({super.key, required this.post});
 
   @override
@@ -19,15 +21,7 @@ class PostCardWidget extends StatelessWidget {
             radius: BorderRadius.circular(6.h),
             imagePath: post.url,
           ),
-          Visibility(
-            visible: post.isVideo,
-            child: Container(
-              padding: EdgeInsets.all(5.h),
-              decoration: const BoxDecoration(
-                  color: Colors.white, shape: BoxShape.circle),
-              child: const Icon(Icons.play_arrow),
-            ),
-          )
+          PlayButton(isVisible: post.isVideo)
         ],
       ),
     );

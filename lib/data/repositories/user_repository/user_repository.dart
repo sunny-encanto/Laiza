@@ -6,8 +6,8 @@ import 'package:laiza/data/models/user/user_model.dart';
 import 'package:laiza/data/models/user_profile_model/user_profile_model.dart';
 
 import '../../../core/app_export.dart';
+import '../../../core/network/dio_client.dart';
 import '../../../core/utils/api_constant.dart';
-import '../../services/apiClient/dio_client.dart';
 
 class UserRepository {
   final ApiClient _apiClient = ApiClient();
@@ -45,17 +45,17 @@ class UserRepository {
           .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
       // Prepare map data
       final Map<String, dynamic> data = user.toJson();
-
       // Conditionally add the image key if the profile image is available
       if (user.profileImg != null && !user.profileImg!.contains('https:')) {
         data['profile_img'] = await MultipartFile.fromFile(
           user.profileImg!,
           filename: user.profileImg!.split('/').last,
         );
+      } else {
+        data.remove('profile_img');
       }
       // Create FormData from the map
       FormData formData = FormData.fromMap(data);
-
       Response response =
           await _apiClient.post(ApiConstant.updateProfile, data: formData);
       if (response.statusCode == 200) {
@@ -79,10 +79,10 @@ class UserRepository {
       Response response = await _apiClient.get(ApiConstant.allInfluencers);
       if (response.statusCode == 200) {
         AllInfluencerModel model = AllInfluencerModel.fromJson(response.data);
-        return model.influencers ?? <UserModel>[];
+        return model.influencers;
       } else {
         AllInfluencerModel model = AllInfluencerModel.fromJson(response.data);
-        return model.influencers ?? <UserModel>[];
+        return model.influencers;
       }
     } on DioException catch (e) {
       String message = e.response?.data['message'] ?? 'Unknown error';
@@ -90,6 +90,27 @@ class UserRepository {
     } catch (e) {
       Logger.log('Error during  Get all influencer', e.toString());
       throw Exception('Failed to get all influencers');
+    }
+  }
+
+  Future<List<UserModel>> getAllSeller() async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+      Response response = await _apiClient.get(ApiConstant.allSeller);
+      if (response.statusCode == 200) {
+        AllInfluencerModel model = AllInfluencerModel.fromJson(response.data);
+        return model.influencers;
+      } else {
+        AllInfluencerModel model = AllInfluencerModel.fromJson(response.data);
+        return model.influencers;
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during  get all seller', e.toString());
+      throw Exception('Failed to get all seller');
     }
   }
 }

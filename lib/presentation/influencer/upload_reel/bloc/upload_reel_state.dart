@@ -16,6 +16,15 @@ final class UploadReelCoverPhotoSelectedSate extends UploadReelState {
   List<Object> get props => [imagePath];
 }
 
+final class ReelSelectedState extends UploadReelState {
+  final String path;
+
+  const ReelSelectedState(this.path);
+
+  @override
+  List<Object> get props => [path];
+}
+
 final class UploadReelInitial extends UploadReelState {
   final List<TextEditingController> controllers;
   final List<FocusNode> focusNodes;

@@ -43,7 +43,7 @@ class EditProfileScreen extends StatelessWidget {
             }
             if (state is ProfileFetchedState) {
               _nameController.text = state.user.name ?? "";
-              // _bioController.text =state.user.bio
+              //_bioController.text =state.user.bio
               _instagramController.text = state.user.instagramLink ?? '';
               _facebookController.text = state.user.facebookLink ?? '';
               _snapChatController.text = state.user.snapchatLink ?? '';
@@ -167,7 +167,7 @@ class EditProfileScreen extends StatelessWidget {
                                             category.id ==
                                             _userModel?.productCategory!);
                                     selectedCategory = SelectionPopupModel(
-                                        title: category.categoryName ?? '',
+                                        title: category.name ?? '',
                                         value: category.id);
                                   }
                                   return CustomDropDown(
@@ -176,7 +176,7 @@ class EditProfileScreen extends StatelessWidget {
                                     items: state.category
                                         .map((e) => SelectionPopupModel(
                                             value: e.id!.toInt(),
-                                            title: e.categoryName ?? ''))
+                                            title: e.name ?? ''))
                                         .toList(),
                                     validator: (value) {
                                       return validateField(
@@ -206,9 +206,9 @@ class EditProfileScreen extends StatelessWidget {
                             controller: _bioController,
                             maxLines: 10,
                             hintText: 'bio',
-                            validator: (value) {
-                              return validateField(value: value!, title: 'bio');
-                            },
+                            // validator: (value) {
+                            //   return validateField(value: value!, title: 'bio');
+                            // },
                           ),
                           SizedBox(height: 10.v),
                           Text(
@@ -245,9 +245,9 @@ class EditProfileScreen extends StatelessWidget {
                           CustomTextFormField(
                             controller: _facebookController,
                             hintText: 'Paste account link',
-                            validator: (value) {
-                              return validateName(value!);
-                            },
+                            // validator: (value) {
+                            //   return validateName(value!);
+                            // },
                           ),
                           SizedBox(height: 10.v),
                           Text(
@@ -258,9 +258,9 @@ class EditProfileScreen extends StatelessWidget {
                           CustomTextFormField(
                             controller: _snapChatController,
                             hintText: 'Paste account link',
-                            validator: (value) {
-                              return validateName(value!);
-                            },
+                            // validator: (value) {
+                            //   return validateName(value!);
+                            // },
                           ),
                           SizedBox(height: 108.v),
                         ],
@@ -279,6 +279,8 @@ class EditProfileScreen extends StatelessWidget {
         child: BlocConsumer<EditProfileBloc, EditProfileState>(
           listener: (context, state) {
             if (state is EditProfileSuccessState) {
+              context.showSnackBar(state.message);
+            } else if (state is EditProfileError) {
               context.showSnackBar(state.message);
             }
           },

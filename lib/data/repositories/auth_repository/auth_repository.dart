@@ -4,10 +4,10 @@ import 'package:laiza/data/models/login_model/login_model.dart';
 import 'package:laiza/data/models/otp_verification_model/otp_verification_model.dart';
 import 'package:laiza/data/models/signup_model/signup_model.dart';
 
+import '../../../core/network/dio_client.dart';
 import '../../../core/utils/api_constant.dart';
 import '../../../core/utils/logger.dart';
 import '../../models/common_model/common_model.dart';
-import '../../services/apiClient/dio_client.dart';
 
 class AuthRepository {
   final ApiClient _apiClient = ApiClient();

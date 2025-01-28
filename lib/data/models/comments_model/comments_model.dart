@@ -20,8 +20,8 @@ class CommentModel {
         status: json["status"],
         error: json["error"],
         commentCount: json["comment_count"],
-        comment:
-            List<Comment>.from(json["comment"].map((x) => Comment.fromJson(x))),
+        comment: List<Comment>.from(
+            json["comments"].map((x) => Comment.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -29,6 +29,6 @@ class CommentModel {
         "status": status,
         "error": error,
         "comment_count": commentCount,
-        "comment": List<dynamic>.from(comment.map((x) => x.toJson())),
+        "comments": List<dynamic>.from(comment.map((x) => x.toJson())),
       };
 }

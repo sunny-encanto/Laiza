@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.laiza.greatminds",
+      "sha256_cert_fingerprints": [
+        "2A:97:21:3B:56:A5:5E:C9:2B:17:1D:17:98:94:DD:8C:C9:33:6A:15:3A:A2:D6:3C:46:3A:C7:EA:3F:02:19:E6"
+      ]
+    }
+  }
+]

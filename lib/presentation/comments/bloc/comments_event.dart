@@ -18,11 +18,12 @@ class CommentLoadEvent extends CommentsEvent {
 
 class CommentLikeUnLikeEvent extends CommentsEvent {
   final int id;
+  final int parentId;
 
-  const CommentLikeUnLikeEvent(this.id);
+  const CommentLikeUnLikeEvent({required this.id, required this.parentId});
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id, parentId];
 }
 
 class AddCommentEvent extends CommentsEvent {
@@ -33,15 +34,6 @@ class AddCommentEvent extends CommentsEvent {
 
   @override
   List<Object> get props => [reelId, comment];
-}
-
-class CommentReplyLoadEvent extends CommentsEvent {
-  final int commentId;
-
-  const CommentReplyLoadEvent(this.commentId);
-
-  @override
-  List<Object> get props => [commentId];
 }
 
 class AddCommentReplyEvent extends CommentsEvent {
@@ -56,9 +48,31 @@ class AddCommentReplyEvent extends CommentsEvent {
 
 class DeleteCommentEvent extends CommentsEvent {
   final int commentId;
+  final int parentId;
 
-  const DeleteCommentEvent(this.commentId);
+  const DeleteCommentEvent({required this.commentId, required this.parentId});
+
+  @override
+  List<Object> get props => [commentId, parentId];
+}
+
+class DeleteSubCommentEvent extends CommentsEvent {
+  final int commentId;
+
+  const DeleteSubCommentEvent(this.commentId);
 
   @override
   List<Object> get props => [commentId];
+}
+
+class EditCommentEvent extends CommentsEvent {
+  final int commentId;
+  final int reelId;
+  final String comment;
+
+  const EditCommentEvent(
+      {required this.commentId, required this.comment, required this.reelId});
+
+  @override
+  List<Object> get props => [commentId, comment, reelId];
 }

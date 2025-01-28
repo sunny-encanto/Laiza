@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
+import '../../../core/network/dio_client.dart';
 import '../../models/post_model/post_model.dart';
-import '../../services/apiClient/dio_client.dart';
 
 class PostRepository {
   final ApiClient _apiClient = ApiClient();

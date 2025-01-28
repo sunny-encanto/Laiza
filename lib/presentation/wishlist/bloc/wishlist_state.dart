@@ -12,7 +12,8 @@ final class WishlistInitial extends WishlistState {}
 final class WishlistLoadingState extends WishlistState {}
 
 final class WishlistLoadedState extends WishlistState {
-  final List<Wishlist> items;
+  final List<WishlistData> items;
+
   const WishlistLoadedState(this.items);
 
   @override
@@ -21,7 +22,9 @@ final class WishlistLoadedState extends WishlistState {
 
 final class WishlistErrorState extends WishlistState {
   final String message;
+
   const WishlistErrorState(this.message);
+
   @override
   List<Object> get props => [message];
 }

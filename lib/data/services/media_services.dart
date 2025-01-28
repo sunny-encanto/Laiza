@@ -15,7 +15,7 @@ class MediaServices {
 
   static Future<Media?> pickFilePathAndExtension() async {
     try {
-      const int maxSizeBytes = 10 * 1024 * 1024; // 10 MB
+      const int maxSizeBytes = 100 * 1024 * 1024; // 10 MB
       FilePickerResult? result = await FilePicker.platform
           .pickFiles(allowCompression: true, compressionQuality: maxSizeBytes);
       if (result != null) {
@@ -23,7 +23,7 @@ class MediaServices {
         String? fileName = result.files.single.name;
         String? fileExtension = p.extension(filePath ?? "");
         if (result.files.single.size > maxSizeBytes) {
-          Fluttertoast.showToast(msg: 'Size more Then Ten Mb Cant be Selected');
+          Fluttertoast.showToast(msg: 'Size more Then 100 Mb Cant be Selected');
         } else {
           return Media.fromJson(
               {'path': filePath, 'extension': fileExtension, 'name': fileName});

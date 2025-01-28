@@ -173,4 +173,5 @@ class ImageConstant {
   //Reel Page
   static String share__ = '$imagePath/Vector-2.svg';
   static String commnet__ = '$imagePath/Group 1000003113.svg';
+  static String uploadReel = '$imagePath/upload_reel.svg';
 }

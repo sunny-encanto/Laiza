@@ -5,8 +5,8 @@ import 'package:laiza/data/models/common_model/common_model.dart';
 import 'package:laiza/data/models/reels_model/reel.dart';
 import 'package:laiza/data/models/reels_model/reels_model.dart';
 
+import '../../../core/network/dio_client.dart';
 import '../../../core/utils/api_constant.dart';
-import '../../services/apiClient/dio_client.dart';
 
 class ReelRepository {
   final ApiClient _apiClient = ApiClient();

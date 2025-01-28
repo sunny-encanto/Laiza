@@ -117,20 +117,28 @@ class LoginScreen extends StatelessWidget {
                       } else if (state is LoginSuccessState) {
                         context.showSnackBar('Successfully logged In');
                         if (PrefUtils.getRole() == UserRole.user.name) {
-                          Navigator.of(context)
-                              .pushReplacementNamed(AppRoutes.bottomBarScreen);
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            AppRoutes.bottomBarScreen,
+                            (route) => false,
+                          );
                         } else {
                           if (state.isProfileComplete) {
-                            Navigator.of(context)
-                                .pushReplacementNamed(AppRoutes.homeScreen);
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              AppRoutes.homeScreen,
+                              (route) => false,
+                            );
                           } else {
-                            Navigator.of(context).pushReplacementNamed(
-                                AppRoutes.influencerFormScreen);
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              AppRoutes.influencerFormScreen,
+                              (route) => false,
+                            );
                           }
                         }
                       } else if (state is LoginUserNotApproved) {
-                        Navigator.of(context)
-                            .pushReplacementNamed(AppRoutes.successScreen);
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          AppRoutes.successScreen,
+                          (route) => false,
+                        );
                       }
                     },
                     builder: (BuildContext context, state) {

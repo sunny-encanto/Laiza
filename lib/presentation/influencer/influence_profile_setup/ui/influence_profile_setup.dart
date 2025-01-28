@@ -4,7 +4,6 @@ import 'package:laiza/core/app_export.dart';
 
 import '../../../../data/blocs/category_bloc/category_bloc.dart';
 import '../../../../data/models/selectionPopupModel/selection_popup_model.dart';
-import '../../../../data/repositories/category_repository/category_repository.dart';
 import '../../../../widgets/custom_drop_down.dart';
 
 class InfluenceProfileSetupScreen extends StatelessWidget {
@@ -115,7 +114,7 @@ class InfluenceProfileSetupScreen extends StatelessWidget {
                               items: state.category
                                   .map((e) => SelectionPopupModel(
                                       value: e.id!.toInt(),
-                                      title: e.categoryName ?? ''))
+                                      title: e.name ?? ''))
                                   .toList(),
                               validator: (value) {
                                 return validateField(

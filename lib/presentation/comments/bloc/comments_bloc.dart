@@ -19,8 +19,9 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
     on<CommentLikeUnLikeEvent>(_onCommentLikeUnlike);
     on<AddCommentEvent>(_onCommentAdd);
     on<AddCommentReplyEvent>(_onAddCommentReplyEvent);
-    on<CommentReplyLoadEvent>(_onCommentReplyLoad);
     on<DeleteCommentEvent>(_onDeleteComment);
+    on<DeleteSubCommentEvent>(_onDeleteSubComment);
+    on<EditCommentEvent>(_onEditComment);
   }
 
   FutureOr<void> _onCommentLoad(
@@ -33,11 +34,32 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
   FutureOr<void> _onCommentLikeUnlike(
       CommentLikeUnLikeEvent event, Emitter<CommentsState> emit) {
     commentList = commentList.map((item) {
-      if (item.id == event.id) {
-        return item.copyWith(
-            isLiked: !item.isLiked,
-            commentCount:
-                item.isLiked ? item.commentCount - 1 : item.commentCount + 1);
+      if (event.parentId == 0) {
+        if (item.id == event.id) {
+          _commentsRepository.addCommentLike(event.id);
+          return item.copyWith(
+              isLiked: !item.isLiked,
+              likeCount:
+                  item.isLiked ? item.likeCount - 1 : item.likeCount + 1);
+        }
+      } else {
+        if (item.id == event.parentId) {
+          _commentsRepository.addSubCommentLike(event.id);
+          List<Comment> replies = item.replies;
+          replies = replies.map(
+            (element) {
+              if (element.id == event.id) {
+                return element.copyWith(
+                    isLiked: !element.isLiked,
+                    likeCount: element.isLiked
+                        ? element.likeCount - 1
+                        : element.likeCount + 1);
+              }
+              return element;
+            },
+          ).toList();
+          return item.copyWith(replies: replies);
+        }
       }
       return item;
     }).toList();
@@ -51,22 +73,12 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
     emit(CommentsInitial());
   }
 
-  FutureOr<void> _onCommentReplyLoad(
-      CommentReplyLoadEvent event, Emitter<CommentsState> emit) async {
-    try {
-      List<Comment> comments =
-          await _commentsRepository.getCommentReply(event.commentId);
-      emit(CommentsReplyLoaded(comments));
-    } catch (e) {
-      emit(CommentsErrorState(e.toString()));
-    }
-  }
-
   FutureOr<void> _onAddCommentReplyEvent(
       AddCommentReplyEvent event, Emitter<CommentsState> emit) async {
     try {
       await _commentsRepository.addCommentReply(
           commentId: event.commentId, reply: event.reply);
+      emit(CommentsInitial());
     } catch (e) {
       emit(CommentsErrorState(e.toString()));
     }
@@ -74,6 +86,31 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
 
   FutureOr<void> _onDeleteComment(
       DeleteCommentEvent event, Emitter<CommentsState> emit) async {
+    try {
+      CommonModel model = event.parentId == 0
+          ? await _commentsRepository.deleteComment(event.commentId)
+          : await _commentsRepository.deleteSubComment(event.commentId);
+      emit(CommentDeletedState(model.message ?? ''));
+    } catch (e) {
+      emit(CommentDeleteErrorState(e.toString()));
+    }
+  }
+
+  FutureOr<void> _onEditComment(
+      EditCommentEvent event, Emitter<CommentsState> emit) async {
+    try {
+      await _commentsRepository.updateComment(
+          commentId: event.commentId,
+          comment: event.comment,
+          reelId: event.reelId);
+      emit(CommentsInitial());
+    } catch (e) {
+      emit(CommentsErrorState(e.toString()));
+    }
+  }
+
+  FutureOr<void> _onDeleteSubComment(
+      DeleteSubCommentEvent event, Emitter<CommentsState> emit) async {
     try {
       CommonModel model =
           await _commentsRepository.deleteComment(event.commentId);

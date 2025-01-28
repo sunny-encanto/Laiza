@@ -25,6 +25,7 @@ class CustomDropDown extends StatelessWidget {
     this.validator,
     this.onChanged,
     this.value,
+    this.isSearchable,
   });
 
   final Alignment? alignment;
@@ -66,6 +67,7 @@ class CustomDropDown extends StatelessWidget {
   final Function(SelectionPopupModel)? onChanged;
 
   final SelectionPopupModel? value;
+  final bool? isSearchable;
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +109,7 @@ class CustomDropDown extends StatelessWidget {
       );
 
   InputDecoration get decoration => InputDecoration(
-        hintText: hintText ?? "",
+        hintText: hintText ?? "Select item",
         hintStyle: hintStyle ??
             TextStyle(fontSize: 14.0.fSize, color: AppColor.secondaryTextColor),
         prefixIcon: prefix,

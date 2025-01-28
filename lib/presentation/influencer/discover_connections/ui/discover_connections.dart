@@ -1,11 +1,13 @@
-import 'package:laiza/presentation/influencer/discover_connections/bloc/discover_connections_bloc.dart';
+import 'package:laiza/data/models/connections_model/connections_model.dart';
+import 'package:laiza/presentation/shimmers/loading_list.dart';
 
 import '../../../../core/app_export.dart';
-import '../../../../data/models/connections_model/connections_model.dart';
 
 class DiscoverConnectionsScreen extends StatelessWidget {
   DiscoverConnectionsScreen({super.key});
-  final _searchController = TextEditingController();
+
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -21,47 +23,15 @@ class DiscoverConnectionsScreen extends StatelessWidget {
             context
                 .read<DiscoverConnectionsBloc>()
                 .add(DiscoverConnectionsFetchEvent());
+            return const SizedBox.shrink();
           } else if (state is DiscoverConnectionsLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const LoadingListPage();
           } else if (state is DiscoverConnectionsError) {
             return Center(child: Text(state.message));
           } else if (state is DiscoverConnectionsLoaded) {
-            return Padding(
-              padding: EdgeInsets.all(20.h),
-              child: Column(
-                children: [
-                  CustomTextFormField(
-                    controller: _searchController,
-                    prefixConstraints: BoxConstraints(maxWidth: 25.h),
-                    prefix: Padding(
-                      padding: EdgeInsets.only(left: 10.h),
-                      child: CustomImageView(
-                        width: 15.h,
-                        imagePath: ImageConstant.searchIcon,
-                      ),
-                    ),
-                    onChanged: (query) {
-                      context
-                          .read<DiscoverConnectionsBloc>()
-                          .add(DiscoverConnectionsSearchEvent(query));
-                    },
-                    hintText: 'Search',
-                  ),
-                  Expanded(
-                    child: ListView.separated(
-                      itemCount: state.connections.length,
-                      shrinkWrap: true,
-                      separatorBuilder: (BuildContext context, int index) =>
-                          Divider(height: 2.v),
-                      itemBuilder: (context, index) => _buildConnectionItem(
-                          state.connections, index, textTheme),
-                    ),
-                  )
-                ],
-              ),
-            );
+            return buildConnectionItem(context, state.connections, false);
+          } else if (state is DiscoverConnectionsFilterLoaded) {
+            return buildConnectionItem(context, state.connections, true);
           }
           return const SizedBox.shrink();
         },
@@ -69,8 +39,47 @@ class DiscoverConnectionsScreen extends StatelessWidget {
     );
   }
 
-  ListTile _buildConnectionItem(
-      List<ConnectionsModel> items, int index, TextTheme textTheme) {
+  Padding buildConnectionItem(BuildContext context,
+      List<ConnectionsModel> connections, bool isFiltered) {
+    return Padding(
+      padding: EdgeInsets.all(20.h),
+      child: Column(
+        children: [
+          CustomTextFormField(
+            controller: _searchController,
+            prefixConstraints: BoxConstraints(maxWidth: 25.h),
+            prefix: Padding(
+              padding: EdgeInsets.only(left: 10.h),
+              child: CustomImageView(
+                width: 15.h,
+                imagePath: ImageConstant.searchIcon,
+              ),
+            ),
+            onChanged: (query) {
+              context
+                  .read<DiscoverConnectionsBloc>()
+                  .add(DiscoverConnectionsSearchEvent(query));
+            },
+            hintText: 'Search',
+          ),
+          Expanded(
+            child: ListView.separated(
+              itemCount: connections.length,
+              shrinkWrap: true,
+              separatorBuilder: (BuildContext context, int index) =>
+                  Divider(height: 2.v),
+              itemBuilder: (context, index) =>
+                  _buildConnectionItem(connections, index, context, isFiltered),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  ListTile _buildConnectionItem(List<ConnectionsModel> items, int index,
+      BuildContext context, bool isFiltered) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     return ListTile(
       contentPadding: const EdgeInsets.all(0),
       leading: CustomImageView(
@@ -83,13 +92,37 @@ class DiscoverConnectionsScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           CustomElevatedButton(
-            width: 96.h,
+            width: 100.h,
             height: 32.v,
-            text: 'Connect',
+            text: items[index].isConnected ? 'Connected' : 'Connect',
             buttonTextStyle: textTheme.titleSmall,
+            onPressed: () {
+              if (isFiltered) {
+                context
+                    .read<DiscoverConnectionsBloc>()
+                    .add(SendFilterConnectionEvent(items[index].id));
+              } else {
+                context
+                    .read<DiscoverConnectionsBloc>()
+                    .add(SendConnectionEvent(items[index].id));
+              }
+            },
           ),
-          const Icon(
-            Icons.close,
+          InkWell(
+            onTap: () {
+              if (isFiltered) {
+                context
+                    .read<DiscoverConnectionsBloc>()
+                    .add(CrossFilterConnectionEvent(items[index].id));
+              } else {
+                context
+                    .read<DiscoverConnectionsBloc>()
+                    .add(CrossConnectionEvent(items[index].id));
+              }
+            },
+            child: const Icon(
+              Icons.close,
+            ),
           )
         ],
       ),
@@ -97,22 +130,22 @@ class DiscoverConnectionsScreen extends StatelessWidget {
         items[index].name,
         style: textTheme.titleMedium,
       ),
-      subtitle: SizedBox(
-        width: SizeUtils.width,
-        child: Row(
-          children: [
-            Text(
-              'Product Category- ',
-              style: textTheme.bodySmall!.copyWith(fontSize: 10.fSize),
-            ),
-            Text(
-              items[index].category,
-              style: textTheme.bodySmall!
-                  .copyWith(fontSize: 10.fSize, color: AppColor.blackColor),
-            ),
-          ],
-        ),
-      ),
+      // subtitle: SizedBox(
+      //   width: SizeUtils.width,
+      //   child: Row(
+      //     children: [
+      //       Text(
+      //         'Product Category- ',
+      //         style: textTheme.bodySmall!.copyWith(fontSize: 10.fSize),
+      //       ),
+      //       Text(
+      //         items[index].category,
+      //         style: textTheme.bodySmall!
+      //             .copyWith(fontSize: 10.fSize, color: AppColor.blackColor),
+      //       ),
+      //     ],
+      //   ),
+      // ),
     );
   }
 }

@@ -9,6 +9,8 @@ sealed class UploadReelEvent extends Equatable {
 
 class AddCoverPhotoEvent extends UploadReelEvent {}
 
+class AddReelEvent extends UploadReelEvent {}
+
 class AddMoreProductLinkEvent extends UploadReelEvent {}
 
 final class UploadReelSubmitRequestEvent extends UploadReelEvent {

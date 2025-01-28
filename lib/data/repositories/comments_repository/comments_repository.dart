@@ -1,13 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:laiza/core/network/dio_client.dart';
 import 'package:laiza/data/models/comments_model/comment.dart';
 import 'package:laiza/data/models/comments_model/comments_model.dart';
 import 'package:laiza/data/models/common_model/common_model.dart';
-import 'package:laiza/data/services/apiClient/dio_client.dart';
 
 import '../../../core/utils/api_constant.dart';
 import '../../../core/utils/logger.dart';
 import '../../../core/utils/pref_utils.dart';
-import '../../models/comment_reply_model/comment_reply_model.dart';
 
 class CommentsRepository {
   final ApiClient _apiClient = ApiClient();
@@ -59,11 +58,16 @@ class CommentsRepository {
     }
   }
 
-  Future<CommonModel> updateComment() async {
+  Future<CommonModel> updateComment(
+      {required int commentId,
+      required String comment,
+      required int reelId}) async {
     try {
       _apiClient
           .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
-      Response response = await _apiClient.get(ApiConstant.updateComment);
+      FormData data = FormData.fromMap({'reel_id': reelId, 'comment': comment});
+      Response response = await _apiClient
+          .post("${ApiConstant.updateComment}/$commentId", data: data);
       if (response.statusCode == 200) {
         CommonModel model = CommonModel.fromJson(response.data);
         return model;
@@ -102,26 +106,25 @@ class CommentsRepository {
     }
   }
 
-  Future<List<Comment>> getCommentReply(int commentId) async {
+  Future<CommonModel> deleteSubComment(int commentId) async {
     try {
       _apiClient
           .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
-
       Response response =
-          await _apiClient.get('${ApiConstant.commentReply}/$commentId');
+          await _apiClient.post("${ApiConstant.deleteSubComment}/$commentId");
       if (response.statusCode == 200) {
-        CommentReplyModel model = CommentReplyModel.fromJson(response.data);
-        return model.data;
+        CommonModel model = CommonModel.fromJson(response.data);
+        return model;
       } else {
-        CommentReplyModel model = CommentReplyModel.fromJson(response.data);
-        return model.data;
+        CommonModel model = CommonModel.fromJson(response.data);
+        return model;
       }
     } on DioException catch (e) {
       String message = e.response?.data['message'] ?? 'Unknown error';
       throw message;
     } catch (e) {
-      Logger.log('Error during get comment reply', e.toString());
-      throw Exception('Failed to get comment reply');
+      Logger.log('Error during delete SubComment', e.toString());
+      throw Exception('Failed to delete SubComment');
     }
   }
 
@@ -130,8 +133,8 @@ class CommentsRepository {
     try {
       _apiClient
           .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
-      FormData data =
-          FormData.fromMap({'comment_id': commentId, 'reply': reply});
+      FormData data = FormData.fromMap(
+          {'comment_id': commentId, 'parent_id': commentId, 'comment': reply});
       Response response =
           await _apiClient.post(ApiConstant.addCommentReply, data: data);
 
@@ -148,6 +151,54 @@ class CommentsRepository {
     } catch (e) {
       Logger.log('Error during add comment reply', e.toString());
       throw Exception('Failed to add comment reply');
+    }
+  }
+
+  Future<CommonModel> addCommentLike(int commentId) async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+      FormData data = FormData.fromMap({'comment_id': commentId});
+      Response response =
+          await _apiClient.post(ApiConstant.addCommentLike, data: data);
+
+      if (response.statusCode == 200) {
+        CommonModel model = CommonModel.fromJson(response.data);
+        return model;
+      } else {
+        CommonModel model = CommonModel.fromJson(response.data);
+        return model;
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during add comment like', e.toString());
+      throw Exception('Failed to add comment like');
+    }
+  }
+
+  Future<CommonModel> addSubCommentLike(int commentId) async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+      FormData data = FormData.fromMap({'sub_comment_id': commentId});
+      Response response =
+          await _apiClient.post(ApiConstant.addSubCommentLike, data: data);
+
+      if (response.statusCode == 200) {
+        CommonModel model = CommonModel.fromJson(response.data);
+        return model;
+      } else {
+        CommonModel model = CommonModel.fromJson(response.data);
+        return model;
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during add subComment like', e.toString());
+      throw Exception('Failed to add subComment like');
     }
   }
 }

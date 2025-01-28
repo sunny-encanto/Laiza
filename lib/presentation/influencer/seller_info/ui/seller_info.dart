@@ -1,10 +1,12 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/data/repositories/product_repository/product_repository.dart';
 import 'package:readmore/readmore.dart';
 
 import '../../../../widgets/slider_widget.dart';
 
 class SellerInfoScreen extends StatelessWidget {
   SellerInfoScreen({super.key});
+
   int _currentIndex = 0;
 
   @override
@@ -306,7 +308,7 @@ class SellerInfoScreen extends StatelessWidget {
                 imagePath: ImageConstant.productImage,
               ),
               BlocConsumer<ProductDetailBloc, ProductDetailState>(
-                bloc: ProductDetailBloc(),
+                bloc: ProductDetailBloc(context.read<ProductRepository>()),
                 buildWhen: (previous, current) => current is OnPageChangedState,
                 listener: (BuildContext context, ProductDetailState state) {
                   if (state is OnPageChangedState) {

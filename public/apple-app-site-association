@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "T5NS3GT985.com.encanto.wellbe",
+        "paths": ["/profile*"]
+      }
+    ]
+  }
+}

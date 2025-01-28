@@ -1,4 +1,11 @@
+import 'package:laiza/data/blocs/favorite_influencers_bloc/favorite_influencers_bloc.dart';
+import 'package:laiza/data/models/product_model/product.dart';
+import 'package:laiza/data/repositories/product_repository/product_repository.dart';
+import 'package:laiza/presentation/shimmers/loading_grid.dart';
+
 import '../../../core/app_export.dart';
+import '../../../data/blocs/product_bloc/product_bloc.dart';
+import '../../../data/blocs/trending_now_bloc/trending_now_bloc.dart';
 import '../../../widgets/influencer_card_widget.dart';
 import '../../../widgets/trending_card_widget.dart';
 
@@ -95,20 +102,36 @@ class DiscoverScreen extends StatelessWidget {
                   style: textTheme.bodySmall,
                 ),
                 SizedBox(height: 20.h),
-                SizedBox(
-                  height: 500.v,
-                  child: MasonryGridView.count(
-                    shrinkWrap: true,
-                    itemCount: 12,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 0,
-                    crossAxisSpacing: 0,
-                    itemBuilder: (BuildContext context, index) {
-                      return TrendingCardWidget(
-                        index: index,
-                        extent: (index % 2 + 1) * 100,
-                      );
+                BlocProvider(
+                  create: (context) => TrendingNowBloc(),
+                  child: BlocBuilder<TrendingNowBloc, TrendingNowState>(
+                    builder: (context, state) {
+                      if (state is TrendingNowInitial) {
+                        context
+                            .read<TrendingNowBloc>()
+                            .add(FetchTrendingNowEvent());
+                      } else if (state is TrendingNowInitial) {
+                        return const LoadingGridScreen();
+                      } else if (state is TrendingNowLoaded) {
+                        return SizedBox(
+                          height: 500.v,
+                          child: MasonryGridView.count(
+                            shrinkWrap: true,
+                            itemCount: 12,
+                            physics: const NeverScrollableScrollPhysics(),
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 0,
+                            crossAxisSpacing: 0,
+                            itemBuilder: (BuildContext context, index) {
+                              return TrendingCardWidget(
+                                index: index,
+                                extent: (index % 2 + 1) * 100,
+                              );
+                            },
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
                     },
                   ),
                 ),
@@ -138,30 +161,47 @@ class DiscoverScreen extends StatelessWidget {
                   style: textTheme.bodySmall,
                 ),
                 SizedBox(height: 20.h),
-                SizedBox(
-                  height: 690.v,
-                  child: GridView.custom(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(0),
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverWovenGridDelegate.count(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 0,
-                      crossAxisSpacing: 0,
-                      pattern: [
-                        const WovenGridTile(1),
-                        const WovenGridTile(
-                          5 / 7,
-                          crossAxisRatio: 0.9,
-                          alignment: AlignmentDirectional.centerEnd,
-                        ),
-                      ],
-                    ),
-                    childrenDelegate: SliverChildBuilderDelegate(
-                      childCount: imagesList.length,
-                      (BuildContext context, int index) =>
-                          InfluencerCardWidget(index: index),
-                    ),
+                BlocProvider(
+                  create: (context) => FavoriteInfluencersBloc(),
+                  child: BlocBuilder<FavoriteInfluencersBloc,
+                      FavoriteInfluencersState>(
+                    builder: (context, state) {
+                      if (state is FavoriteInfluencersInitial) {
+                        context
+                            .read<FavoriteInfluencersBloc>()
+                            .add(FetchFavInfluencersEvent());
+                      } else if (state is FavoriteInfluencersLoading) {
+                        return const LoadingGridScreen();
+                      } else if (state is FavoriteInfluencersLoaded) {
+                        return SizedBox(
+                          height: 690.v,
+                          child: GridView.custom(
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.all(0),
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate: SliverWovenGridDelegate.count(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 0,
+                              crossAxisSpacing: 0,
+                              pattern: [
+                                const WovenGridTile(1),
+                                const WovenGridTile(
+                                  5 / 7,
+                                  crossAxisRatio: 0.9,
+                                  alignment: AlignmentDirectional.centerEnd,
+                                ),
+                              ],
+                            ),
+                            childrenDelegate: SliverChildBuilderDelegate(
+                              childCount: imagesList.length,
+                              (BuildContext context, int index) =>
+                                  InfluencerCardWidget(index: index),
+                            ),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
                   ),
                 ),
                 SizedBox(height: 24.v),
@@ -175,16 +215,36 @@ class DiscoverScreen extends StatelessWidget {
                   style: textTheme.bodySmall,
                 ),
                 SizedBox(height: 20.h),
-                MasonryGridView.count(
-                  shrinkWrap: true,
-                  itemCount: 12,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 15.v,
-                  crossAxisSpacing: 10.h,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ProductCardWidget(image: imagesList[index]);
-                  },
+                BlocProvider(
+                  create: (_) => ProductBloc(context.read<ProductRepository>())
+                    ..add(LoadProducts()),
+                  child: BlocBuilder<ProductBloc, ProductState>(
+                    builder: (context, state) {
+                      if (state is ProductLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (state is ProductError) {
+                        return Center(child: Text('Error: ${state.message}'));
+                      } else if (state is ProductLoaded) {
+                        return MasonryGridView.count(
+                          shrinkWrap: true,
+                          itemCount: state.products.length,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 15.v,
+                          crossAxisSpacing: 10.h,
+                          itemBuilder: (BuildContext context, int index) {
+                            if (index == state.products.length - 1) {
+                              // Fetch next page when reaching the end
+                              context.read<ProductBloc>().add(FetchNextPage());
+                            }
+                            final Product product = state.products[index];
+                            return ProductCardWidget(product: product);
+                          },
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
                 ),
               ],
             ),

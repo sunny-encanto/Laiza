@@ -1,5 +1,7 @@
 part of 'video_player_bloc.dart';
 
+enum VideoSourceType { network, file }
+
 sealed class VideoPlayerEvent extends Equatable {
   const VideoPlayerEvent();
 

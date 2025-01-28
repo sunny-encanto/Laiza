@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:laiza/data/repositories/comments_repository/comments_repository.dart';
 import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
+import 'package:laiza/data/repositories/product_repository/product_repository.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 
 import '../core/app_export.dart';
+import '../presentation/influencer/order_management/bloc/influencer_orders_bloc.dart';
 
 class AppRoutes {
   static const String splashScreen = '/splash_screen';
@@ -207,10 +209,9 @@ class AppRoutes {
         int id = settings.arguments as int;
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => ProductDetailBloc(),
-                  child: ProductDetailScreen(
-                    id: id,
-                  ),
+                  create: (context) =>
+                      ProductDetailBloc(context.read<ProductRepository>()),
+                  child: ProductDetailScreen(id: id),
                 ));
 
       case cartScreen:
@@ -320,11 +321,13 @@ class AppRoutes {
                 ));
 
       case commentsScreen:
+        int id = settings.arguments as int;
         return CupertinoPageRoute(
+            fullscreenDialog: true,
             builder: (context) => BlocProvider(
                   create: (context) =>
                       CommentsBloc(context.read<CommentsRepository>()),
-                  child: CommentsScreen(reelId: 0),
+                  child: CommentsScreen(reelId: id),
                 ));
       case viewImageWidget:
         final String url = settings.arguments as String;
@@ -424,7 +427,8 @@ class AppRoutes {
       case discoverConnectionsScreen:
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => DiscoverConnectionsBloc(),
+                  create: (context) =>
+                      DiscoverConnectionsBloc(context.read<UserRepository>()),
                   child: DiscoverConnectionsScreen(),
                 ));
 
@@ -465,7 +469,10 @@ class AppRoutes {
 
       case orderManagementScreen:
         return CupertinoPageRoute(
-            builder: (context) => const OrderManagementScreen());
+            builder: (context) => BlocProvider(
+                  create: (context) => InfluencerOrdersBloc(),
+                  child: const OrderManagementScreen(),
+                ));
       default:
         return null;
     }

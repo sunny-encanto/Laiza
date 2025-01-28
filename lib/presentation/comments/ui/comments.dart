@@ -1,6 +1,5 @@
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:laiza/core/app_export.dart';
-import 'package:laiza/data/models/comment_reply_model/reply.dart';
 
 import '../../../data/models/comments_model/comment.dart';
 
@@ -23,7 +22,7 @@ class CommentsScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
             centerTitle: true,
-            automaticallyImplyLeading: false,
+            // automaticallyImplyLeading: false,
             title: Text(
               'Comments',
               style: textTheme.titleMedium,
@@ -54,9 +53,8 @@ class CommentsScreen extends StatelessWidget {
                   child: Text(state.message),
                 );
               } else if (state is CommentsLoaded) {
-                //TODO: Need to uncomment for fetch Replies
-                // context.read<CommentsBloc>().add(CommentReplyLoadEvent(reelId));
                 return ListView.builder(
+                  shrinkWrap: true,
                   keyboardDismissBehavior:
                       ScrollViewKeyboardDismissBehavior.onDrag,
                   padding: EdgeInsets.symmetric(horizontal: 10.h),
@@ -128,7 +126,7 @@ class CommentsScreen extends StatelessWidget {
                 height: 50.h,
                 width: 50.h,
                 radius: BorderRadius.circular(50.h),
-                imagePath: imagesList[0],
+                imagePath: item.user.profileImg,
                 fit: BoxFit.fill,
               ),
               trailing: BlocBuilder<CommentsBloc, CommentsState>(
@@ -137,9 +135,9 @@ class CommentsScreen extends StatelessWidget {
                     children: [
                       GestureDetector(
                           onTap: () {
-                            context
-                                .read<CommentsBloc>()
-                                .add(CommentLikeUnLikeEvent(item.id));
+                            context.read<CommentsBloc>().add(
+                                CommentLikeUnLikeEvent(
+                                    id: item.id, parentId: item.parentId));
                           },
                           child: Icon(
                             item.isLiked
@@ -149,7 +147,7 @@ class CommentsScreen extends StatelessWidget {
                             size: 20.h,
                           )),
                       Text(
-                        item.commentCount.toString(),
+                        item.likeCount.toString(),
                         style: textTheme.bodySmall,
                       ),
                     ],
@@ -157,7 +155,7 @@ class CommentsScreen extends StatelessWidget {
                 },
               ),
               title: Text(
-                item.comment,
+                item.user.username ?? '',
                 style: textTheme.titleMedium!
                     .copyWith(fontWeight: FontWeight.w400),
               ),
@@ -169,89 +167,33 @@ class CommentsScreen extends StatelessWidget {
                     style: textTheme.titleMedium,
                   ),
                   SizedBox(height: 5.v),
-                  InkWell(
-                      onTap: () {
-                        if (!_focusNode.hasFocus) {
-                          _focusNode.requestFocus();
-                        }
-                        _commentId = item.id;
-                      },
-                      child: Text(
-                        'Reply',
-                        style: textTheme.bodySmall,
-                      )),
+                  if (item.parentId == 0)
+                    InkWell(
+                        onTap: () {
+                          if (!_focusNode.hasFocus) {
+                            _focusNode.requestFocus();
+                          }
+                          _commentId = item.id;
+                        },
+                        child: Text(
+                          'Reply',
+                          style: textTheme.bodySmall,
+                        )),
                 ],
               ),
             ),
-            BlocBuilder<CommentsBloc, CommentsState>(
-              buildWhen: (previous, current) => current is CommentsReplyLoaded,
-              builder: (context, state) {
-                if (state is CommentsErrorState) {
-                  return Center(child: Text(state.message));
-                } else if (state is CommentsReplyLoaded) {
-                  return ListView.builder(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: state.comments[index].replies.length,
-                    itemBuilder: (context, replyIndex) {
-                      Reply reply = state.comments[index].replies[replyIndex];
-                      return Padding(
-                        padding: EdgeInsets.only(left: 30.h),
-                        child: ListTile(
-                          minLeadingWidth: 25.h,
-                          onTap: () {},
-                          contentPadding: const EdgeInsets.all(0),
-                          leading: CustomImageView(
-                              height: 35.h,
-                              width: 35.h,
-                              radius: BorderRadius.circular(25.h),
-                              imagePath: imagesList[0],
-                              fit: BoxFit.fill
-                              //reply.user.profileImg,
-                              ),
-                          trailing: Column(
-                            children: [
-                              InkWell(
-                                  onTap: () {},
-                                  child: Icon(
-                                    Icons.favorite_border_sharp,
-                                    size: 20.h,
-                                  )),
-                              Text(
-                                '12',
-                                style: textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                          title: Text(
-                            reply.user.name ?? '',
-                            style: textTheme.titleMedium!
-                                .copyWith(fontWeight: FontWeight.w400),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                reply.reply,
-                                style: textTheme.titleMedium,
-                              ),
-                              SizedBox(height: 5.v),
-                              Text(
-                                'Reply',
-                                style: textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                }
-                return const SizedBox.shrink();
+            ListView.builder(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: item.replies.length,
+              itemBuilder: (context, replyIndex) {
+                Comment reply = item.replies[replyIndex];
+                return Padding(
+                    padding: EdgeInsets.only(left: 30.h),
+                    child: _buildComment(reply, replyIndex, context));
               },
-            )
+            ),
           ],
         ),
       ),
@@ -276,27 +218,27 @@ class CommentsScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // TextButton.icon(
+            //   style: TextButton.styleFrom(
+            //       alignment: Alignment.centerLeft,
+            //       minimumSize: Size(SizeUtils.width, 50.v)),
+            //   onPressed: () {
+            //     Navigator.of(context).pop();
+            //     _focusNode.requestFocus();
+            //     commentController.text = comment.comment;
+            //     _commentId = comment.id;
+            //   },
+            //   icon: const Icon(Icons.edit, color: Colors.black),
+            //   label: const Text('Edit', style: TextStyle(color: Colors.black)),
+            // ),
+            // Divider(color: AppColor.primary),
             TextButton.icon(
               style: TextButton.styleFrom(
                   alignment: Alignment.centerLeft,
                   minimumSize: Size(SizeUtils.width, 50.v)),
               onPressed: () {
-                Navigator.of(context).pop();
-                _focusNode.requestFocus();
-                commentController.text = comment.comment;
-              },
-              icon: const Icon(Icons.edit, color: Colors.black),
-              label: const Text('Edit', style: TextStyle(color: Colors.black)),
-            ),
-            Divider(color: AppColor.primary),
-            TextButton.icon(
-              style: TextButton.styleFrom(
-                  alignment: Alignment.centerLeft,
-                  minimumSize: Size(SizeUtils.width, 50.v)),
-              onPressed: () {
-                context
-                    .read<CommentsBloc>()
-                    .add(DeleteCommentEvent(comment.id));
+                context.read<CommentsBloc>().add(DeleteCommentEvent(
+                    commentId: comment.id, parentId: comment.parentId));
                 Navigator.of(context).pop();
               },
               icon: const Icon(Icons.delete, color: Colors.red),

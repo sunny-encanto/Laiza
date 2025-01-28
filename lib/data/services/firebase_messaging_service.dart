@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/services.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/data/services/notification_service.dart';

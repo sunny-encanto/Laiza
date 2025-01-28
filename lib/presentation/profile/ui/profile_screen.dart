@@ -12,11 +12,17 @@ class ProfileScreen extends StatelessWidget {
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(12.h),
+                  bottomRight: Radius.circular(12.h),
+                ),
+              ),
               automaticallyImplyLeading: false,
               elevation: 0,
               backgroundColor: AppColor.blackColor,
               titleSpacing: 0,
-              expandedHeight: 200.0,
+              expandedHeight: 250.0.v,
               floating: false,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
@@ -36,9 +42,15 @@ class ProfileScreen extends StatelessWidget {
                           imagePath: ImageConstant.notificationIcon)
                     ],
                   ),
-                  background: Image.network(
-                    "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
-                    fit: BoxFit.cover,
+                  background: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(12.h),
+                      bottomRight: Radius.circular(12.h),
+                    ),
+                    child: Image.network(
+                      "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
+                      fit: BoxFit.cover,
+                    ),
                   )),
             ),
           ];

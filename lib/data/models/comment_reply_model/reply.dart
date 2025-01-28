@@ -23,7 +23,7 @@ class Reply {
         id: json["id"],
         commentId: json["comment_id"],
         userId: json["user_id"],
-        reply: json["reply"],
+        reply: json["comment"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         user: UserModel.fromJson(
@@ -34,7 +34,7 @@ class Reply {
         "id": id,
         "comment_id": commentId,
         "user_id": userId,
-        "reply": reply,
+        "comment": reply,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
         "user": user.toJson(),

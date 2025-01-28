@@ -1,8 +1,8 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/models/connection_request_model/connection_request_model.dart';
+import 'package:laiza/presentation/shimmers/loading_list.dart';
 
 import '../../../empty_pages/empty_request/empty_request.dart';
-import '../bloc/connection_request_bloc.dart';
 
 class ConnectionsRequestScreen extends StatelessWidget {
   const ConnectionsRequestScreen({super.key});
@@ -24,9 +24,7 @@ class ConnectionsRequestScreen extends StatelessWidget {
                 .read<ConnectionRequestBloc>()
                 .add(ConnectionRequestLoadEvent());
           } else if (state is ConnectionRequestLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const LoadingListPage();
           } else if (state is ConnectionRequestError) {
             return Center(
               child: Text(state.message),

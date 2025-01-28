@@ -5,11 +5,11 @@ import 'package:laiza/data/models/countries/country.dart';
 import 'package:laiza/data/models/states_model/state.dart';
 import 'package:laiza/data/models/states_model/states_model.dart';
 
+import '../../../core/network/dio_client.dart';
 import '../../../core/utils/api_constant.dart';
 import '../../../core/utils/logger.dart';
 import '../../../core/utils/pref_utils.dart';
 import '../../models/city_model/city.dart';
-import '../../services/apiClient/dio_client.dart';
 
 class RegionRepository {
   final ApiClient _apiClient = ApiClient();

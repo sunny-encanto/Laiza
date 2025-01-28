@@ -1,9 +1,10 @@
 import 'package:intl/intl.dart';
 import 'package:laiza/data/models/message/message_model.dart';
-import 'package:laiza/presentation/video_player/ui/video_player.dart';
+import 'package:laiza/widgets/play_button.dart';
 
 import '../../../../../core/app_export.dart';
 import '../../../../../core/utils/pref_utils.dart';
+import '../../../../user/video_player/ui/video_player.dart';
 
 class VideoMessageWidget extends StatelessWidget {
   const VideoMessageWidget({super.key, required this.message});
@@ -46,22 +47,14 @@ class VideoMessageWidget extends StatelessWidget {
                             // borderRadius: BorderRadius.circular(10.fSize),
                           ),
                         ),
-                        InkWell(
+                        PlayButton(
+                          isVisible: true,
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const VideoPlayerWidget(
-                                  videoUrl:
-                                      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'),
+                              builder: (context) => VideoPlayerWidget(
+                                  videoUrl: message.url ?? ''),
                             ));
                           },
-                          child: Container(
-                            padding: EdgeInsets.all(5.v),
-                            decoration: BoxDecoration(color: AppColor.primary),
-                            child: const Icon(
-                              Icons.play_arrow,
-                              color: Colors.white,
-                            ),
-                          ),
                         )
                       ],
                     ),

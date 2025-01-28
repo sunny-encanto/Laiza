@@ -10,7 +10,7 @@ part 'wishlist_state.dart';
 
 class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
   late WishlistRepository _wishlistRepository;
-  List<Wishlist> itemList = <Wishlist>[];
+  List<WishlistData> itemList = <WishlistData>[];
 
   WishlistBloc(WishlistRepository wishlistRepository)
       : super(WishlistInitial()) {
@@ -31,15 +31,27 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
   }
 
   FutureOr<void> _onWishListItemRemove(
-      RemoveWishListsItemEvent event, Emitter<WishlistState> emit) async {
+    RemoveWishListsItemEvent event,
+    Emitter<WishlistState> emit,
+  ) async {
     try {
-      final updatedItems = List<Wishlist>.from(itemList)
-        ..removeWhere((item) => item.id == event.id);
+      // Emit loading state if necessary
+      emit(WishlistLoadingState());
+      final updatedItems = <WishlistData>[];
+      for (final item in itemList) {
+        if (item.product.id == event.id) {
+          await _wishlistRepository.removeFromWishList(event.id);
+        } else {
+          updatedItems.add(item);
+        }
+      }
       emit(WishlistLoadedState(updatedItems));
-      // Update the original itemList to reflect the removal
+      // Update the original itemList
       itemList = updatedItems;
     } catch (e) {
-      emit(const WishlistErrorState('Failed to remove wishlist item'));
+      // Emit error state if something goes wrong
+      emit(WishlistErrorState(
+          'Failed to remove wishlist item: ${e.toString()}'));
     }
   }
 }

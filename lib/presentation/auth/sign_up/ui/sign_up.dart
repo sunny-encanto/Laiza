@@ -4,7 +4,6 @@ import 'package:laiza/core/app_export.dart';
 import 'package:laiza/presentation/auth/sign_up/bloc/sign_up_states.dart';
 
 import '../../../../core/utils/pref_utils.dart';
-import '../../../../data/repositories/auth_repository/auth_repository.dart';
 import '../../login/ui/socail_login_widget.dart';
 import '../bloc/sign_up_event.dart';
 
@@ -24,7 +23,7 @@ class SignUpScreen extends StatelessWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
     print('Role=> ${PrefUtils.getRole()}');
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.h),
