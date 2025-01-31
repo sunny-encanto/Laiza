@@ -1,66 +1,107 @@
 class ConnectionRequestModel {
-  final int id;
-  final String name;
-  final String profile;
-  final String category;
-  final String description;
-  String requestStatus;
+  String message;
+  List<ConnectionRequest> requests;
 
   ConnectionRequestModel({
-    required this.id,
-    required this.name,
-    required this.profile,
-    required this.category,
-    required this.description,
-    required this.requestStatus,
+    required this.message,
+    required this.requests,
   });
 
-  ConnectionRequestModel copyWith({String? requestStatus}) {
-    return ConnectionRequestModel(
-        id: id,
-        name: name,
-        profile: profile,
-        category: category,
-        description: description,
-        requestStatus: requestStatus ?? this.requestStatus);
-  }
+  factory ConnectionRequestModel.fromJson(Map<String, dynamic> json) =>
+      ConnectionRequestModel(
+        message: json["message"],
+        requests: List<ConnectionRequest>.from(
+            json["data"].map((x) => ConnectionRequest.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "message": message,
+        "data": List<dynamic>.from(requests.map((x) => x.toJson())),
+      };
+}
+
+class ConnectionRequest {
+  int id;
+  int senderId;
+  String senderType;
+  int receiverId;
+  String receiverType;
+  ConnectionRequestStatus status;
+  Receiver sender;
+  Receiver receiver;
+
+  ConnectionRequest({
+    required this.id,
+    required this.senderId,
+    required this.senderType,
+    required this.receiverId,
+    required this.receiverType,
+    required this.status,
+    required this.sender,
+    required this.receiver,
+  });
+
+  ConnectionRequest copyWith({
+    ConnectionRequestStatus? status,
+  }) =>
+      ConnectionRequest(
+          id: id,
+          senderId: senderId,
+          senderType: senderType,
+          receiverId: receiverId,
+          receiverType: receiverType,
+          status: status ?? this.status,
+          sender: sender,
+          receiver: receiver);
+
+  factory ConnectionRequest.fromJson(Map<String, dynamic> json) =>
+      ConnectionRequest(
+        id: json["id"],
+        senderId: json["sender_id"],
+        senderType: json["sender_type"],
+        receiverId: json["receiver_id"],
+        receiverType: json["receiver_type"],
+        status: ConnectionRequestStatus.values
+            .firstWhere((e) => e.toString().split('.').last == json["status"]),
+        sender: Receiver.fromJson(json["sender"]),
+        receiver: Receiver.fromJson(json["receiver"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "sender_id": senderId,
+        "sender_type": senderType,
+        "receiver_id": receiverId,
+        "receiver_type": receiverType,
+        "status": status.toString().split('.').last,
+        "sender": sender.toJson(),
+        "receiver": receiver.toJson(),
+      };
+}
+
+class Receiver {
+  int id;
+  String name;
+
+  Receiver({
+    required this.id,
+    required this.name,
+  });
+
+  factory Receiver.fromJson(Map<String, dynamic> json) => Receiver(
+        id: json["id"],
+        name: json["name"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+      };
 }
 
 enum ConnectionRequestStatus {
   pending,
-  rejected,
   accepted,
+  rejected,
+  canceled,
 }
-
-List<ConnectionRequestModel> connectionRequestList = <ConnectionRequestModel>[
-  ConnectionRequestModel(
-    id: 1,
-    name: 'Kratika Thapar',
-    profile:
-        'https://as2.ftcdn.net/v2/jpg/03/83/25/83/1000_F_383258331_D8imaEMl8Q3lf7EKU2Pi78Cn0R7KkW9o.jpg',
-    category: 'Comsmetics',
-    description:
-        "Seller’s Message-Hi Carol, I represent a cosmetics brand specializing in high-quality, natural beauty products. I believe your content aligns perfectly with our brand, and I'd love to collaborate with you to promote our latest skincare line. Looking forward to your response!",
-    requestStatus: ConnectionRequestStatus.pending.name,
-  ),
-  ConnectionRequestModel(
-    id: 2,
-    name: 'Kratika Thapar',
-    profile:
-        'https://as2.ftcdn.net/v2/jpg/03/83/25/83/1000_F_383258331_D8imaEMl8Q3lf7EKU2Pi78Cn0R7KkW9o.jpg',
-    category: 'Comsmetics',
-    description:
-        "Seller’s Message-Hi Carol, I represent a cosmetics brand specializing in high-quality, natural beauty products. I believe your content aligns perfectly with our brand, and I'd love to collaborate with you to promote our latest skincare line. Looking forward to your response!",
-    requestStatus: ConnectionRequestStatus.pending.name,
-  ),
-  ConnectionRequestModel(
-    id: 3,
-    name: 'Kratika Thapar',
-    profile:
-        'https://as2.ftcdn.net/v2/jpg/03/83/25/83/1000_F_383258331_D8imaEMl8Q3lf7EKU2Pi78Cn0R7KkW9o.jpg',
-    category: 'Comsmetics',
-    description:
-        "Seller’s Message-Hi Carol, I represent a cosmetics brand specializing in high-quality, natural beauty products. I believe your content aligns perfectly with our brand, and I'd love to collaborate with you to promote our latest skincare line. Looking forward to your response!",
-    requestStatus: ConnectionRequestStatus.pending.name,
-  ),
-];

@@ -14,3 +14,16 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## to Remove lStar not found Error
+
+dependency uni_links
+Update compileSdkVersion and targetSdkVersion to 31
+
+And add this code snippet in your android/build.gradle file at the very end.
+
+configurations.all {
+resolutionStrategy {
+force 'androidx.core:core-ktx:1.6.0'
+}
+}

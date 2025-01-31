@@ -103,7 +103,8 @@ class DiscoverScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20.h),
                 BlocProvider(
-                  create: (context) => TrendingNowBloc(),
+                  create: (context) =>
+                      TrendingNowBloc(context.read<PostRepository>()),
                   child: BlocBuilder<TrendingNowBloc, TrendingNowState>(
                     builder: (context, state) {
                       if (state is TrendingNowInitial) {
@@ -112,12 +113,14 @@ class DiscoverScreen extends StatelessWidget {
                             .add(FetchTrendingNowEvent());
                       } else if (state is TrendingNowInitial) {
                         return const LoadingGridScreen();
+                      } else if (state is TrendingNowError) {
+                        return Center(child: Text(state.message));
                       } else if (state is TrendingNowLoaded) {
                         return SizedBox(
                           height: 500.v,
                           child: MasonryGridView.count(
                             shrinkWrap: true,
-                            itemCount: 12,
+                            itemCount: state.trendingNow.length,
                             physics: const NeverScrollableScrollPhysics(),
                             crossAxisCount: 3,
                             mainAxisSpacing: 0,

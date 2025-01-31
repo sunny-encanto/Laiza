@@ -81,6 +81,9 @@ class DiscoverConnectionsScreen extends StatelessWidget {
       BuildContext context, bool isFiltered) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return ListTile(
+      onTap: () {
+        Navigator.of(context).pushNamed(AppRoutes.sellerInfoScreen);
+      },
       contentPadding: const EdgeInsets.all(0),
       leading: CustomImageView(
         height: 50.h,

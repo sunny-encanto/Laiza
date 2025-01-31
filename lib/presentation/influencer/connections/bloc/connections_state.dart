@@ -13,14 +13,18 @@ final class ConnectionsLoadingSate extends ConnectionsState {}
 
 final class ConnectionsErrorState extends ConnectionsState {
   final String message;
+
   const ConnectionsErrorState(this.message);
+
   @override
   List<Object> get props => [message];
 }
 
 final class ConnectionsLoadedState extends ConnectionsState {
-  final List<ConnectionsModel> connections;
+  final List<Connection> connections;
+
   const ConnectionsLoadedState(this.connections);
+
   @override
   List<Object> get props => [connections];
 }

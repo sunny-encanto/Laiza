@@ -15,8 +15,9 @@ class ChatsScreen extends StatefulWidget {
 }
 
 class _ChatsScreenState extends State<ChatsScreen> {
-  final _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   String query = '';
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;

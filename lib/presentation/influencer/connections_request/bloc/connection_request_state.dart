@@ -13,6 +13,7 @@ final class ConnectionRequestLoading extends ConnectionRequestState {}
 
 final class ConnectionRequestError extends ConnectionRequestState {
   final String message;
+
   const ConnectionRequestError(this.message);
 
   @override
@@ -20,8 +21,10 @@ final class ConnectionRequestError extends ConnectionRequestState {
 }
 
 final class ConnectionRequestLoaded extends ConnectionRequestState {
-  final List<ConnectionRequestModel> requestList;
+  final List<ConnectionRequest> requestList;
+
   const ConnectionRequestLoaded(this.requestList);
+
   @override
   List<Object> get props => [requestList];
 }

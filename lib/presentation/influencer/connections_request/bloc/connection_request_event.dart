@@ -10,11 +10,12 @@ sealed class ConnectionRequestEvent extends Equatable {
 class ConnectionRequestLoadEvent extends ConnectionRequestEvent {}
 
 class ConnectionRequestChangeStatusEvent extends ConnectionRequestEvent {
-  final String status;
+  final ConnectionRequestStatus status;
   final int id;
 
   const ConnectionRequestChangeStatusEvent(
       {required this.id, required this.status});
+
   @override
   List<Object> get props => [status];
 }

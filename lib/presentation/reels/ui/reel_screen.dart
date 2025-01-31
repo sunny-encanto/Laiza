@@ -4,13 +4,16 @@ import 'package:laiza/widgets/slider_widget.dart';
 import 'package:whitecodel_reels/whitecodel_reels.dart';
 
 import '../../../core/app_export.dart';
-import '../../../data/repositories/comments_repository/comments_repository.dart';
+import '../../../data/blocs/my_reel_bloc/my_reel_bloc.dart';
+import '../../../data/models/reels_model/reel.dart';
+import '../../../data/services/share.dart';
 import '../../../widgets/like_button/bloc/like_button_bloc.dart';
 
 class ReelScreen extends StatelessWidget {
   ReelScreen({super.key});
 
   bool _isFollowed = false;
+  bool _isLiked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -18,75 +21,93 @@ class ReelScreen extends StatelessWidget {
     return Scaffold(
       body: BlocProvider(
           create: (context) => ReelBloc(context.read<ReelRepository>()),
-          child: BlocBuilder<ReelBloc, ReelState>(builder: (context, state) {
-            if (state is ReelInitial) {
-              context.read<ReelBloc>().add(LoadReelEvent());
-            } else if (state is ReelLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is ReelError) {
-              return Center(
-                child: Text(state.message),
-              );
-            } else if (state is ReelLoaded) {
-              return Column(
-                children: [
-                  state.reels.isNotEmpty
-                      ? Expanded(
-                          child: WhiteCodelReels(
-                              key: UniqueKey(),
-                              context: context,
-                              loader: const Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                              isCaching: true,
-                              videoList: List.generate(state.reels.length,
-                                  (index) => state.reels[index].reelPath),
-                              builder: (context, index, child,
-                                  videoPlayerController, pageController) {
-                                pageController.addListener(() {
-                                  if (pageController.page != index.toDouble()) {
-                                    videoPlayerController.pause();
-                                  } else {
-                                    videoPlayerController.play();
-                                  }
-                                });
-                                return Stack(
-                                  children: [
-                                    child,
-                                    _buildViewCountWidget(textTheme),
-                                    Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          _buildRightControl(index, context),
-                                          SizedBox(height: 54.v),
-                                          customSlider(
-                                            height: 100.h,
-                                            childList: [
-                                              _buildSliderItem(context)
+          child: BlocBuilder<ReelBloc, ReelState>(
+              buildWhen: (previous, current) => (current is ReelLoading ||
+                  current is ReelLoaded ||
+                  current is ReelError),
+              builder: (context, state) {
+                if (state is ReelInitial) {
+                  context.read<ReelBloc>().add(LoadReelEvent());
+                } else if (state is ReelLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is ReelError) {
+                  return Center(
+                    child: Text(state.message),
+                  );
+                } else if (state is ReelLoaded) {
+                  return Column(
+                    children: [
+                      state.reels.isNotEmpty
+                          ? Expanded(
+                              child: WhiteCodelReels(
+                                  key: UniqueKey(),
+                                  context: context,
+                                  loader: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                  isCaching: true,
+                                  videoList: List.generate(state.reels.length,
+                                      (index) => state.reels[index].reelPath),
+                                  builder: (context, index, child,
+                                      videoPlayerController, pageController) {
+                                    pageController.addListener(() {
+                                      if (pageController.page !=
+                                          index.toDouble()) {
+                                        videoPlayerController.pause();
+                                      } else {
+                                        videoPlayerController.play();
+                                      }
+                                    });
+                                    _isLiked =
+                                        state.reels[index].likeStatus == 1;
+                                    return Stack(
+                                      children: [
+                                        child,
+                                        _buildViewCountWidget(textTheme),
+                                        Align(
+                                          alignment: Alignment.bottomRight,
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              _buildRightControl(
+                                                  state.reels[index], context),
+                                              SizedBox(height: 54.v),
+                                              customSlider(
+                                                height: 100.h,
+                                                autoPlay: state.reels[index]
+                                                        .product.length >
+                                                    1,
+                                                childList: List.generate(
+                                                  state.reels[index].product
+                                                      .length,
+                                                  (sliderIndex) =>
+                                                      _buildSliderItem(
+                                                          context,
+                                                          state.reels[index]
+                                                                  .product[
+                                                              sliderIndex]),
+                                                ),
+                                              ),
+                                              SizedBox(height: 36.h),
+                                              _buildFollowBanner(context),
+                                              SizedBox(height: 12.h),
                                             ],
                                           ),
-                                          SizedBox(height: 36.h),
-                                          _buildFollowBanner(context),
-                                          SizedBox(height: 12.h),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                );
-                              }),
-                        )
-                      : const SizedBox.shrink(),
-                ],
-              );
-            }
-            return const SizedBox.shrink();
-          })),
+                                        )
+                                      ],
+                                    );
+                                  }),
+                            )
+                          : const SizedBox.shrink(),
+                    ],
+                  );
+                }
+                return const SizedBox.shrink();
+              })),
     );
   }
 
-  Align _buildRightControl(int index, BuildContext context) {
+  Align _buildRightControl(Reel reel, BuildContext context) {
     return Align(
       alignment: Alignment.bottomRight,
       child: Padding(
@@ -110,9 +131,11 @@ class ReelScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12)),
                       child: IconButton(
                           onPressed: () {
-                            // context
-                            //     .read<LikeButtonBloc>()
-                            //     .add(LikeButtonPressEvent(!state.isLIked));
+                            _isLiked = !_isLiked;
+
+                            context.read<LikeButtonBloc>().add(
+                                LikeButtonPressEvent(
+                                    reelId: reel.id, isLiked: _isLiked));
                           },
                           icon: Icon(
                             state.isLIked
@@ -122,54 +145,48 @@ class ReelScreen extends StatelessWidget {
                           )),
                     );
                   }
-                  return Container();
-                  //   Container(
-                  //   decoration: BoxDecoration(
-                  //       color: Colors.black,
-                  //       borderRadius: BorderRadius.circular(12)),
-                  //   child: IconButton(
-                  //       onPressed: () {
-                  //         context.read<LikeButtonBloc>().add(
-                  //             LikeButtonPressEvent(
-                  //                 realList[index].likeStatus == 1
-                  //                     ? false
-                  //                     : true));
-                  //       },
-                  //       icon: Icon(
-                  //         realList[index].likeStatus == 1
-                  //             ? Icons.favorite
-                  //             : Icons.favorite_border_outlined,
-                  //         color: realList[index].likeStatus == 1
-                  //             ? Colors.red
-                  //             : Colors.white,
-                  //       )),
-                  // );
+                  return Container(
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(12)),
+                    child: IconButton(
+                        onPressed: () {
+                          _isLiked = !_isLiked;
+
+                          context.read<LikeButtonBloc>().add(
+                              LikeButtonPressEvent(
+                                  reelId: reel.id, isLiked: _isLiked));
+                        },
+                        icon: Icon(
+                          _isLiked
+                              ? Icons.favorite
+                              : Icons.favorite_border_outlined,
+                          color: _isLiked ? Colors.red : Colors.white,
+                        )),
+                  );
                 },
               ),
             ),
             SizedBox(height: 24.h),
             //Comment button
             CustomIconButton(
-                icon: ImageConstant.commentIcon,
+                icon: ImageConstant.commnet__,
                 color: Colors.black,
+                iconColor: Colors.white,
                 onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => BlocProvider(
-                      create: (context) =>
-                          CommentsBloc(context.read<CommentsRepository>()),
-                      //TODO: Need to change reelId
-                      child: CommentsScreen(reelId: 0),
-                    ),
-                  );
+                  Navigator.of(context)
+                      .pushNamed(AppRoutes.commentsScreen, arguments: reel.id)
+                      .then((_) {
+                    context.read<MyReelBloc>().add(LoadMyReelEvent());
+                  });
                 }),
             SizedBox(height: 24.h),
             //Share button
             CustomIconButton(
-                icon: ImageConstant.shareIcon,
+                icon: ImageConstant.share__,
                 color: Colors.black,
                 onTap: () async {
-                  //await shareContent(realList[index].reelPath);
+                  await shareContent(reel.reelPath);
                 }),
             SizedBox(height: 24.h),
             //Wish list button
@@ -212,7 +229,7 @@ class ReelScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSliderItem(BuildContext context) {
+  Widget _buildSliderItem(BuildContext context, ReelProduct product) {
     return Container(
       width: SizeUtils.width - 60.h,
       decoration: BoxDecoration(
@@ -226,32 +243,37 @@ class ReelScreen extends StatelessWidget {
             width: 100.h,
             height: 100.v,
             fit: BoxFit.fill,
-            imagePath: ImageConstant.shoeImg,
+            imagePath: product.productImage,
           ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.all(5.0.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('₹ 2582'),
+                  Text(
+                    '₹ ${product.price}',
+                    style: TextStyle(fontSize: 15.fSize),
+                  ),
                   SizedBox(height: 5.h),
-                  const Text(
-                    'OGIY RETRO SHOES HIGH PREMIUM QUALITY Sneakers For Men',
+                  Text(
+                    product.productName,
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 3.h),
-                  const Text(
-                    'Stock:2',
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  // const Text(
+                  //   'Stock:2',
+                  //   overflow: TextOverflow.ellipsis,
+                  // ),
                 ],
               ),
             ),
           ),
           InkWell(
             onTap: () {
-              Navigator.of(context).pushNamed(AppRoutes.productDetailScreen);
+              Navigator.of(context).pushNamed(AppRoutes.productDetailScreen,
+                  arguments: product.id);
             },
             child: Container(
               margin: EdgeInsets.all(5.h),

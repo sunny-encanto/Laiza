@@ -1,7 +1,7 @@
 import 'package:laiza/core/app_export.dart';
-import 'package:laiza/data/models/connections_model/connections_model.dart';
 import 'package:laiza/presentation/shimmers/loading_list.dart';
 
+import '../../../../data/models/my_connections_model/my_connections_model.dart';
 import '../../../empty_pages/no_connections_found/no_connections_found.dart';
 
 class ConnectionsScreen extends StatelessWidget {
@@ -39,7 +39,7 @@ class ConnectionsScreen extends StatelessWidget {
   }
 
   Column _buildConnectionsWidget(
-      BuildContext context, List<ConnectionsModel> items) {
+      BuildContext context, List<Connection> connections) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
       children: [
@@ -59,51 +59,53 @@ class ConnectionsScreen extends StatelessWidget {
           hintText: 'Search',
         ),
         Expanded(
-          child: items.isEmpty
+          child: connections.isEmpty
               ? const NoConnectionsFoundScreen()
               : ListView.separated(
                   separatorBuilder: (BuildContext context, int index) =>
                       Divider(height: 2.v),
-                  itemCount: items.length,
+                  itemCount: connections.length,
                   shrinkWrap: true,
-                  itemBuilder: (context, index) =>
-                      _buildConnectionItem(items, index, textTheme),
+                  itemBuilder: (context, index) {
+                    Connection item = connections[index];
+                    return _buildConnectionItem(item, textTheme);
+                  },
                 ),
         )
       ],
     );
   }
 
-  ListTile _buildConnectionItem(
-      List<ConnectionsModel> items, int index, TextTheme textTheme) {
+  ListTile _buildConnectionItem(Connection item, TextTheme textTheme) {
     return ListTile(
       onTap: () {},
       contentPadding: const EdgeInsets.all(0),
       leading: CustomImageView(
+        onTap: () {},
         height: 50.h,
         width: 50.h,
         radius: BorderRadius.circular(50.h),
-        imagePath: items[index].profile,
+        imagePath: item.profileImg,
       ),
       trailing: CustomImageView(
         imagePath: ImageConstant.chatIcon,
       ),
       title: Text(
-        items[index].name,
+        item.name,
         style: textTheme.titleMedium,
       ),
-      subtitle: Row(
-        children: [
-          Text(
-            'Product Category- ',
-            style: textTheme.bodySmall,
-          ),
-          Text(
-            items[index].category,
-            style: textTheme.bodySmall!.copyWith(color: AppColor.blackColor),
-          ),
-        ],
-      ),
+      // subtitle: Row(
+      //   children: [
+      //     Text(
+      //       'Product Category- ',
+      //       style: textTheme.bodySmall,
+      //     ),
+      //     Text(
+      //       item.category,
+      //       style: textTheme.bodySmall!.copyWith(color: AppColor.blackColor),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

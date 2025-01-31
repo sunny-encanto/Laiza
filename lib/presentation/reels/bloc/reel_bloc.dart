@@ -10,19 +10,21 @@ part 'reel_state.dart';
 
 class ReelBloc extends Bloc<ReelEvent, ReelState> {
   final ReelRepository _reelRepository;
+  List<Reel> reels = <Reel>[];
 
   ReelBloc(this._reelRepository) : super(ReelInitial()) {
     // Handle loading of reels
     on<LoadReelEvent>(_onLoadReels);
 
     on<ReelFollowRequestEvent>(_onFollowRequest);
+    on<ToggleReelLikeButtonEvent>(_onToggleLikeButton);
   }
 
   Future<void> _onLoadReels(
       LoadReelEvent event, Emitter<ReelState> emit) async {
     emit(ReelLoading());
     try {
-      List<Reel> reels = await _reelRepository.getReels();
+      reels = await _reelRepository.getAllReels();
       emit(ReelLoaded(reels));
     } catch (e) {
       emit(ReelError(e.toString()));
@@ -32,5 +34,22 @@ class ReelBloc extends Bloc<ReelEvent, ReelState> {
   FutureOr<void> _onFollowRequest(
       ReelFollowRequestEvent event, Emitter<ReelState> emit) async {
     emit(ReelFollowRequestState(event.isFollowed));
+  }
+
+  FutureOr<void> _onToggleLikeButton(
+      ToggleReelLikeButtonEvent event, Emitter<ReelState> emit) {
+    reels = reels.map((item) {
+      if (item.id == event.id) {
+        if (item.likeStatus == 0) {
+          _reelRepository.addReelLike(event.id);
+          return item.copyWith(likeStatus: 1, likesCount: item.likesCount + 1);
+        } else {
+          _reelRepository.removeReelLike(event.id);
+          return item.copyWith(likeStatus: 0, likesCount: item.likesCount - 1);
+        }
+      }
+      return item;
+    }).toList();
+    emit(ReelLoaded(reels));
   }
 }

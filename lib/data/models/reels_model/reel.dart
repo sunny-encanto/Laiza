@@ -1,7 +1,7 @@
 class Reel {
   int id;
   int userId;
-  int productId;
+  List<String> productId;
   int catId;
   String reelTitle;
   String reelPath;
@@ -11,6 +11,7 @@ class Reel {
   String reelHashtag;
   int likesCount;
   int commentsCount;
+  List<ReelProduct> product;
 
   Reel({
     required this.id,
@@ -25,6 +26,7 @@ class Reel {
     required this.reelHashtag,
     required this.likesCount,
     required this.commentsCount,
+    required this.product,
   });
 
   Reel copyWith({int? likeStatus, int? likesCount}) {
@@ -41,14 +43,15 @@ class Reel {
       reelHashtag: reelHashtag,
       likesCount: likesCount ?? this.likesCount,
       commentsCount: commentsCount,
+      product: product,
     );
   }
 
   factory Reel.fromJson(Map<String, dynamic> json) => Reel(
         id: json["id"],
         userId: json["user_id"],
-        productId: json["product_id"],
-        catId: json["category_id"],
+        productId: List<String>.from(json["product_id"].map((x) => x)),
+        catId: json["category_id"] ?? 0,
         reelTitle: json["reel_title"],
         reelPath: json["reel_path"],
         likeStatus: json['is_like'],
@@ -57,12 +60,14 @@ class Reel {
         reelHashtag: json["reel_hashtag"],
         likesCount: json["likes_count"],
         commentsCount: json["comments_count"],
+        product: List<ReelProduct>.from(
+            json["product"].map((x) => ReelProduct.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "user_id": userId,
-        "product_id": productId,
+        "product_id": List<dynamic>.from(productId.map((x) => x)),
         "reel_title": reelTitle,
         "reel_path": reelPath,
         "is_like": likeStatus,
@@ -71,6 +76,35 @@ class Reel {
         "reel_hashtag": reelHashtag,
         "likes_count": likesCount,
         "comments_count": commentsCount,
-        "category_id": catId
+        "category_id": catId,
+        "product": List<dynamic>.from(product.map((x) => x.toJson())),
+      };
+}
+
+class ReelProduct {
+  int id;
+  String productName;
+  String price;
+  String productImage;
+
+  ReelProduct({
+    required this.id,
+    required this.productName,
+    required this.price,
+    required this.productImage,
+  });
+
+  factory ReelProduct.fromJson(Map<String, dynamic> json) => ReelProduct(
+        id: json["id"],
+        productName: json["product_name"],
+        price: json["price"],
+        productImage: json["product_image"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "product_name": productName,
+        "price": price,
+        "product_image": productImage,
       };
 }

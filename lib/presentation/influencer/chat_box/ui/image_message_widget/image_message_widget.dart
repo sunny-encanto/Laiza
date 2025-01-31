@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:intl/intl.dart';
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/core/utils/pref_utils.dart';
@@ -6,6 +8,7 @@ import 'package:photo_view/photo_view.dart';
 
 class ImageMessageWidget extends StatelessWidget {
   final Message message;
+
   const ImageMessageWidget({super.key, required this.message});
 
   @override
@@ -172,16 +175,21 @@ class ImageMessageWidget extends StatelessWidget {
 }
 
 class ViewImageWidget extends StatelessWidget {
-  const ViewImageWidget({super.key, required this.url});
+  const ViewImageWidget({super.key, required this.url, this.isFilePath});
+
   final String url;
+  final bool? isFilePath;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
           backgroundColor: Colors.black,
           iconTheme: IconThemeData(color: AppColor.offWhite)),
       body: PhotoView(
-        imageProvider: NetworkImage(url),
+        imageProvider:
+            isFilePath == null ? NetworkImage(url) : FileImage(File(url)),
       ),
     );
   }

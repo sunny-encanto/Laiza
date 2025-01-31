@@ -26,3 +26,12 @@ class ReelFollowRequestEvent extends ReelEvent {
   @override
   List<Object> get props => [isFollowed];
 }
+
+class ToggleReelLikeButtonEvent extends ReelEvent {
+  final int id;
+
+  const ToggleReelLikeButtonEvent(this.id);
+
+  @override
+  List<Object> get props => [id];
+}

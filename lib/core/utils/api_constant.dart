@@ -28,7 +28,8 @@ class ApiConstant {
   static String following = 'api/user/following';
   static String unfollow = 'api/user/unfollow';
   static String follow = 'api/user/follow';
-  static String reel = 'api/user/reel';
+  static String myReel = 'api/user/reel';
+  static String allReel = 'api/user/reel/all';
   static String userReel = 'api/user/reel/all';
   static String addReel = 'api/user/reel/add';
   static String updateReel = 'api/user/reel/update';
@@ -56,4 +57,7 @@ class ApiConstant {
   static String updateCart = 'api/user/cart/update';
   static String sendConnection = 'api/user/connection/send';
   static String getRequests = 'api/user/connection/requests';
+  static String getMyConnections = 'api/user/get_my_connection';
+  static String acceptRejectConnections = 'api/user/connection/update_requests';
+  static String trendingItems = 'api/user/trending_now';
 }

@@ -43,7 +43,7 @@ class EditProfileScreen extends StatelessWidget {
             }
             if (state is ProfileFetchedState) {
               _nameController.text = state.user.name ?? "";
-              //_bioController.text =state.user.bio
+              _bioController.text = state.user.bio ?? "";
               _instagramController.text = state.user.instagramLink ?? '';
               _facebookController.text = state.user.facebookLink ?? '';
               _snapChatController.text = state.user.snapchatLink ?? '';
@@ -295,7 +295,7 @@ class EditProfileScreen extends StatelessWidget {
                 _userModel?.xComLink = _xController.text;
                 _userModel?.facebookLink = _facebookController.text;
                 _userModel?.snapchatLink = _snapChatController.text;
-
+                _userModel?.bio = _bioController.text;
                 if (_selectedImage.isNotEmpty) {
                   _userModel?.profileImg = _selectedImage;
                 }
@@ -336,6 +336,14 @@ class EditProfileScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(100.h),
                     ),
                     child: CustomImageView(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ViewImageWidget(
+                            url: _selectedImage,
+                            isFilePath: true,
+                          ),
+                        ));
+                      },
                       radius: BorderRadius.circular(100.h),
                       width: 90.v,
                       height: 90.v,
@@ -351,6 +359,12 @@ class EditProfileScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(100.h),
                   ),
                   child: CustomImageView(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            ViewImageWidget(url: user.profileImg ?? ''),
+                      ));
+                    },
                     radius: BorderRadius.circular(100.h),
                     width: 90.v,
                     height: 90.v,

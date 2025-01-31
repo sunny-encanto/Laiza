@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
+import '../app_export.dart';
 import '../errors/exceptions.dart';
 import '../utils/api_constant.dart';
 
@@ -111,6 +113,16 @@ class ApiClient {
       throw Exception('Server error: ${e.response?.statusCode}');
     } else if (e.type == DioExceptionType.cancel) {
       throw Exception('Request was cancelled.');
+    } else if (e.type == DioExceptionType.connectionError) {
+      Fluttertoast.showToast(
+        msg: 'No Internet',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      throw Exception('No Internet Connection');
     } else {
       throw Exception('Unexpected error occurred: ${e.message}');
     }

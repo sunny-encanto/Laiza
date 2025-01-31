@@ -24,7 +24,7 @@ class MyReelBloc extends Bloc<MyReelEvent, MyReelState> {
       LoadMyReelEvent event, Emitter<MyReelState> emit) async {
     emit(MyReelLoading());
     try {
-      reels = await _reelRepository.getReels();
+      reels = await _reelRepository.getMyReels();
       emit(MyReelLoaded(reels));
     } catch (e) {
       emit(MyReelError(e.toString()));

@@ -1,13 +1,16 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:laiza/core/app_export.dart';
+import 'package:laiza/data/models/trending_items_model/trending_items_model.dart';
 
 part 'trending_now_event.dart';
 part 'trending_now_state.dart';
 
 class TrendingNowBloc extends Bloc<TrendingNowEvent, TrendingNowState> {
-  TrendingNowBloc() : super(TrendingNowInitial()) {
+  final PostRepository _postRepository;
+
+  TrendingNowBloc(this._postRepository) : super(TrendingNowInitial()) {
     on<FetchTrendingNowEvent>(_onFetchTrendingNow);
   }
 
@@ -15,8 +18,8 @@ class TrendingNowBloc extends Bloc<TrendingNowEvent, TrendingNowState> {
       FetchTrendingNowEvent event, Emitter<TrendingNowState> emit) async {
     try {
       emit(TrendingNowLoading());
-      await Future.delayed(const Duration(seconds: 1));
-      emit(const TrendingNowLoaded([]));
+      List<TrendingItems> items = await _postRepository.getTrendingItems();
+      emit(TrendingNowLoaded(items));
     } catch (e) {
       emit(TrendingNowError(e.toString()));
     }

@@ -1,10 +1,11 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/blocs/all_seller_bloc/all_seller_bloc.dart';
+import 'package:laiza/data/models/my_connections_model/my_connections_model.dart';
 import 'package:laiza/data/models/product_model/product.dart';
 import 'package:laiza/data/models/user/user_model.dart';
+import 'package:laiza/data/repositories/connections_repository/connections_repository.dart';
 
 import '../../../../data/blocs/product_bloc/product_bloc.dart';
-import '../../../../data/models/connections_model/connections_model.dart';
 import '../../../../data/repositories/product_repository/product_repository.dart';
 import '../../../shimmers/loading_list.dart';
 import '../../side_bar/ui/side_bar.dart';
@@ -29,7 +30,7 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomTextFormField(
-                        contentPadding: EdgeInsets.only(left: 10.h),
+                        contentPadding: EdgeInsets.all(15.h),
                         prefixConstraints: BoxConstraints(maxWidth: 25.h),
                         prefix: Padding(
                           padding: EdgeInsets.only(left: 10.h),
@@ -169,11 +170,36 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 12.v),
-                Column(
-                  children: List.generate(
-                      4,
-                      (index) => _buildConnectionItem(
-                          connectionsList[index], textTheme)),
+                BlocProvider(
+                  create: (context) =>
+                      ConnectionsBloc(context.read<ConnectionsRepository>()),
+                  child: BlocBuilder<ConnectionsBloc, ConnectionsState>(
+                    builder: (context, state) {
+                      if (state is ConnectionsInitial) {
+                        context
+                            .read<ConnectionsBloc>()
+                            .add(FetchConnectionsEvent());
+                      } else if (state is ConnectionsLoadingSate) {
+                        return const LoadingListPage();
+                      } else if (state is ConnectionsErrorState) {
+                        return Center(child: Text(state.message));
+                      } else if (state is ConnectionsLoadedState) {
+                        List<Connection> connections = state.connections
+                            .sublist(
+                                0,
+                                state.connections.length > 4
+                                    ? 4
+                                    : state.connections.length);
+                        return Column(
+                          children: List.generate(
+                              connections.length,
+                              (index) => _buildConnectionItem(
+                                  connections[index], textTheme)),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
                 ),
                 SizedBox(height: 28.v),
                 Text(
@@ -299,6 +325,10 @@ class HomeScreen extends StatelessWidget {
                                           height: 33.v,
                                           text: 'View Profile',
                                           buttonTextStyle: textTheme.titleSmall,
+                                          onPressed: () {
+                                            Navigator.of(context).pushNamed(
+                                                AppRoutes.sellerInfoScreen);
+                                          },
                                         )
                                       ],
                                     ),
@@ -328,7 +358,7 @@ class HomeScreen extends StatelessWidget {
     }
   }
 
-  ListTile _buildConnectionItem(ConnectionsModel items, TextTheme textTheme) {
+  ListTile _buildConnectionItem(Connection items, TextTheme textTheme) {
     return ListTile(
       onTap: () {},
       contentPadding: const EdgeInsets.all(0),
@@ -336,7 +366,7 @@ class HomeScreen extends StatelessWidget {
         height: 50.h,
         width: 50.h,
         radius: BorderRadius.circular(50.h),
-        imagePath: items.profile,
+        imagePath: items.profileImg,
       ),
       trailing: CustomImageView(
         imagePath: ImageConstant.chatIcon,
@@ -345,18 +375,18 @@ class HomeScreen extends StatelessWidget {
         items.name,
         style: textTheme.titleMedium,
       ),
-      subtitle: Row(
-        children: [
-          Text(
-            'Product Category- ',
-            style: textTheme.bodySmall,
-          ),
-          Text(
-            items.category,
-            style: textTheme.bodySmall!.copyWith(color: AppColor.blackColor),
-          ),
-        ],
-      ),
+      // subtitle: Row(
+      //   children: [
+      //     Text(
+      //       'Product Category- ',
+      //       style: textTheme.bodySmall,
+      //     ),
+      //     Text(
+      //       items.category,
+      //       style: textTheme.bodySmall!.copyWith(color: AppColor.blackColor),
+      //     ),
+      //   ],
+      // ),
     );
   }
 
@@ -430,7 +460,7 @@ class PromotionProductCard extends StatelessWidget {
             width: SizeUtils.width,
             radius: BorderRadius.circular(12.h),
             imagePath: product.images.isEmpty
-                ? ImageConstant.productImage
+                ? ImageConstant.imageNotFound
                 : product.images[0].imagePath,
             fit: BoxFit.fill,
           ),

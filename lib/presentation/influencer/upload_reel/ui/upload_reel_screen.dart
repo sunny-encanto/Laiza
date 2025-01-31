@@ -3,13 +3,11 @@ import 'package:laiza/data/models/product_model/product.dart';
 import 'package:laiza/data/models/selectionPopupModel/selection_popup_model.dart';
 import 'package:laiza/data/repositories/product_repository/product_repository.dart';
 import 'package:laiza/presentation/user/video_player/ui/video_player.dart';
-import 'package:laiza/widgets/custom_drop_down.dart';
+import 'package:multi_dropdown/multi_dropdown.dart';
 
-import '../../../../data/blocs/category_bloc/category_bloc.dart';
 import '../../../../data/blocs/product_bloc/product_bloc.dart';
-import '../../../../data/models/category_model/Category.dart';
 import '../../../../data/models/reels_model/reel.dart';
-import '../../../../widgets/custom_searchable_dropdown.dart';
+import '../../../../widgets/multi_select_dropdown.dart';
 
 class UploadReelScreen extends StatelessWidget {
   final String? mediaPath;
@@ -17,15 +15,20 @@ class UploadReelScreen extends StatelessWidget {
 
   UploadReelScreen({super.key, this.mediaPath, this.reel});
 
-  SelectionPopupModel? selectedCategory;
   SelectionPopupModel? selectedProduct;
   final tittleController = TextEditingController();
   final desController = TextEditingController();
-  final productController = TextEditingController();
+  MultiSelectController<SelectionPopupModel> productController =
+      MultiSelectController<SelectionPopupModel>();
+
+  // final productController = TextEditingController();
   final hashTagController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   String coverImage = '';
   String reelPath = '';
+  List<SelectionPopupModel> selectedProducts = <SelectionPopupModel>[];
+  List<DropdownItem<SelectionPopupModel>> initialProduct =
+      <DropdownItem<SelectionPopupModel>>[];
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +64,6 @@ class UploadReelScreen extends StatelessWidget {
                         alignment: Alignment.center,
                         children: [
                           VideoPlayerFromFile(path: reelPath),
-
                           // CustomImageView(
                           //   onTap: () {},
                           //   height: 470.v,
@@ -76,7 +78,6 @@ class UploadReelScreen extends StatelessWidget {
                         ],
                       );
                     }
-
                     if (reelPath.isNotEmpty) {
                       return Stack(
                         alignment: Alignment.center,
@@ -259,6 +260,7 @@ class UploadReelScreen extends StatelessWidget {
                         value: value ?? '', title: 'product title');
                   },
                 ),
+
                 SizedBox(height: 20.v),
                 Text(
                   'Product',
@@ -277,15 +279,24 @@ class UploadReelScreen extends StatelessWidget {
                         return const SizedBox.shrink();
                       } else if (state is ProductLoaded) {
                         if (reel != null) {
-                          Product product = state.products
-                              .where((item) => item.id == reel?.productId)
-                              .first;
-                          selectedProduct = SelectionPopupModel(
-                              title: product.productName, value: product.id);
-                          productController.text = selectedProduct?.title ?? '';
+                          List<String> productIds =
+                              reel?.productId ?? <String>[];
+                          for (var id in productIds) {
+                            Product product = state.products
+                                .where((item) => item.id == int.parse(id))
+                                .first;
+                            SelectionPopupModel model = SelectionPopupModel(
+                                title: product.productName, value: product.id);
+                            initialProduct.add(
+                                DropdownItem<SelectionPopupModel>(
+                                    label: model.title, value: model));
+                            productController.selectedItems.add(
+                                DropdownItem(label: model.title, value: model));
+                          }
                         }
-                        return SearchableDropdown(
-                          controller: productController,
+                        return MultiSelectDropdownWithSearch(
+                          initialItems: initialProduct,
+                          searchController: productController,
                           items: state.products
                               .map((Product product) => SelectionPopupModel(
                                   value: product.id.toInt(),
@@ -293,7 +304,7 @@ class UploadReelScreen extends StatelessWidget {
                               .toList(),
                           hint: 'Select Product',
                           onChanged: (value) {
-                            selectedProduct = value;
+                            selectedProducts = value;
                           },
                         );
                       } else {
@@ -334,53 +345,7 @@ class UploadReelScreen extends StatelessWidget {
                     return validateField(value: value ?? '', title: 'hashtag');
                   },
                 ),
-                SizedBox(height: 20.v),
-                Text(
-                  'Category',
-                  style: textTheme.titleMedium,
-                ),
-                SizedBox(height: 8.v),
-                BlocProvider(
-                  create: (context) =>
-                      CategoryBloc(context.read<CategoryRepository>()),
-                  child: BlocBuilder<CategoryBloc, CategoryState>(
-                    builder: (context, state) {
-                      if (state is CategoryInitial) {
-                        context.read<CategoryBloc>().add(CategoryLoadEvent());
-                        return const SizedBox.shrink();
-                      } else if (state is CategoryLoading) {
-                        return const SizedBox.shrink();
-                      } else if (state is CategoryLoaded) {
-                        if (reel != null) {
-                          Category category = state.category
-                              .where((item) => item.id == reel?.catId)
-                              .first;
-                          selectedCategory = SelectionPopupModel(
-                              title: category.name ?? '', value: category.id);
-                        }
-                        return CustomDropDown(
-                          value: selectedCategory,
-                          hintText: 'Select Category',
-                          items: state.category
-                              .map((Category category) => SelectionPopupModel(
-                                  value: category.id!.toInt(),
-                                  title: category.name ?? ''))
-                              .toList(),
-                          validator: (SelectionPopupModel? value) {
-                            return validateField(
-                                value: value?.title ?? '',
-                                title: 'product category');
-                          },
-                          onChanged: (SelectionPopupModel? val) {
-                            selectedCategory = val;
-                          },
-                        );
-                      } else {
-                        return const SizedBox.shrink();
-                      }
-                    },
-                  ),
-                ),
+
                 SizedBox(height: 20.v),
                 // Text(
                 //   'Product link',
@@ -451,11 +416,13 @@ class UploadReelScreen extends StatelessWidget {
                   } else {
                     if (reel != null) {
                       Reel newReel = reel!;
-                      newReel.catId = selectedCategory?.value;
                       newReel.reelCoverPath = coverImage;
                       newReel.reelTitle = tittleController.text;
                       newReel.reelDescription = desController.text;
                       newReel.reelHashtag = hashTagController.text;
+                      newReel.productId = selectedProducts
+                          .map((item) => item.value.toString())
+                          .toList();
                       context
                           .read<UploadReelBloc>()
                           .add(UpdateReelRequestEvent(newReel));
@@ -465,9 +432,10 @@ class UploadReelScreen extends StatelessWidget {
                           .add(UploadReelSubmitRequestEvent(
                             reelPath: reelPath,
                             reelTitle: tittleController.text,
-                            productId: selectedProduct?.value ?? 0,
+                            productIds: selectedProducts
+                                .map((item) => item.value.toString())
+                                .toList(),
                             reelDes: desController.text,
-                            categoryId: selectedCategory?.value ?? 0,
                             coverPath: coverImage,
                             hashTag: hashTagController.text,
                           ));

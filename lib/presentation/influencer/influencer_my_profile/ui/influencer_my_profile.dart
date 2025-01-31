@@ -580,6 +580,12 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                         height: 90.v,
                         fit: BoxFit.fill,
                         imagePath: state.userModel.profileImg,
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ViewImageWidget(
+                                url: state.userModel.profileImg ?? ''),
+                          ));
+                        },
                       ),
                     ),
                     SizedBox(width: 12.h),

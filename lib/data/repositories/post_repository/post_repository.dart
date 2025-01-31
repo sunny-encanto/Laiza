@@ -1,33 +1,33 @@
 import 'package:dio/dio.dart';
+import 'package:laiza/data/models/trending_items_model/trending_items_model.dart';
 
 import '../../../core/network/dio_client.dart';
-import '../../models/post_model/post_model.dart';
+import '../../../core/utils/api_constant.dart';
+import '../../../core/utils/logger.dart';
+import '../../../core/utils/pref_utils.dart';
 
 class PostRepository {
   final ApiClient _apiClient = ApiClient();
 
-  Future<List<Post>> fetchPosts() async {
-    Response response = await _apiClient.get('/posts');
+  Future<List<TrendingItems>> getTrendingItems() async {
     try {
-      if (response.statusCode == 200) {
-        List<dynamic> body = response.data;
-        List<Post> posts = [];
-        // body.map((dynamic item) => Post.fromJson(item)).toList();
-        return posts;
-      } else {
-        throw Exception('Failed to load posts');
-      }
-    } catch (e) {
-      throw Exception('Failed to load posts');
-    }
-  }
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
 
-  Future<void> createPost(Map<String, dynamic> postData) async {
-    try {
-      Response response = await _apiClient.post('/posts', data: postData);
-      // return Post.fromJson(response.data);
+      Response response = await _apiClient.get(ApiConstant.trendingItems);
+      if (response.statusCode == 200) {
+        TrendingItemsModel model = TrendingItemsModel.fromJson(response.data);
+        return model.items;
+      } else {
+        TrendingItemsModel model = TrendingItemsModel.fromJson(response.data);
+        return model.items;
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
     } catch (e) {
-      throw Exception('Failed to create post: $e');
+      Logger.log('Error during get trending items', e.toString());
+      throw Exception('Failed to get trending items');
     }
   }
 }

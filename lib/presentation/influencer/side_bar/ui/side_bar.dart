@@ -1,5 +1,6 @@
 import 'package:laiza/core/app_export.dart';
-import 'package:laiza/data/services/firebase_services.dart';
+
+import '../../../profile/ui/profile_screen.dart';
 
 class SideBar extends StatelessWidget {
   const SideBar({super.key});
@@ -132,8 +133,7 @@ class SideBar extends StatelessWidget {
               imagePath: ImageConstant.logout,
               tittle: 'Log out',
               onTap: () async {
-                await FirebaseServices.handleLogOut(context);
-                // Navigator.of(context).pop();
+                await logOutDialog(context);
               },
               textTheme: textTheme,
             ),

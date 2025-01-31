@@ -174,4 +174,5 @@ class ImageConstant {
   static String share__ = '$imagePath/Vector-2.svg';
   static String commnet__ = '$imagePath/Group 1000003113.svg';
   static String uploadReel = '$imagePath/upload_reel.svg';
+  static String imageNotFound = '$imagePath/image_not_found.png';
 }

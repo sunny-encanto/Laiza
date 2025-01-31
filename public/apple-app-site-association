@@ -3,7 +3,7 @@
     "apps": [],
     "details": [
       {
-        "appID": "T5NS3GT985.com.encanto.wellbe",
+        "appID": "app_id",
         "paths": ["/profile*"]
       }
     ]

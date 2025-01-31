@@ -12,7 +12,7 @@ final class TrendingNowInitial extends TrendingNowState {}
 final class TrendingNowLoading extends TrendingNowState {}
 
 final class TrendingNowLoaded extends TrendingNowState {
-  final List trendingNow;
+  final List<TrendingItems> trendingNow;
 
   const TrendingNowLoaded(this.trendingNow);
 

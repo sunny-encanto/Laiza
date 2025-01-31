@@ -34,96 +34,100 @@ class ConnectionsRequestScreen extends StatelessWidget {
                 ? const EmptyRequestScreen()
                 : ListView.builder(
                     itemCount: state.requestList.length,
-                    itemBuilder: (context, index) => Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 20.v, vertical: 10.v),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              CustomImageView(
-                                radius: BorderRadius.circular(100.h),
-                                width: 50.v,
-                                height: 50.v,
-                                fit: BoxFit.fill,
-                                imagePath:
-                                    'https://as2.ftcdn.net/v2/jpg/03/83/25/83/1000_F_383258331_D8imaEMl8Q3lf7EKU2Pi78Cn0R7KkW9o.jpg',
-                              ),
-                              SizedBox(width: 4.v),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Krithika Thapar',
-                                    style: textTheme.titleMedium,
+                    itemBuilder: (context, index) {
+                      ConnectionRequest request = state.requestList[index];
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20.v, vertical: 10.v),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                CustomImageView(
+                                  radius: BorderRadius.circular(100.h),
+                                  width: 50.v,
+                                  height: 50.v,
+                                  fit: BoxFit.fill,
+                                  imagePath:
+                                      'https://as2.ftcdn.net/v2/jpg/03/83/25/83/1000_F_383258331_D8imaEMl8Q3lf7EKU2Pi78Cn0R7KkW9o.jpg',
+                                ),
+                                SizedBox(width: 4.v),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      request.sender.name,
+                                      style: textTheme.titleMedium,
+                                    ),
+                                    SizedBox(height: 4.v),
+                                    // Row(
+                                    //   children: [
+                                    //     Text(
+                                    //       'Product Category- ',
+                                    //       style: textTheme.bodySmall!
+                                    //           .copyWith(fontSize: 12.fSize),
+                                    //     ),
+                                    //     Text(
+                                    //       'Cosmetics',
+                                    //       style: textTheme.titleMedium!
+                                    //           .copyWith(fontSize: 12.fSize),
+                                    //     ),
+                                    //   ],
+                                    // ),
+                                  ],
+                                ),
+                                const Spacer(),
+                                Visibility(
+                                  visible: state.requestList[index].status ==
+                                      ConnectionRequestStatus.pending,
+                                  replacement: CustomImageView(
+                                    imagePath: ImageConstant.chatIcon,
                                   ),
-                                  SizedBox(height: 4.v),
-                                  Row(
+                                  child: Row(
                                     children: [
-                                      Text(
-                                        'Product Category- ',
-                                        style: textTheme.bodySmall!
-                                            .copyWith(fontSize: 12.fSize),
+                                      CustomImageView(
+                                        onTap: () {
+                                          context.read<ConnectionRequestBloc>().add(
+                                              ConnectionRequestChangeStatusEvent(
+                                                  id: state
+                                                      .requestList[index].id,
+                                                  status:
+                                                      ConnectionRequestStatus
+                                                          .accepted));
+                                        },
+                                        imagePath: ImageConstant.accept,
                                       ),
-                                      Text(
-                                        'Cosmetics',
-                                        style: textTheme.titleMedium!
-                                            .copyWith(fontSize: 12.fSize),
+                                      SizedBox(width: 12.h),
+                                      CustomImageView(
+                                        onTap: () {
+                                          context.read<ConnectionRequestBloc>().add(
+                                              ConnectionRequestChangeStatusEvent(
+                                                  id: request.id,
+                                                  status:
+                                                      ConnectionRequestStatus
+                                                          .rejected));
+                                        },
+                                        imagePath: ImageConstant.reject,
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
-                              const Spacer(),
-                              Visibility(
-                                visible:
-                                    state.requestList[index].requestStatus ==
-                                        ConnectionRequestStatus.pending.name,
-                                replacement: CustomImageView(
-                                  imagePath: ImageConstant.chatIcon,
-                                ),
-                                child: Row(
-                                  children: [
-                                    CustomImageView(
-                                      onTap: () {
-                                        context.read<ConnectionRequestBloc>().add(
-                                            ConnectionRequestChangeStatusEvent(
-                                                id: state.requestList[index].id,
-                                                status: ConnectionRequestStatus
-                                                    .accepted.name));
-                                      },
-                                      imagePath: ImageConstant.accept,
-                                    ),
-                                    SizedBox(width: 12.h),
-                                    CustomImageView(
-                                      onTap: () {
-                                        context.read<ConnectionRequestBloc>().add(
-                                            ConnectionRequestChangeStatusEvent(
-                                                id: state.requestList[index].id,
-                                                status: ConnectionRequestStatus
-                                                    .rejected.name));
-                                      },
-                                      imagePath: ImageConstant.reject,
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                          SizedBox(height: 8.v),
-                          Visibility(
-                            visible: state.requestList[index].requestStatus ==
-                                ConnectionRequestStatus.pending.name,
-                            child: Text(
-                              state.requestList[index].description,
-                              style: textTheme.bodySmall!
-                                  .copyWith(fontSize: 12.fSize),
+                                )
+                              ],
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                  );
+                            SizedBox(height: 8.v),
+                            // Visibility(
+                            //   visible: state.requestList[index].status ==
+                            //       ConnectionRequestStatus.pending.name,
+                            //   child: Text(
+                            //     'state.requestList[index].description',
+                            //     style: textTheme.bodySmall!
+                            //         .copyWith(fontSize: 12.fSize),
+                            //   ),
+                            // )
+                          ],
+                        ),
+                      );
+                    });
           }
           return const SizedBox.shrink();
         },

@@ -11,14 +11,34 @@ import '../../../core/utils/api_constant.dart';
 class ReelRepository {
   final ApiClient _apiClient = ApiClient();
 
-  Future<List<Reel>> getReels() async {
+  Future<List<Reel>> getMyReels() async {
     try {
       _apiClient
           .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
 
-      Response response = await _apiClient.get(
-        ApiConstant.reel,
-      );
+      Response response = await _apiClient.get(ApiConstant.myReel);
+      if (response.statusCode == 200) {
+        ReelModel model = ReelModel.fromJson(response.data);
+        return model.reels;
+      } else {
+        ReelModel model = ReelModel.fromJson(response.data);
+        return model.reels;
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during get Reels', e.toString());
+      throw Exception('Failed to get Reels');
+    }
+  }
+
+  Future<List<Reel>> getAllReels() async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+
+      Response response = await _apiClient.get(ApiConstant.allReel);
       if (response.statusCode == 200) {
         ReelModel model = ReelModel.fromJson(response.data);
         return model.reels;
@@ -36,8 +56,7 @@ class ReelRepository {
   }
 
   Future<CommonModel> addReel({
-    required int productId,
-    required int categoryId,
+    required List<String> productIds,
     required String reelTitle,
     required String reelDes,
     required String reelPath,
@@ -48,8 +67,7 @@ class ReelRepository {
       _apiClient
           .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
       FormData formData = FormData.fromMap({
-        'product_id': productId,
-        'category_id': categoryId,
+        'product_id[]': productIds,
         'reel_title': reelTitle,
         'reel_description': reelDes,
         'reel_hashtag': hashTag,
@@ -152,6 +170,8 @@ class ReelRepository {
       } else {
         data['reel_cover_path'] = null;
       }
+      data['product_id[]'] = reel.productId;
+      data.remove('product_id');
       // Create FormData from the map
       FormData formData = FormData.fromMap(data);
       Response response = await _apiClient

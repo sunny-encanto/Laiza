@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:laiza/data/repositories/comments_repository/comments_repository.dart';
+import 'package:laiza/data/repositories/connections_repository/connections_repository.dart';
 import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
 import 'package:laiza/data/repositories/product_repository/product_repository.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
@@ -119,6 +120,8 @@ class AppRoutes {
   static const String returnProductScreen = '/Return_product_screen';
 
   static const String orderManagementScreen = '/orderManagement_screen';
+
+  static const String imageViewScreen = '/imageView_Screen';
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -340,7 +343,8 @@ class AppRoutes {
       case connectionsScreen:
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => ConnectionsBloc(),
+                  create: (context) =>
+                      ConnectionsBloc(context.read<ConnectionsRepository>()),
                   child: ConnectionsScreen(),
                 ));
 
@@ -413,7 +417,8 @@ class AppRoutes {
       case connectionsRequestScreen:
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => ConnectionRequestBloc(),
+                  create: (context) => ConnectionRequestBloc(
+                      context.read<ConnectionsRepository>()),
                   child: const ConnectionsRequestScreen(),
                 ));
 

@@ -142,38 +142,6 @@ class ProfileScreen extends StatelessWidget {
       default:
     }
   }
-
-  logOutDialog(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
-    return showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              actionsPadding: EdgeInsets.all(25.v),
-              title: Text(
-                'Logout ?',
-                style: textTheme.titleLarge!.copyWith(fontSize: 20.fSize),
-              ),
-              content: Text(
-                'Are you sure want to logout...?',
-                style: textTheme.bodySmall!.copyWith(fontSize: 20.fSize),
-              ),
-              actionsAlignment: MainAxisAlignment.spaceAround,
-              actions: [
-                CustomOutlineButton(
-                    width: 100.h,
-                    text: 'Cancel',
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    }),
-                CustomElevatedButton(
-                    width: 100.h,
-                    text: 'Ok',
-                    onPressed: () async {
-                      await FirebaseServices.handleLogOut(context);
-                    }),
-              ],
-            ));
-  }
 }
 
 List menuItem = [
@@ -185,3 +153,35 @@ List menuItem = [
   'Settings',
   'Log Out',
 ];
+
+logOutDialog(BuildContext context) {
+  TextTheme textTheme = Theme.of(context).textTheme;
+  return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            actionsPadding: EdgeInsets.all(25.v),
+            title: Text(
+              'Logout ?',
+              style: textTheme.titleLarge!.copyWith(fontSize: 20.fSize),
+            ),
+            content: Text(
+              'Are you sure want to logout...?',
+              style: textTheme.bodySmall!.copyWith(fontSize: 20.fSize),
+            ),
+            actionsAlignment: MainAxisAlignment.spaceAround,
+            actions: [
+              CustomOutlineButton(
+                  width: 100.h,
+                  text: 'Cancel',
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  }),
+              CustomElevatedButton(
+                  width: 100.h,
+                  text: 'Ok',
+                  onPressed: () async {
+                    await FirebaseServices.handleLogOut(context);
+                  }),
+            ],
+          ));
+}

@@ -22,6 +22,18 @@ class ConnectionsModel {
         profile: profile,
         isConnected: isConnected ?? this.isConnected,
       );
+
+  factory ConnectionsModel.fromJson(Map<String, dynamic> json) =>
+      ConnectionsModel(
+        id: json["id"],
+        category: json["category"] ?? "",
+        profile: json["profile_img"],
+        name: json["name"],
+        isConnected: true,
+      );
+
+  Map<String, dynamic> toJson() =>
+      {'id': id, 'category': category, 'profile_img': profile, 'name': name};
 }
 
 List<ConnectionsModel> connectionsList = <ConnectionsModel>[

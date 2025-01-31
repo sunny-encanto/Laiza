@@ -50,10 +50,9 @@ class UploadReelBloc extends Bloc<UploadReelEvent, UploadReelState> {
     try {
       emit(UploadReelLoadingSate());
       CommonModel responseData = await _reelRepository.addReel(
-        productId: event.productId,
+        productIds: event.productIds,
         reelTitle: event.reelTitle,
         reelPath: event.reelPath,
-        categoryId: event.categoryId,
         reelDes: event.reelDes,
         coverPath: event.coverPath,
         hashTag: event.hashTag,
