@@ -11,16 +11,40 @@ final class CreateCollectionInitial extends CreateCollectionState {}
 
 final class CreateCollectionLoading extends CreateCollectionState {}
 
+final class CreateCollectionRequestLoading extends CreateCollectionState {}
+
 final class CreateCollectionError extends CreateCollectionState {
   final String message;
+
   const CreateCollectionError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+final class CreateCollectionRequestError extends CreateCollectionState {
+  final String message;
+
+  const CreateCollectionRequestError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+final class CreateCollectionSuccess extends CreateCollectionState {
+  final String message;
+
+  const CreateCollectionSuccess(this.message);
+
   @override
   List<Object> get props => [message];
 }
 
 final class CreateCollectionLoaded extends CreateCollectionState {
   final List<Post> collection;
+
   const CreateCollectionLoaded(this.collection);
+
   @override
   List<Object> get props => [collection];
 }

@@ -21,6 +21,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<FetchNextPage>(_onFetchNextPage);
     on<ResetPagination>(_onResetPagination);
     on<ToggleWishListEvent>(_onToggleWishList);
+    on<AskForPromotionEvent>(_onAskForPromotion);
   }
 
   Future<void> _onLoadProducts(
@@ -73,6 +74,19 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           WishlistRepository().addToWishList(event.id);
         }
         return item.copyWith(isAddedToWishlist: !item.isAddedToWishlist);
+      }
+      return item;
+    }).toList();
+    emit(ProductLoaded(products: products, hasMore: _hasMore));
+  }
+
+  FutureOr<void> _onAskForPromotion(
+      AskForPromotionEvent event, Emitter<ProductState> emit) async {
+    products = products.map((item) {
+      if (item.id == event.id) {
+        _productRepository.askForPromotion(event.id);
+        return item.copyWith(
+            promotionalStatus: item.promotionalStatus == 1 ? 0 : 1);
       }
       return item;
     }).toList();

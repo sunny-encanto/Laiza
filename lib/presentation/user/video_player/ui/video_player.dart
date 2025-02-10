@@ -14,7 +14,11 @@ class VideoPlayerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.black,
+      ),
       body: BlocProvider(
         create: (context) => VideoPlayerBloc(videoUrl),
         child: BlocBuilder<VideoPlayerBloc, VideoPlayerState>(

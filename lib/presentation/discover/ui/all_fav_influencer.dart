@@ -1,4 +1,6 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/data/models/reels_model/reel.dart';
+import 'package:laiza/data/models/user/user_model.dart';
 
 import '../../../widgets/influencer_card_widget.dart';
 
@@ -33,7 +35,23 @@ class AllFavInfluencerScreen extends StatelessWidget {
         ),
         childrenDelegate: SliverChildBuilderDelegate(
           childCount: imagesList.length,
-          (context, index) => InfluencerCardWidget(index: index),
+          (context, index) => InfluencerCardWidget(
+              //Need to change here
+              reel: Reel(
+                  id: 0,
+                  userId: 0,
+                  productId: <String>[],
+                  catId: 0,
+                  reelTitle: '',
+                  reelPath: '',
+                  likeStatus: 1,
+                  reelDescription: '',
+                  reelCoverPath: '',
+                  reelHashtag: '',
+                  likesCount: 1,
+                  commentsCount: 1,
+                  product: <ReelProduct>[],
+                  user: UserModel())),
         ),
       ),
     );

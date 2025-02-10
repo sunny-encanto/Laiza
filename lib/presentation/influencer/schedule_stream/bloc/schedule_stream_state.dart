@@ -13,12 +13,21 @@ final class ScheduleStreamLoading extends ScheduleStreamState {}
 
 final class ScheduleStreamError extends ScheduleStreamState {
   final String message;
+
   const ScheduleStreamError(this.message);
+
   @override
   List<Object> get props => [message];
 }
 
-final class ScheduleStreamSuccess extends ScheduleStreamState {}
+final class ScheduleStreamSuccess extends ScheduleStreamState {
+  final String message;
+
+  const ScheduleStreamSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
 
 class DatePickerSelected extends ScheduleStreamState {
   final DateTime selectedDate;

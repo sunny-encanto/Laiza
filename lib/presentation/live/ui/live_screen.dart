@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/data/blocs/upcoming_stream_bloc/up_coming_stream_bloc.dart';
 import 'package:laiza/data/models/live_stream_model.dart/live_stream_model.dart';
+import 'package:laiza/data/repositories/live_stream_repository/live_stream_repository.dart';
 import 'package:laiza/data/services/firebase_services.dart';
+import 'package:laiza/presentation/shimmers/loading_list.dart';
 
-import '../../../widgets/slider_widget.dart';
 import '../../../widgets/streams_card_widget.dart';
 
 class LiveScreen extends StatelessWidget {
@@ -77,6 +79,7 @@ class LiveScreen extends StatelessWidget {
                         itemBuilder: (context, index) => Padding(
                           padding: EdgeInsets.only(right: 10.h),
                           child: StreamsCard(
+                            isLive: true,
                             model: liveStreamModel[index],
                           ),
                         ),
@@ -89,11 +92,45 @@ class LiveScreen extends StatelessWidget {
                 style: textTheme.titleLarge,
               ),
               SizedBox(height: 20.v),
-              SizedBox(
-                child: customSlider(height: 186.h, childList: [
-                  _buildUpComingStreamCardRed(),
-                  _buildUpComingStreamCardGreen()
-                ]),
+              BlocProvider(
+                create: (context) =>
+                    UpComingStreamBloc(context.read<LiveStreamRepository>()),
+                child: BlocBuilder<UpComingStreamBloc, UpComingStreamState>(
+                  builder: (context, state) {
+                    if (state is UpComingStreamInitial) {
+                      context
+                          .read<UpComingStreamBloc>()
+                          .add(FetchUpcomingStream());
+                    } else if (state is UpComingStreamLoading) {
+                      return const HorizontalLoadingListPage();
+                    } else if (state is UpComingStreamLoaded) {
+                      List<LiveStreamModel> liveStreamModel =
+                          state.upcomingStreams
+                              .map((e) => LiveStreamModel(
+                                    liveId: e.id.toString(),
+                                    userName: e.users.name ?? '',
+                                    userId: e.users.id,
+                                    userProfile: e.users.profileImg,
+                                  ))
+                              .toList();
+                      return SizedBox(
+                        height: liveStreamModel.isNotEmpty ? 250.v : 0.v,
+                        child: ListView.builder(
+                          itemCount: liveStreamModel.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) => Padding(
+                            padding: EdgeInsets.only(right: 10.h),
+                            child: StreamsCard(
+                              isLive: false,
+                              model: liveStreamModel[index],
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
               )
             ],
           ),

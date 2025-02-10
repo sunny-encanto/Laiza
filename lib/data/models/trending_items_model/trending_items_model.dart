@@ -30,7 +30,7 @@ class TrendingItemsModel {
 
 class TrendingItems {
   int id;
-  Type type;
+  TrendingItemType type;
   String image;
   String? reelPath;
 
@@ -56,9 +56,10 @@ class TrendingItems {
       };
 }
 
-enum Type { PRODUCT, REEL }
+enum TrendingItemType { PRODUCT, REEL }
 
-final typeValues = EnumValues({"product": Type.PRODUCT, "reel": Type.REEL});
+final typeValues = EnumValues(
+    {"product": TrendingItemType.PRODUCT, "reel": TrendingItemType.REEL});
 
 class EnumValues<T> {
   Map<String, T> map;

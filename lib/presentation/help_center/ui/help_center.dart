@@ -1,3 +1,7 @@
+import 'package:laiza/data/blocs/faq_bloc/faq_bloc.dart';
+import 'package:laiza/data/models/faq_model/faq_model.dart';
+import 'package:laiza/data/repositories/help_center_repository/help_center_repository.dart';
+
 import '../../../core/app_export.dart';
 import '../../../data/services/url_lancher.dart';
 
@@ -30,22 +34,32 @@ class HelpCentreScreen extends StatelessWidget {
               style: textTheme.titleLarge!.copyWith(fontSize: 20.fSize),
             ),
             const SizedBox(height: 8),
-            _buildFAQ(
-                "How do I create an account?",
-                "To create an account, click on the Sign-Up button on the home screen, and follow the steps to enter your details and verify your email.",
-                textTheme),
-            _buildFAQ(
-                "How can I reset my password?",
-                "If you forgot your password, go to the login screen and click on 'Forgot Password'. You will receive a link to reset your password via email.",
-                textTheme),
-            _buildFAQ(
-                "How do I track my order?",
-                "You can track your order by going to the 'Orders' section of the app, where you can view the status and details of all your orders.",
-                textTheme),
-            _buildFAQ(
-                "How can I contact customer support?",
-                "You can reach customer support via email at support@Laiza.com, or by calling our support number listed below.",
-                textTheme),
+            BlocProvider(
+              create: (context) =>
+                  FaqBloc(context.read<HelpCenterRepository>()),
+              child: BlocBuilder<FaqBloc, FaqState>(
+                builder: (context, state) {
+                  if (state is FaqInitial) {
+                    context.read<FaqBloc>().add(FetchFAQ());
+                  } else if (state is FaqLoading) {
+                    return const SizedBox.shrink();
+                  } else if (state is FaqError) {
+                    return Center(child: Text(state.message));
+                  } else if (state is FaqLoaded) {
+                    return Column(
+                      children: List.generate(
+                        state.faqs.length,
+                        (index) {
+                          FAQ faq = state.faqs[index];
+                          return _buildFAQ(faq.question, faq.answer, textTheme);
+                        },
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ),
 
             const SizedBox(height: 16),
 
@@ -88,16 +102,16 @@ class HelpCentreScreen extends StatelessWidget {
   // Helper function to build FAQ items
   Widget _buildFAQ(String question, String answer, TextTheme textTheme) {
     return ExpansionTile(
-      title: Text(
-        question,
-        style: textTheme.titleMedium,
-      ),
+      title: Text(question, style: textTheme.titleMedium),
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            answer,
-            style: textTheme.bodySmall,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              answer,
+              style: textTheme.bodySmall,
+            ),
           ),
         ),
         const SizedBox(height: 8),

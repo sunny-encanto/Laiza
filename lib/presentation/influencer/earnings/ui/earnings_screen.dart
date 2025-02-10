@@ -1,17 +1,36 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:laiza/core/app_export.dart';
 
+import '../../../../data/services/razorpay_service.dart';
+
 class EarningsScreen extends StatelessWidget {
-  const EarningsScreen({super.key});
+  EarningsScreen({super.key});
+
+  final RazorpayService _razorpayService = RazorpayService();
+
+  void _startPayment() {
+    _razorpayService.openCheckout(
+      amount: 500.0,
+      // Amount in INR
+      name: 'Test User',
+      description: 'Test Payment',
+      email: 'test@example.com',
+      contact: '9876543210',
+      orderId: '', // Optional: Replace with your order ID from backend
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Payments & Earnings Page',
-          style: textTheme.titleMedium!.copyWith(fontSize: 20.fSize),
+        title: InkWell(
+          onTap: _startPayment,
+          child: Text(
+            'Payments & Earnings Page',
+            style: textTheme.titleMedium!.copyWith(fontSize: 20.fSize),
+          ),
         ),
       ),
       body: SingleChildScrollView(

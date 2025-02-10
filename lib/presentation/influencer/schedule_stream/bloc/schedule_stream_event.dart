@@ -18,6 +18,7 @@ class SelectDateEvent extends ScheduleStreamEvent {
 
 class SelectTimeEvent extends ScheduleStreamEvent {
   final TimeOfDay pickedTime;
+
   const SelectTimeEvent(this.pickedTime);
 
   @override
@@ -29,23 +30,25 @@ class ScheduleNowRequestEvent extends ScheduleStreamEvent {
   final String description;
   final String date;
   final String time;
-  final String link;
+  final List<String> productIds;
 
   const ScheduleNowRequestEvent({
     required this.title,
     required this.description,
     required this.date,
     required this.time,
-    required this.link,
+    required this.productIds,
   });
 
   @override
-  List<Object> get props => [title, description, date, time, link];
+  List<Object> get props => [title, description, date, time, productIds];
 }
 
 class GoLiveButtonTapEvent extends ScheduleStreamEvent {
   final LiveStreamModel liveStreamModel;
+
   const GoLiveButtonTapEvent(this.liveStreamModel);
+
   @override
   List<Object> get props => [liveStreamModel];
 }

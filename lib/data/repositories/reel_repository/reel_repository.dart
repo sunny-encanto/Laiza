@@ -55,6 +55,29 @@ class ReelRepository {
     }
   }
 
+  Future<List<Reel>> getAllReelsFromFollowedInfluencer() async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+
+      Response response =
+          await _apiClient.get(ApiConstant.allReelFromFollowedInfluencer);
+      if (response.statusCode == 200) {
+        ReelModel model = ReelModel.fromJson(response.data);
+        return model.reels;
+      } else {
+        ReelModel model = ReelModel.fromJson(response.data);
+        return model.reels;
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during get Reels', e.toString());
+      throw Exception('Failed to get Reels');
+    }
+  }
+
   Future<CommonModel> addReel({
     required List<String> productIds,
     required String reelTitle,

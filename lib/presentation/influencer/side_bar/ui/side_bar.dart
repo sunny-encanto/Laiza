@@ -126,6 +126,7 @@ class SideBar extends StatelessWidget {
               tittle: 'Settings',
               onTap: () {
                 Navigator.of(context).pop();
+                Navigator.of(context).pushNamed(AppRoutes.changePasswordScreen);
               },
               textTheme: textTheme,
             ),

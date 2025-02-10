@@ -16,6 +16,7 @@ class ApiConstant {
   static String forgotPassword = 'api/forgot_password';
   static String verifyForgotPasswordOtp = 'api/verify_forgot_password_otp';
   static String resetPassword = 'api/reset_password';
+  static String changePassword = 'api/change_password';
   static String profile = 'api/profile';
   static String updateProfile = 'api/user/update_profile';
   static String getCategories = 'api/user/all_influencer_category';
@@ -30,6 +31,7 @@ class ApiConstant {
   static String follow = 'api/user/follow';
   static String myReel = 'api/user/reel';
   static String allReel = 'api/user/reel/all';
+  static String allReelFromFollowedInfluencer = 'api/user/influencer/reels';
   static String userReel = 'api/user/reel/all';
   static String addReel = 'api/user/reel/add';
   static String updateReel = 'api/user/reel/update';
@@ -47,6 +49,7 @@ class ApiConstant {
   static String addCommentLike = 'api/user/reel/comment/like';
   static String addSubCommentLike = 'api/user/reel/sub_comment/like';
   static String allProduct = 'api/user/product/all';
+  static String allInfluencerProduct = 'api/user/influencer/product';
   static String productDetails = 'api/user/product/details';
   static String addToWishList = 'api/user/wishlist/add';
   static String removerFromWishList = 'api/user/wishlist/remove';
@@ -60,4 +63,13 @@ class ApiConstant {
   static String getMyConnections = 'api/user/get_my_connection';
   static String acceptRejectConnections = 'api/user/connection/update_requests';
   static String trendingItems = 'api/user/trending_now';
+  static String fAQ = 'api/admin/faq/list';
+  static String advertisement = 'api/admin/advertisement/all';
+  static String getInfluencerProfile = 'api/user/get_influencer_profile';
+  static String deleteUser = 'api/user/user_delete';
+  static String askPromotion = 'api/user/ask/promotion';
+  static String addStream = 'api/user/stream/add';
+  static String getAllStream = 'api/user/stream/list';
+  static String addCollection = 'api/user/collection/create-with-reels';
+  static String getCollection = 'api/user/collection';
 }

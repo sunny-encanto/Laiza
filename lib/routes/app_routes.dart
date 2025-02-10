@@ -1,11 +1,15 @@
 import 'package:flutter/cupertino.dart';
+import 'package:laiza/data/blocs/influencer_profile_bloc/influencer_profile_bloc.dart';
+import 'package:laiza/data/repositories/collection_repository/collection_repository.dart';
 import 'package:laiza/data/repositories/comments_repository/comments_repository.dart';
 import 'package:laiza/data/repositories/connections_repository/connections_repository.dart';
 import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
+import 'package:laiza/data/repositories/live_stream_repository/live_stream_repository.dart';
 import 'package:laiza/data/repositories/product_repository/product_repository.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 
 import '../core/app_export.dart';
+import '../presentation/auth/change_password/ui/create_password.dart';
 import '../presentation/influencer/order_management/bloc/influencer_orders_bloc.dart';
 
 class AppRoutes {
@@ -50,6 +54,8 @@ class AppRoutes {
   static const String forgotPasswordScreen = '/forgot_password_screen';
 
   static const String changePasswordScreen = '/change_password_screen';
+
+  static const String createPasswordScreen = '/create_password_screen';
 
   static const String myOrderScreen = '/my_order_screen';
 
@@ -230,7 +236,11 @@ class AppRoutes {
       case influencerProfileScreen:
         String id = settings.arguments as String;
         return CupertinoPageRoute(
-            builder: (context) => InfluencerProfileScreen(id: id));
+            builder: (context) => BlocProvider(
+                  create: (context) =>
+                      InfluencerProfileBloc(context.read<UserRepository>()),
+                  child: InfluencerProfileScreen(id: id),
+                ));
 
       case collectionViewScreen:
         return CupertinoPageRoute(
@@ -259,17 +269,22 @@ class AppRoutes {
                   child: ForgotPasswordScreen(),
                 ));
 
-      case changePasswordScreen:
+      case createPasswordScreen:
         String email = settings.arguments as String;
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) =>
                       ChangePasswordBloc(context.read<AuthRepository>()),
-                  child: ChangePasswordScreen(
-                    email: email,
-                  ),
+                  child: CreatePasswordScreen(email: email),
                 ));
 
+      case changePasswordScreen:
+        return CupertinoPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) =>
+                      ChangePasswordBloc(context.read<AuthRepository>()),
+                  child: ChangePasswordScreen(),
+                ));
       case orderTrackScreen:
         return CupertinoPageRoute(
             builder: (context) => const OrderTrackScreen());
@@ -351,8 +366,9 @@ class AppRoutes {
       case createConnectionsScreen:
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => CreateCollectionBloc(),
-                  child: const CreateCollectionScreen(),
+                  create: (context) => CreateCollectionBloc(
+                      context.read<CollectionRepository>()),
+                  child: CreateCollectionScreen(),
                 ));
 
       case influenceProfileSetupScreen:
@@ -392,7 +408,8 @@ class AppRoutes {
       case scheduleStreamScreen:
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => ScheduleStreamBloc(),
+                  create: (context) =>
+                      ScheduleStreamBloc(context.read<LiveStreamRepository>()),
                   child: ScheduleStreamScreen(),
                 ));
 
@@ -462,7 +479,7 @@ class AppRoutes {
             builder: (context) => const AllProductsScreen());
 
       case earningsScreen:
-        return CupertinoPageRoute(builder: (context) => const EarningsScreen());
+        return CupertinoPageRoute(builder: (context) => EarningsScreen());
 
       case recentTransactionsScreen:
         return CupertinoPageRoute(

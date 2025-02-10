@@ -201,4 +201,32 @@ class AuthRepository {
       throw Exception('Failed to reset password');
     }
   }
+
+  Future<CommonModel> changePassword(
+      {required String password, required String newPassword}) async {
+    Map<String, String> data = {
+      'current_password': password,
+      'password': newPassword,
+      'confirm_password': newPassword,
+    };
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+      Response response =
+          await _apiClient.post(ApiConstant.changePassword, data: data);
+      if (response.statusCode == 200) {
+        var responseData = await response.data;
+        return CommonModel.fromJson(responseData);
+      } else {
+        var responseData = await response.data;
+        return CommonModel.fromJson(responseData);
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during reset password', e.toString());
+      throw Exception('Failed to reset password');
+    }
+  }
 }

@@ -8,6 +8,7 @@ import 'package:laiza/data/models/user_profile_model/user_profile_model.dart';
 import '../../../core/app_export.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/utils/api_constant.dart';
+import '../../models/influencer_profile_model/influencer_profile_model.dart';
 
 class UserRepository {
   final ApiClient _apiClient = ApiClient();
@@ -111,6 +112,54 @@ class UserRepository {
     } catch (e) {
       Logger.log('Error during  get all seller', e.toString());
       throw Exception('Failed to get all seller');
+    }
+  }
+
+  Future<InfluencerProfileModel> getInfluencerProfile(String id) async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+      Response response =
+          await _apiClient.get("${ApiConstant.getInfluencerProfile}/$id");
+      if (response.statusCode == 200) {
+        InfluencerProfileModel model =
+            InfluencerProfileModel.fromJson(response.data);
+        return model;
+      } else {
+        InfluencerProfileModel model =
+            InfluencerProfileModel.fromJson(response.data);
+        return model;
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during  get influencer Profile', e.toString());
+      throw Exception('Failed to get influencer Profile');
+    }
+  }
+
+  Future<CommonModel> deleteUser() async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+      Response response = await _apiClient
+          .get('${ApiConstant.deleteUser}/${PrefUtils.getId()}');
+      if (response.statusCode == 200) {
+        var responseData = await response.data;
+        CommonModel model = CommonModel.fromJson(responseData);
+        return model;
+      } else {
+        var responseData = await response.data;
+        CommonModel model = CommonModel.fromJson(responseData);
+        return model;
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during delete user', e.toString());
+      throw Exception('Failed to delete user');
     }
   }
 }

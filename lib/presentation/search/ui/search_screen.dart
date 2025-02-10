@@ -5,8 +5,10 @@ import '../../../core/app_export.dart';
 
 class SearchScreen extends StatelessWidget {
   SearchScreen({super.key});
+
   final _searchController = TextEditingController();
   final List<String> _suggestions = ['Kristen Stewart', 'Kristen', 'Stewart'];
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;

@@ -21,3 +21,12 @@ class ToggleWishListEvent extends ProductEvent {
   @override
   List<Object?> get props => [id];
 }
+
+class AskForPromotionEvent extends ProductEvent {
+  final int id;
+
+  const AskForPromotionEvent(this.id);
+
+  @override
+  List<Object?> get props => [id];
+}

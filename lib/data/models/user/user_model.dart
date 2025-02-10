@@ -39,6 +39,8 @@ class UserModel {
   String? bankVerification;
   String? bio;
   bool? isFollowed;
+  int? followersCount;
+  int? followingCount;
 
   UserModel({
     this.id,
@@ -77,6 +79,8 @@ class UserModel {
     this.instagramUserName,
     this.bio,
     this.isFollowed,
+    this.followersCount,
+    this.followingCount,
   });
 
 // CopyWith function
@@ -84,43 +88,44 @@ class UserModel {
     bool? isFollowed,
   }) {
     return UserModel(
-      id: id,
-      name: name,
-      email: email,
-      profile: profile,
-      token: token,
-      role: role,
-      profileImg: profileImg,
-      username: username,
-      emailVerifiedAt: emailVerifiedAt,
-      phoneNumber: phoneNumber,
-      brandName: brandName,
-      companyName: companyName,
-      country: country,
-      state: state,
-      city: city,
-      productCategory: productCategory,
-      instagramFollowers: instagramFollowers,
-      instagramLink: instagramLink,
-      userType: userType,
-      isLogin: isLogin,
-      isDelete: isDelete,
-      isApprove: isApprove,
-      isVerified: isVerified,
-      isProfileComplete: isProfileComplete,
-      facebookLink: facebookLink,
-      snapchatLink: snapchatLink,
-      xComLink: xComLink,
-      accountNumber: accountNumber,
-      iFCCode: iFCCode,
-      branchName: branchName,
-      accountHolderName: accountHolderName,
-      aadharNumber: aadharNumber,
-      bankVerification: bankVerification,
-      instagramUserName: instagramUserName,
-      bio: bio,
-      isFollowed: isFollowed ?? this.isFollowed,
-    );
+        id: id,
+        name: name,
+        email: email,
+        profile: profile,
+        token: token,
+        role: role,
+        profileImg: profileImg,
+        username: username,
+        emailVerifiedAt: emailVerifiedAt,
+        phoneNumber: phoneNumber,
+        brandName: brandName,
+        companyName: companyName,
+        country: country,
+        state: state,
+        city: city,
+        productCategory: productCategory,
+        instagramFollowers: instagramFollowers,
+        instagramLink: instagramLink,
+        userType: userType,
+        isLogin: isLogin,
+        isDelete: isDelete,
+        isApprove: isApprove,
+        isVerified: isVerified,
+        isProfileComplete: isProfileComplete,
+        facebookLink: facebookLink,
+        snapchatLink: snapchatLink,
+        xComLink: xComLink,
+        accountNumber: accountNumber,
+        iFCCode: iFCCode,
+        branchName: branchName,
+        accountHolderName: accountHolderName,
+        aadharNumber: aadharNumber,
+        bankVerification: bankVerification,
+        instagramUserName: instagramUserName,
+        bio: bio,
+        isFollowed: isFollowed ?? this.isFollowed,
+        followersCount: followersCount,
+        followingCount: followingCount);
   }
 
   factory UserModel.fromJson(
@@ -156,6 +161,8 @@ class UserModel {
         instagramUserName: json['insta_username'],
         bio: json['bio'],
         isFollowed: json['is_follow'],
+        followersCount: json['followers_count'],
+        followingCount: json['following_count'],
       );
 
   Map<String, dynamic> toJson() {
@@ -192,6 +199,8 @@ class UserModel {
     if (isProfileComplete != null)
       data['is_profile_complete'] = isProfileComplete;
     if (instagramUserName != null) data['insta_username'] = instagramUserName;
+    if (followersCount != null) data['followers_count'] = followersCount;
+    if (followingCount != null) data['following_count'] = followingCount;
     return data;
   }
 }

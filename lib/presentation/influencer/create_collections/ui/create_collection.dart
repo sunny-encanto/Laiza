@@ -4,7 +4,9 @@ import 'package:laiza/presentation/shimmers/loading_grid.dart';
 import '../../../../widgets/post_card_widget.dart';
 
 class CreateCollectionScreen extends StatelessWidget {
-  const CreateCollectionScreen({super.key});
+  CreateCollectionScreen({super.key});
+
+  final titleController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +19,9 @@ class CreateCollectionScreen extends StatelessWidget {
         ),
       ),
       body: BlocBuilder<CreateCollectionBloc, CreateCollectionState>(
+        buildWhen: (previous, current) => (current is CreateCollectionLoading ||
+            current is CreateCollectionError ||
+            current is CreateCollectionLoaded),
         builder: (context, state) {
           if (state is CreateCollectionInitial) {
             context.read<CreateCollectionBloc>().add(CollectionFetchEvent());
@@ -54,10 +59,37 @@ class CreateCollectionScreen extends StatelessWidget {
           children: [
             Expanded(
               child: CustomTextFormField(
+                controller: titleController,
                 hintText: 'Add Title',
               ),
             ),
-            CustomElevatedButton(width: 108.h, height: 36.v, text: 'Done')
+            BlocConsumer<CreateCollectionBloc, CreateCollectionState>(
+              listener: (context, state) {
+                if (state is CreateCollectionSuccess) {
+                  context.showSnackBar(state.message);
+                  Navigator.of(context).pop();
+                } else if (state is CreateCollectionRequestError) {
+                  context.showSnackBar(state.message);
+                }
+              },
+              builder: (context, state) {
+                return CustomElevatedButton(
+                  isLoading: state is CreateCollectionRequestLoading,
+                  width: 108.h,
+                  height: 36.v,
+                  text: 'Done',
+                  onPressed: () {
+                    if (titleController.text.isEmpty) {
+                      context.showSnackBar('Please enter title');
+                    } else {
+                      context
+                          .read<CreateCollectionBloc>()
+                          .add(CollectionSubmitEvent(titleController.text));
+                    }
+                  },
+                );
+              },
+            )
           ],
         ),
       ),

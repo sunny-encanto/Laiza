@@ -2,13 +2,16 @@ import '../../../../core/app_export.dart';
 
 // ignore: must_be_immutable
 class ChangePasswordScreen extends StatelessWidget {
-  final String email;
-  ChangePasswordScreen({super.key, required this.email});
+  ChangePasswordScreen({super.key});
+
   final _formKey = GlobalKey<FormState>();
   final passwordController = TextEditingController();
+  final currentPasswordController = TextEditingController();
   final reEnterPasswordController = TextEditingController();
   bool _isNewPasswordVisible = false;
+  bool _isCurrentPasswordVisible = false;
   bool _isReEnteredPasswordVisible = false;
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -28,6 +31,42 @@ class ChangePasswordScreen extends StatelessWidget {
               Text(
                 context.translate('createNewPassword'),
                 style: textTheme.bodySmall,
+              ),
+              SizedBox(height: 12.v),
+              Text(
+                'Enter Current password',
+                style: textTheme.titleMedium,
+              ),
+              SizedBox(height: 8.v),
+              BlocConsumer<ChangePasswordBloc, ChangePasswordState>(
+                listener: (context, state) {
+                  if (state is CurrentPasswordToggleState) {
+                    _isCurrentPasswordVisible = state.isVisible;
+                  }
+                },
+                builder: (context, state) {
+                  return CustomTextFormField(
+                    controller: currentPasswordController,
+                    obscureText: !_isCurrentPasswordVisible,
+                    hintText: '**********',
+                    suffix: InkWell(
+                      child: Icon(
+                        _isCurrentPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onTap: () {
+                        _isCurrentPasswordVisible = !_isCurrentPasswordVisible;
+                        context.read<ChangePasswordBloc>().add(
+                            CurrentPasswordToggle(_isCurrentPasswordVisible));
+                      },
+                    ),
+                    validator: (value) {
+                      return validatePassword(value!);
+                    },
+                  );
+                },
               ),
               SizedBox(height: 12.v),
               Text(
@@ -71,6 +110,7 @@ class ChangePasswordScreen extends StatelessWidget {
                 context.translate('reEnterPassword'),
                 style: textTheme.titleMedium,
               ),
+              SizedBox(height: 8.v),
               BlocConsumer<ChangePasswordBloc, ChangePasswordState>(
                 listener: (context, state) {
                   if (state is ReEnterNewPasswordToggleState) {
@@ -105,17 +145,12 @@ class ChangePasswordScreen extends StatelessWidget {
                   );
                 },
               ),
-              Text(
-                context.translate('you_may_receive_email'),
-                style: textTheme.bodySmall!.copyWith(fontSize: 12.fSize),
-              ),
               SizedBox(height: 24.v),
               BlocConsumer<ChangePasswordBloc, ChangePasswordState>(
                 listener: (context, state) {
                   if (state is ChangePasswordSuccess) {
                     context.showSnackBar(state.message);
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        AppRoutes.signInScreen, (route) => false);
+                    Navigator.of(context).pop();
                   } else if (state is ChangePasswordError) {
                     context.showSnackBar(state.message);
                   }
@@ -130,10 +165,8 @@ class ChangePasswordScreen extends StatelessWidget {
                       } else {
                         context.read<ChangePasswordBloc>().add(
                             ChangePasswordSubmitRequest(
-                                email: email,
                                 newPassword: passwordController.text,
-                                confirmPassword:
-                                    reEnterPasswordController.text));
+                                password: currentPasswordController.text));
                       }
                     },
                   );

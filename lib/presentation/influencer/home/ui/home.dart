@@ -448,70 +448,84 @@ class PromotionProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return Container(
-      decoration: BoxDecoration(
-          color: AppColor.offWhite, borderRadius: BorderRadius.circular(12.h)),
-      width: 200.h,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomImageView(
-            height: 185.v,
-            width: SizeUtils.width,
-            radius: BorderRadius.circular(12.h),
-            imagePath: product.images.isEmpty
-                ? ImageConstant.imageNotFound
-                : product.images[0].imagePath,
-            fit: BoxFit.fill,
-          ),
-          SizedBox(height: 4.v),
-          Text(
-            product.productName,
-            style: textTheme.titleMedium,
-            overflow: TextOverflow.ellipsis,
-          ),
-          SizedBox(height: 8.v),
-          Text(
-            'by ${product.user.name}',
-            style: textTheme.bodySmall,
-          ),
-          SizedBox(height: 4.v),
-          Row(
-            children: [
-              Text(
-                'Category- ',
-                style: textTheme.bodySmall,
-              ),
-              Text(
-                "${product.category.name}",
-                style: textTheme.titleMedium!.copyWith(fontSize: 12.fSize),
-              ),
-            ],
-          ),
-          SizedBox(height: 4.v),
-          Row(
-            children: [
-              Text(
-                'Promotion Pricing- ',
-                style: textTheme.bodySmall,
-              ),
-              Expanded(
-                child: Text(
-                  '₹${product.price}',
+    return InkWell(
+      onTap: () {
+        Navigator.of(context)
+            .pushNamed(AppRoutes.productDetailScreen, arguments: product.id);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+            color: AppColor.offWhite,
+            borderRadius: BorderRadius.circular(12.h)),
+        width: 200.h,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomImageView(
+              height: 185.v,
+              width: SizeUtils.width,
+              radius: BorderRadius.circular(12.h),
+              imagePath: product.images.isEmpty
+                  ? ImageConstant.imageNotFound
+                  : product.images[0].imagePath,
+              fit: BoxFit.fill,
+            ),
+            SizedBox(height: 4.v),
+            Text(
+              product.productName,
+              style: textTheme.titleMedium,
+              overflow: TextOverflow.ellipsis,
+            ),
+            SizedBox(height: 8.v),
+            Text(
+              'by ${product.user.name}',
+              style: textTheme.bodySmall,
+            ),
+            SizedBox(height: 4.v),
+            Row(
+              children: [
+                Text(
+                  'Category- ',
+                  style: textTheme.bodySmall,
+                ),
+                Text(
+                  "${product.category.name}",
                   style: textTheme.titleMedium!.copyWith(fontSize: 12.fSize),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.v),
-          Center(
-            child: CustomElevatedButton(
-              height: 26.v,
-              text: 'Ask for Promotion',
-              buttonTextStyle: textTheme.titleSmall,
+              ],
             ),
-          )
-        ],
+            SizedBox(height: 4.v),
+            Row(
+              children: [
+                Text(
+                  'Promotion Pricing- ',
+                  style: textTheme.bodySmall,
+                ),
+                Expanded(
+                  child: Text(
+                    '₹${product.price}',
+                    style: textTheme.titleMedium!.copyWith(fontSize: 12.fSize),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 12.v),
+            Center(
+              child: CustomElevatedButton(
+                height: 26.v,
+                text: product.promotionalStatus == 0
+                    ? 'Ask for Promotion'
+                    : "Requested",
+                buttonTextStyle: textTheme.titleSmall,
+                onPressed: () {
+                  context
+                      .read<ProductBloc>()
+                      .add(AskForPromotionEvent(product.id));
+                },
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -1,25 +1,21 @@
 import 'package:laiza/data/models/product_model/product.dart';
 
 class AllProductModel {
-  bool success;
   AllProductData data;
   String message;
 
   AllProductModel({
-    required this.success,
     required this.data,
     required this.message,
   });
 
   factory AllProductModel.fromJson(Map<String, dynamic> json) =>
       AllProductModel(
-        success: json["success"],
         data: AllProductData.fromJson(json["data"]),
         message: json["message"],
       );
 
   Map<String, dynamic> toJson() => {
-        "success": success,
         "data": data.toJson(),
         "message": message,
       };

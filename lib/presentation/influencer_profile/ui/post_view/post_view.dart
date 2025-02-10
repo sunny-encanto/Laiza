@@ -1,10 +1,13 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/models/post_model/post_model.dart';
+import 'package:laiza/data/models/reels_model/reel.dart';
 
 import '../../../../widgets/post_card_widget.dart';
 
 class PostView extends StatelessWidget {
-  const PostView({super.key});
+  final List<Reel> reel;
+
+  const PostView({super.key, required this.reel});
 
   @override
   Widget build(BuildContext context) {
@@ -44,28 +47,33 @@ class PostView extends StatelessWidget {
         SizedBox(
           height: 261.v,
           child: ListView.builder(
-            itemCount: postList.length,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) => Padding(
-              padding: EdgeInsets.only(right: 24.h),
-              child: PostCardWidget(post: postList[index]),
-            ),
-          ),
+              itemCount: reel.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                Post post = Post(
+                    id: reel[index].id,
+                    url: reel[index].reelCoverPath,
+                    isVideo: true);
+                return Padding(
+                  padding: EdgeInsets.only(right: 24.h),
+                  child: PostCardWidget(post: post),
+                );
+              }),
         ),
         SizedBox(height: 36.v),
-        Text(
-          'Collections',
-          style: textTheme.titleMedium,
-        ),
-        SizedBox(height: 8.v),
-        SizedBox(
-          height: 185.v,
-          child: ListView.builder(
-            itemCount: imagesList.length,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) => _buildCollectionCard(context),
-          ),
-        ),
+        // Text(
+        //   'Collections',
+        //   style: textTheme.titleMedium,
+        // ),
+        // SizedBox(height: 8.v),
+        // SizedBox(
+        //   height: 185.v,
+        //   child: ListView.builder(
+        //     itemCount: imagesList.length,
+        //     scrollDirection: Axis.horizontal,
+        //     itemBuilder: (context, index) => _buildCollectionCard(context),
+        //   ),
+        // ),
         SizedBox(height: 24.v),
         Text(
           'Recent Posts',
@@ -95,8 +103,14 @@ class PostView extends StatelessWidget {
             ],
           ),
           childrenDelegate: SliverChildBuilderDelegate(
-            childCount: postList.length,
-            (context, index) => PostCardWidget(post: postList[index]),
+            childCount: reel.length,
+            (context, index) {
+              Post post = Post(
+                  id: reel[index].id,
+                  url: reel[index].reelCoverPath,
+                  isVideo: true);
+              return PostCardWidget(post: post);
+            },
           ),
         ),
         SizedBox(height: 24.v),

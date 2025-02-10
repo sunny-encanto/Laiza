@@ -1,8 +1,11 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/core/utils/api_constant.dart';
+import 'package:laiza/data/blocs/collection_bloc/collection_bloc.dart';
 import 'package:laiza/data/models/user/user_model.dart';
+import 'package:laiza/data/repositories/collection_repository/collection_repository.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 import 'package:laiza/presentation/shimmers/loading_grid.dart';
+import 'package:laiza/presentation/shimmers/loading_list.dart';
 import 'package:laiza/widgets/play_button.dart';
 
 import '../../../../data/blocs/my_reel_bloc/my_reel_bloc.dart';
@@ -141,42 +144,73 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                                 ],
                               ),
                               SizedBox(height: 24.h),
-                              SizedBox(
-                                  height: 185.v,
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: (context, index) => index == 0
-                                        ? InkWell(
-                                            onTap: () {
-                                              Navigator.of(context).pushNamed(
-                                                  AppRoutes
-                                                      .createConnectionsScreen);
-                                            },
-                                            child: Container(
-                                              alignment: Alignment.center,
-                                              width: 125.h,
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color:
-                                                          AppColor.offWhite)),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Icon(
-                                                    Icons.add,
-                                                    size: 40.h,
-                                                    color: Colors.grey,
-                                                  ),
-                                                  SizedBox(height: 5.h),
-                                                  const Text(
-                                                      'Add New \nCollection')
-                                                ],
-                                              ),
-                                            ),
-                                          )
-                                        : _buildCollectionCard(context),
-                                  )),
+                              BlocProvider(
+                                create: (context) => CollectionBloc(
+                                    context.read<CollectionRepository>()),
+                                child: BlocBuilder<CollectionBloc,
+                                    CollectionState>(
+                                  builder: (context, state) {
+                                    if (state is CollectionInitial) {
+                                      context
+                                          .read<CollectionBloc>()
+                                          .add(FetchCollection());
+                                    } else if (state is CollectionLoading) {
+                                      return const HorizontalLoadingListPage();
+                                    } else if (state is CollectionError) {
+                                      return Center(
+                                        child: Text(state.message),
+                                      );
+                                    } else if (state is CollectionLoaded) {
+                                      return SizedBox(
+                                          height: 185.v,
+                                          child: ListView.builder(
+                                            itemCount: state.collection.length,
+                                            scrollDirection: Axis.horizontal,
+                                            itemBuilder: (context, index) =>
+                                                index == 0
+                                                    ? InkWell(
+                                                        onTap: () {
+                                                          Navigator.of(context)
+                                                              .pushNamed(AppRoutes
+                                                                  .createConnectionsScreen);
+                                                        },
+                                                        child: Container(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          width: 125.h,
+                                                          decoration: BoxDecoration(
+                                                              border: Border.all(
+                                                                  color: AppColor
+                                                                      .offWhite)),
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Icon(
+                                                                Icons.add,
+                                                                size: 40.h,
+                                                                color:
+                                                                    Colors.grey,
+                                                              ),
+                                                              SizedBox(
+                                                                  height: 5.h),
+                                                              const Text(
+                                                                  'Add New \nCollection')
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : CollectionCardWidget(
+                                                        collection: state
+                                                            .collection[index],
+                                                      ),
+                                          ));
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
+                                ),
+                              ),
                               SizedBox(height: 24.v),
                               CustomOutlineButton(
                                   onPressed: () async {

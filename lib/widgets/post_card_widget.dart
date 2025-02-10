@@ -21,7 +21,14 @@ class PostCardWidget extends StatelessWidget {
             radius: BorderRadius.circular(6.h),
             imagePath: post.url,
           ),
-          PlayButton(isVisible: post.isVideo)
+          PlayButton(
+            isVisible: post.isVideo,
+            onTap: () {
+              // Navigator.of(context).push(MaterialPageRoute(
+              //   builder: (context) => VideoReelPage(initialIndex: index),
+              // ));
+            },
+          )
         ],
       ),
     );

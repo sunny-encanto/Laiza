@@ -5,16 +5,16 @@ import 'package:laiza/core/utils/date_time_utils.dart';
 import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/data/models/live_stream_model.dart/live_stream_model.dart';
 
-import '../bloc/schedule_stream_bloc.dart';
-
 class ScheduleStreamScreen extends StatelessWidget {
   ScheduleStreamScreen({super.key});
+
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _productLinkController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -189,7 +189,14 @@ class ScheduleStreamScreen extends StatelessWidget {
       ),
       bottomSheet: Padding(
         padding: EdgeInsets.all(20.h),
-        child: BlocBuilder<ScheduleStreamBloc, ScheduleStreamState>(
+        child: BlocConsumer<ScheduleStreamBloc, ScheduleStreamState>(
+          listener: (context, state) {
+            if (state is ScheduleStreamError) {
+              context.showSnackBar(state.message);
+            } else if (state is ScheduleStreamSuccess) {
+              context.showSnackBar(state.message);
+            }
+          },
           builder: (context, state) {
             return CustomElevatedButton(
               isLoading: state is ScheduleStreamLoading,
@@ -206,7 +213,7 @@ class ScheduleStreamScreen extends StatelessWidget {
                         description: _descriptionController.text,
                         date: _dateController.text,
                         time: _timeController.text,
-                        link: _productLinkController.text,
+                        productIds: [],
                       ));
                 }
               },

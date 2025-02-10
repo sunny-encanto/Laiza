@@ -11,9 +11,12 @@ part 'change_password_state.dart';
 class ChangePasswordBloc
     extends Bloc<ChangePasswordEvent, ChangePasswordState> {
   final AuthRepository _authRepository;
+
   ChangePasswordBloc(this._authRepository) : super(ChangePasswordInitial()) {
-    on<ChangePasswordSubmitRequest>(onSubmitRequest);
+    on<CreatePasswordSubmitRequest>(onSubmitRequest);
+    on<ChangePasswordSubmitRequest>(onChangePassword);
     on<NewPasswordToggle>(onNewPasswordToggle);
+    on<CurrentPasswordToggle>(onCurrentPasswordToggle);
     on<ReEnteredNewPasswordToggle>(onReEnterPasswordToggle);
   }
 
@@ -25,7 +28,7 @@ class ChangePasswordBloc
     emit(ReEnterNewPasswordToggleState(event.isVisible));
   }
 
-  FutureOr<void> onSubmitRequest(ChangePasswordSubmitRequest event,
+  FutureOr<void> onSubmitRequest(CreatePasswordSubmitRequest event,
       Emitter<ChangePasswordState> emit) async {
     try {
       emit(ChangePasswordLoading());
@@ -37,5 +40,22 @@ class ChangePasswordBloc
     } catch (e) {
       emit(ChangePasswordError(e.toString()));
     }
+  }
+
+  FutureOr<void> onChangePassword(ChangePasswordSubmitRequest event,
+      Emitter<ChangePasswordState> emit) async {
+    try {
+      emit(ChangePasswordLoading());
+      CommonModel model = await _authRepository.changePassword(
+          password: event.password, newPassword: event.newPassword);
+      emit(ChangePasswordSuccess(model.message ?? ''));
+    } catch (e) {
+      emit(ChangePasswordError(e.toString()));
+    }
+  }
+
+  FutureOr<void> onCurrentPasswordToggle(
+      CurrentPasswordToggle event, Emitter<ChangePasswordState> emit) {
+    emit(CurrentPasswordToggleState(event.isVisible));
   }
 }

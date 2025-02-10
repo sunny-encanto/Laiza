@@ -1,23 +1,25 @@
 import 'package:laiza/core/app_export.dart';
 
-class InfluencerCardWidget extends StatelessWidget {
-  final int index;
+import '../data/models/reels_model/reel.dart';
 
-  const InfluencerCardWidget({super.key, required this.index});
+class InfluencerCardWidget extends StatelessWidget {
+  final Reel reel;
+
+  const InfluencerCardWidget({super.key, required this.reel});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        //TODO: Add Id in argoument
-        Navigator.of(context).pushNamed(AppRoutes.influencerProfileScreen);
+        Navigator.of(context).pushNamed(AppRoutes.influencerProfileScreen,
+            arguments: reel.user.id);
       },
       child: Container(
         width: 185.h,
         alignment: Alignment.bottomCenter,
         decoration: BoxDecoration(
             image: DecorationImage(
-                fit: BoxFit.fill, image: NetworkImage(imagesList[index])),
+                fit: BoxFit.fill, image: NetworkImage(reel.reelCoverPath)),
             color: Colors.grey,
             borderRadius: BorderRadius.circular(12.h)),
         child: Padding(
@@ -28,11 +30,11 @@ class InfluencerCardWidget extends StatelessWidget {
                 height: 30.v,
                 width: 30.v,
                 radius: BorderRadius.circular(20.h),
-                imagePath: ImageConstant.reelImg,
+                imagePath: reel.user.profileImg,
               ),
               SizedBox(width: 12.h),
               Text(
-                'Daniel George',
+                reel.user.name ?? '',
                 style: TextStyle(color: Colors.white, fontSize: 12.fSize),
               ),
             ],

@@ -1,17 +1,24 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/blocs/all_influencer_bloc/bloc/all_influencer_bloc.dart';
+import 'package:laiza/data/blocs/product_from_influencer_bloc/product_from_influencer_bloc.dart';
+import 'package:laiza/data/blocs/reel_from_followed_influencer/reel_from_followed_influencer_bloc.dart';
 import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
+import 'package:laiza/data/repositories/product_repository/product_repository.dart';
+import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 import 'package:laiza/presentation/creator/bloc/creator_bloc.dart';
 import 'package:laiza/presentation/shimmers/loading_grid.dart';
 import 'package:laiza/widgets/influencer_card_widget.dart';
 
+import '../../../data/blocs/following_bloc/following_bloc.dart';
+import '../../../data/models/followers_model/follower.dart';
+import '../../../data/models/reels_model/reel.dart';
 import '../../../widgets/influencer_profile_card_widget.dart';
 
 // ignore: must_be_immutable
 class CreatorScreen extends StatelessWidget {
   CreatorScreen({super.key});
 
-  int _selectedChip = 1;
+  // int _selectedChip = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -32,60 +39,153 @@ class CreatorScreen extends StatelessWidget {
                   style: textTheme.titleLarge,
                 ),
                 SizedBox(height: 20.v),
-                SizedBox(
-                    height: 130.v,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 5,
-                      itemBuilder: (BuildContext context, int index) => Padding(
-                        padding: EdgeInsets.only(left: 8.h),
-                        child: profileWidget(textTheme),
-                      ),
-                    )),
+                BlocProvider(
+                  create: (context) =>
+                      FollowingBloc(context.read<FollowersRepository>()),
+                  child: BlocBuilder<FollowingBloc, FollowingState>(
+                    builder: (context, state) {
+                      if (state is FollowingInitial) {
+                        context.read<FollowingBloc>().add(FetchFollowings());
+                      } else if (state is FollowingLoading) {
+                        return const LoadingGridScreen();
+                      } else if (state is FollowingErrorState) {
+                        return Center(child: Text(state.message));
+                      } else if (state is FollowingLoadedState) {
+                        return SizedBox(
+                            height: 130.v,
+                            child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: state.followings.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  Follower following = state.followings[index];
+                                  return Padding(
+                                    padding: EdgeInsets.only(left: 8.h),
+                                    child: profileWidget(context, following),
+                                  );
+                                }));
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ),
                 SizedBox(height: 20.v),
-                SizedBox(
-                  height: 36.v,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (BuildContext context, int index) => InkWell(
-                      onTap: () {
+                // SizedBox(
+                //   height: 36.v,
+                //   child: ListView.builder(
+                //     scrollDirection: Axis.horizontal,
+                //     itemBuilder: (BuildContext context, int index) => InkWell(
+                //       onTap: () {
+                //         context
+                //             .read<CreatorBloc>()
+                //             .add(CreatorsCategoryChipSelectedEvent(index));
+                //       },
+                //       child: BlocConsumer<CreatorBloc, CreatorState>(
+                //         listener: (BuildContext context, state) {
+                //           if (state is CreatorsCategoryChipSelectedState) {
+                //             _selectedChip = state.categoryId;
+                //           }
+                //         },
+                //         builder: (BuildContext context, state) {
+                //           return AnimatedContainer(
+                //             duration: const Duration(milliseconds: 400),
+                //             margin: EdgeInsets.only(right: 12.h),
+                //             height: 36.v,
+                //             width: 89.h,
+                //             alignment: Alignment.center,
+                //             decoration: BoxDecoration(
+                //                 border: Border.all(color: Colors.black),
+                //                 color: _selectedChip == index
+                //                     ? Colors.black
+                //                     : Colors.white,
+                //                 borderRadius: BorderRadius.circular(24.h)),
+                //             child: AnimatedDefaultTextStyle(
+                //               duration: const Duration(milliseconds: 400),
+                //               style: textTheme.labelSmall!.copyWith(
+                //                   color: _selectedChip == index
+                //                       ? Colors.white
+                //                       : null),
+                //               child: const Text(
+                //                 'Fashion',
+                //               ),
+                //             ),
+                //           );
+                //         },
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                Text(
+                  'Product from your Influencers',
+                  style: textTheme.titleMedium,
+                ),
+                SizedBox(height: 20.v),
+                BlocProvider(
+                  create: (context) => ProductFromInfluencerBloc(
+                      context.read<ProductRepository>()),
+                  child: BlocBuilder<ProductFromInfluencerBloc,
+                      ProductFromInfluencerState>(
+                    builder: (context, state) {
+                      if (state is ProductFromInfluencerInitial) {
                         context
-                            .read<CreatorBloc>()
-                            .add(CreatorsCategoryChipSelectedEvent(index));
-                      },
-                      child: BlocConsumer<CreatorBloc, CreatorState>(
-                        listener: (BuildContext context, state) {
-                          if (state is CreatorsCategoryChipSelectedState) {
-                            _selectedChip = state.categoryId;
-                          }
-                        },
-                        builder: (BuildContext context, state) {
-                          return AnimatedContainer(
-                            duration: const Duration(milliseconds: 400),
-                            margin: EdgeInsets.only(right: 12.h),
-                            height: 36.v,
-                            width: 89.h,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black),
-                                color: _selectedChip == index
-                                    ? Colors.black
-                                    : Colors.white,
-                                borderRadius: BorderRadius.circular(24.h)),
-                            child: AnimatedDefaultTextStyle(
-                              duration: const Duration(milliseconds: 400),
-                              style: textTheme.labelSmall!.copyWith(
-                                  color: _selectedChip == index
-                                      ? Colors.white
-                                      : null),
-                              child: const Text(
-                                'Fashion',
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                            .read<ProductFromInfluencerBloc>()
+                            .add(FetchProductFromInfluencer());
+                      } else if (state is ProductFromInfluencerLoading) {
+                        return const SizedBox.shrink();
+                      } else if (state is ProductFromInfluencerError) {
+                        return Center(child: Text(state.message));
+                      } else if (state is ProductFromInfluencerLoaded) {
+                        return SizedBox(
+                          height: 240.v,
+                          child: ListView.builder(
+                            itemCount: state.products.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              ReelProduct product = state.products[index];
+                              return Padding(
+                                padding: EdgeInsets.only(right: 10.h),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CustomImageView(
+                                      radius: BorderRadius.circular(6.h),
+                                      height: 150.v,
+                                      width: 150.h,
+                                      fit: BoxFit.fill,
+                                      imagePath: product.productImage,
+                                    ),
+                                    SizedBox(height: 4.v),
+                                    // Text(
+                                    //   product.,
+                                    //   style: textTheme.bodySmall,
+                                    // ),
+                                    SizedBox(height: 6.v),
+                                    Text(
+                                      product.productName,
+                                      style: textTheme.titleMedium,
+                                    ),
+                                    SizedBox(height: 6.v),
+                                    Text(
+                                      '₹ ${product.price}',
+                                      style: textTheme.bodySmall,
+                                    ),
+                                    SizedBox(height: 8.v),
+                                    Center(
+                                      child: CustomElevatedButton(
+                                        width: 150.h,
+                                        height: 26.v,
+                                        text: 'Buy Now',
+                                        buttonTextStyle: textTheme.titleSmall,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
                   ),
                 ),
                 SizedBox(height: 20.v),
@@ -99,16 +199,38 @@ class CreatorScreen extends StatelessWidget {
                   style: textTheme.bodySmall,
                 ),
                 SizedBox(height: 20.h),
-                SizedBox(
-                    height: 261.v,
-                    child: ListView.builder(
-                      itemCount: imagesList.length,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (BuildContext context, index) => Padding(
-                        padding: EdgeInsets.only(right: 5.h),
-                        child: InfluencerCardWidget(index: index),
-                      ),
-                    )),
+                BlocProvider(
+                  create: (context) => ReelFromFollowedInfluencerBloc(
+                      context.read<ReelRepository>()),
+                  child: BlocBuilder<ReelFromFollowedInfluencerBloc,
+                      ReelFromFollowedInfluencerState>(
+                    builder: (context, state) {
+                      if (state is ReelFromFollowedInfluencerInitial) {
+                        context
+                            .read<ReelFromFollowedInfluencerBloc>()
+                            .add(FetchReelFromFollowedInfluencer());
+                      } else if (state is ReelFromFollowedInfluencerLoading) {
+                        return const SizedBox.shrink();
+                      } else if (state is ReelFromFollowedInfluencerError) {
+                        return Center(child: Text(state.message));
+                      } else if (state is ReelFromFollowedInfluencerLoaded) {
+                        return SizedBox(
+                            height: 261.v,
+                            child: ListView.builder(
+                                itemCount: state.reel.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (BuildContext context, index) {
+                                  Reel reel = state.reel[index];
+                                  return Padding(
+                                    padding: EdgeInsets.only(right: 5.h),
+                                    child: InfluencerCardWidget(reel: reel),
+                                  );
+                                }));
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ),
                 SizedBox(height: 28.v),
                 Text(
                   'Discover and Follow New Creators',
@@ -158,57 +280,65 @@ class CreatorScreen extends StatelessWidget {
     );
   }
 
-  Widget profileWidget(TextTheme textTheme) {
-    return Column(
-      children: [
-        Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
-          children: [
-            // Outer colored border
-            Container(
-              width: 82.v,
-              height: 82.v,
-              decoration: const BoxDecoration(
-                color: Colors.pink,
-                shape: BoxShape.circle,
-              ),
-            ),
-            // Inner content
-            Container(
-              width: 75.v,
-              height: 75.v,
-              decoration: const BoxDecoration(shape: BoxShape.circle),
-              child: CustomImageView(
-                radius: BorderRadius.circular(80),
+  Widget profileWidget(BuildContext context, Follower following) {
+    TextTheme textTheme = Theme.of(context).textTheme;
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pushNamed(AppRoutes.influencerProfileScreen,
+            arguments: following.id.toString());
+      },
+      child: Column(
+        children: [
+          Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              // Outer colored border
+              Container(
                 width: 82.v,
                 height: 82.v,
-                imagePath: ImageConstant.reelImg,
+                decoration: const BoxDecoration(
+                  color: Colors.pink,
+                  shape: BoxShape.circle,
+                ),
               ),
-            ),
-          ],
-        ),
-        SizedBox(height: 12.h),
-        Text(
-          'Name ',
-          style: textTheme.titleMedium,
-        ),
-        Row(
-          children: [
-            Container(
-              height: 8.v,
-              width: 8.h,
-              decoration: const BoxDecoration(
-                  shape: BoxShape.circle, color: Colors.red),
-            ),
-            SizedBox(width: 5.h),
-            Text(
-              '4 New Post ',
-              style: textTheme.bodySmall,
-            ),
-          ],
-        ),
-      ],
+              // Inner content
+              Container(
+                width: 75.v,
+                height: 75.v,
+                decoration: const BoxDecoration(shape: BoxShape.circle),
+                child: CustomImageView(
+                  radius: BorderRadius.circular(80),
+                  width: 82.v,
+                  height: 82.v,
+                  imagePath: following.profileImg,
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.h),
+          Text(
+            following.name,
+            style: textTheme.titleMedium,
+          ),
+          Row(
+            children: [
+              Container(
+                height: 8.v,
+                width: 8.h,
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.red),
+              ),
+              SizedBox(width: 5.h),
+              Text(
+                '4 New Post ',
+                style: textTheme.bodySmall,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

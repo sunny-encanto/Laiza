@@ -23,5 +23,13 @@
 -dontwarn com.xiaomi.mipush.sdk.MiPushCommandMessage
 -dontwarn com.xiaomi.mipush.sdk.MiPushMessage
 -dontwarn com.xiaomi.mipush.sdk.PushMessageReceiver
+# Razorepay
+-keepattributes *Annotation*
+-dontwarn com.razorpay.**
+-keep class com.razorpay.** {*;}
+-optimizations !method/inlining/
+-keepclasseswithmembers class * {
+  public void onPayment*(...);
+}
 
 

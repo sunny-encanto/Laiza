@@ -1,3 +1,5 @@
+import '../user/user_model.dart';
+
 class Reel {
   int id;
   int userId;
@@ -12,6 +14,7 @@ class Reel {
   int likesCount;
   int commentsCount;
   List<ReelProduct> product;
+  UserModel user;
 
   Reel({
     required this.id,
@@ -27,6 +30,7 @@ class Reel {
     required this.likesCount,
     required this.commentsCount,
     required this.product,
+    required this.user,
   });
 
   Reel copyWith({int? likeStatus, int? likesCount}) {
@@ -44,6 +48,7 @@ class Reel {
       likesCount: likesCount ?? this.likesCount,
       commentsCount: commentsCount,
       product: product,
+      user: user,
     );
   }
 
@@ -54,14 +59,20 @@ class Reel {
         catId: json["category_id"] ?? 0,
         reelTitle: json["reel_title"],
         reelPath: json["reel_path"],
-        likeStatus: json['is_like'],
+        likeStatus: json['is_like'] ?? 0,
         reelDescription: json["reel_description"],
         reelCoverPath: json["reel_cover_path"],
         reelHashtag: json["reel_hashtag"],
-        likesCount: json["likes_count"],
-        commentsCount: json["comments_count"],
-        product: List<ReelProduct>.from(
-            json["product"].map((x) => ReelProduct.fromJson(x))),
+        likesCount: json["likes_count"] ?? 0,
+        commentsCount: json["comments_count"] ?? 0,
+        product: json["product"] != null
+            ? List<ReelProduct>.from(
+                json["product"].map((x) => ReelProduct.fromJson(x)))
+            : <ReelProduct>[],
+        user: json['users'] != null
+            ? UserModel.fromJson(
+                json: json['users'], id: (json['users']['id']).toString())
+            : UserModel(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -78,6 +89,7 @@ class Reel {
         "comments_count": commentsCount,
         "category_id": catId,
         "product": List<dynamic>.from(product.map((x) => x.toJson())),
+        'users': user.toJson()
       };
 }
 

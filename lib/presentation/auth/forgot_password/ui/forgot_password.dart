@@ -56,7 +56,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                     Navigator.of(context)
                         .pushNamed(AppRoutes.otpScreen, arguments: {
                       'id': state.userId,
-                      'routeName': AppRoutes.changePasswordScreen,
+                      'routeName': AppRoutes.createPasswordScreen,
                       'email': _emailController.text.trim(),
                       'authType': 'forgotPassword'
                     });

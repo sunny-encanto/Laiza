@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
+import 'package:laiza/data/repositories/help_center_repository/help_center_repository.dart';
 import 'package:laiza/data/repositories/product_repository/product_repository.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 import 'package:laiza/data/services/notification_service.dart';
@@ -8,8 +9,11 @@ import 'core/app_export.dart';
 import 'core/network/connectivity_cubit.dart';
 import 'core/utils/pref_utils.dart';
 import 'data/models/user/user_model.dart';
+import 'data/repositories/advertisement_repository/advertisement_repository.dart';
+import 'data/repositories/collection_repository/collection_repository.dart';
 import 'data/repositories/comments_repository/comments_repository.dart';
 import 'data/repositories/connections_repository/connections_repository.dart';
+import 'data/repositories/live_stream_repository/live_stream_repository.dart';
 import 'data/services/deeplink_service.dart';
 import 'data/services/firebase_messaging_service.dart';
 import 'localization/app_localization.dart';
@@ -85,6 +89,14 @@ class _MyAppState extends State<MyApp> {
               create: (BuildContext context) => ProductRepository()),
           RepositoryProvider(
               create: (BuildContext context) => ConnectionsRepository()),
+          RepositoryProvider(
+              create: (BuildContext context) => HelpCenterRepository()),
+          RepositoryProvider(
+              create: (BuildContext context) => AdvertisementRepository()),
+          RepositoryProvider(
+              create: (BuildContext context) => LiveStreamRepository()),
+          RepositoryProvider(
+              create: (BuildContext context) => CollectionRepository()),
         ],
         child: MultiBlocProvider(
           providers: [

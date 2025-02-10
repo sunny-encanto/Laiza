@@ -41,6 +41,7 @@ class AllOngoingStreamsScreen extends StatelessWidget {
                     crossAxisSpacing: 5.h,
                     itemBuilder: (context, index) {
                       return StreamsCard(
+                        isLive: true,
                         model: liveStreamModel[index],
                       );
                     },

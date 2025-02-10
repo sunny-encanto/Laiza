@@ -52,7 +52,7 @@ class Product {
       required this.user,
       required this.isAddedToWishlist});
 
-  Product copyWith({bool? isAddedToWishlist}) {
+  Product copyWith({bool? isAddedToWishlist, int? promotionalStatus}) {
     return Product(
       id: id,
       userId: userId,
@@ -65,7 +65,7 @@ class Product {
       availableColor: availableColor,
       couponDiscount: couponDiscount,
       features: features,
-      promotionalStatus: promotionalStatus,
+      promotionalStatus: promotionalStatus ?? this.promotionalStatus,
       createdAt: createdAt,
       updatedAt: updatedAt,
       coupons: coupons,

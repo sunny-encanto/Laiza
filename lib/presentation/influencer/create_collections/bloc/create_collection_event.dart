@@ -11,9 +11,18 @@ class CollectionFetchEvent extends CreateCollectionEvent {}
 
 class CollectionSelectEvent extends CreateCollectionEvent {
   final int id;
+
   const CollectionSelectEvent(this.id);
+
   @override
   List<Object> get props => [id];
 }
 
-class CollectionSubmitEvent extends CreateCollectionEvent {}
+class CollectionSubmitEvent extends CreateCollectionEvent {
+  final String title;
+
+  const CollectionSubmitEvent(this.title);
+
+  @override
+  List<Object> get props => [title];
+}

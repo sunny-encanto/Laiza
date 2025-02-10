@@ -1,13 +1,17 @@
-import 'package:laiza/data/blocs/favorite_influencers_bloc/favorite_influencers_bloc.dart';
+import 'package:laiza/data/blocs/advertisement_bloc/advertisement_bloc.dart';
+import 'package:laiza/data/models/advertisement_model/advertisement_model.dart';
 import 'package:laiza/data/models/product_model/product.dart';
+import 'package:laiza/data/repositories/advertisement_repository/advertisement_repository.dart';
 import 'package:laiza/data/repositories/product_repository/product_repository.dart';
 import 'package:laiza/presentation/shimmers/loading_grid.dart';
 
 import '../../../core/app_export.dart';
 import '../../../data/blocs/product_bloc/product_bloc.dart';
 import '../../../data/blocs/trending_now_bloc/trending_now_bloc.dart';
+import '../../../data/repositories/reel_repository/reel_repository.dart';
 import '../../../widgets/influencer_card_widget.dart';
 import '../../../widgets/trending_card_widget.dart';
+import '../../reels/bloc/reel_bloc.dart';
 
 class DiscoverScreen extends StatelessWidget {
   const DiscoverScreen({super.key});
@@ -127,7 +131,7 @@ class DiscoverScreen extends StatelessWidget {
                             crossAxisSpacing: 0,
                             itemBuilder: (BuildContext context, index) {
                               return TrendingCardWidget(
-                                index: index,
+                                trendingItems: state.trendingNow[index],
                                 extent: (index % 2 + 1) * 100,
                               );
                             },
@@ -146,16 +150,17 @@ class DiscoverScreen extends StatelessWidget {
                       'From Your Favorite Influencers',
                       style: textTheme.titleMedium,
                     ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .pushNamed(AppRoutes.allFavInfluencerScreen);
-                      },
-                      child: Text(
-                        'View All',
-                        style: textTheme.bodySmall,
-                      ),
-                    ),
+                    //Need to unComment
+                    // InkWell(
+                    //   onTap: () {
+                    //     Navigator.of(context)
+                    //         .pushNamed(AppRoutes.allFavInfluencerScreen);
+                    //   },
+                    //   child: Text(
+                    //     'View All',
+                    //     style: textTheme.bodySmall,
+                    //   ),
+                    // ),
                   ],
                 ),
                 SizedBox(height: 2.v),
@@ -165,48 +170,54 @@ class DiscoverScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20.h),
                 BlocProvider(
-                  create: (context) => FavoriteInfluencersBloc(),
-                  child: BlocBuilder<FavoriteInfluencersBloc,
-                      FavoriteInfluencersState>(
-                    builder: (context, state) {
-                      if (state is FavoriteInfluencersInitial) {
-                        context
-                            .read<FavoriteInfluencersBloc>()
-                            .add(FetchFavInfluencersEvent());
-                      } else if (state is FavoriteInfluencersLoading) {
-                        return const LoadingGridScreen();
-                      } else if (state is FavoriteInfluencersLoaded) {
-                        return SizedBox(
-                          height: 690.v,
-                          child: GridView.custom(
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.all(0),
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate: SliverWovenGridDelegate.count(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 0,
-                              crossAxisSpacing: 0,
-                              pattern: [
-                                const WovenGridTile(1),
-                                const WovenGridTile(
-                                  5 / 7,
-                                  crossAxisRatio: 0.9,
-                                  alignment: AlignmentDirectional.centerEnd,
+                    create: (context) =>
+                        ReelBloc(context.read<ReelRepository>()),
+                    child: BlocBuilder<ReelBloc, ReelState>(
+                        buildWhen: (previous, current) =>
+                            (current is ReelLoading ||
+                                current is ReelLoaded ||
+                                current is ReelError),
+                        builder: (context, state) {
+                          if (state is ReelInitial) {
+                            context.read<ReelBloc>().add(LoadReelEvent());
+                          } else if (state is ReelLoading) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          } else if (state is ReelError) {
+                            return Center(
+                              child: Text(state.message),
+                            );
+                          } else if (state is ReelLoaded) {
+                            return SizedBox(
+                              height: 690.v,
+                              child: GridView.custom(
+                                shrinkWrap: true,
+                                padding: const EdgeInsets.all(0),
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate: SliverWovenGridDelegate.count(
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 0,
+                                  crossAxisSpacing: 0,
+                                  pattern: [
+                                    const WovenGridTile(1),
+                                    const WovenGridTile(
+                                      5 / 7,
+                                      crossAxisRatio: 0.9,
+                                      alignment: AlignmentDirectional.centerEnd,
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            childrenDelegate: SliverChildBuilderDelegate(
-                              childCount: imagesList.length,
-                              (BuildContext context, int index) =>
-                                  InfluencerCardWidget(index: index),
-                            ),
-                          ),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  ),
-                ),
+                                childrenDelegate: SliverChildBuilderDelegate(
+                                  childCount: state.reels.length,
+                                  (BuildContext context, int index) =>
+                                      InfluencerCardWidget(
+                                          reel: state.reels[index]),
+                                ),
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        })),
                 SizedBox(height: 24.v),
                 Text(
                   'Explore More Products',
@@ -258,62 +269,98 @@ class DiscoverScreen extends StatelessWidget {
   }
 
   _buildDiscoverCard() {
-    return Stack(
-      clipBehavior: Clip.hardEdge,
-      alignment: Alignment.topRight,
-      children: [
-        Container(
-          width: SizeUtils.width,
-          height: 186.v,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.h),
-              color: AppColor.blackColor),
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0.v, horizontal: 10.0.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 27.v),
-                Text(
-                  'Meet Our Creator of the Week',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.roboto(
-                    color: Colors.white,
-                    fontSize: 16.fSize,
-                    fontWeight: FontWeight.w600,
+    return BlocProvider(
+      create: (context) =>
+          AdvertisementBloc(context.read<AdvertisementRepository>()),
+      child: BlocBuilder<AdvertisementBloc, AdvertisementState>(
+        builder: (context, state) {
+          if (state is AdvertisementInitial) {
+            context.read<AdvertisementBloc>().add(FetchAdvertisementEvent());
+          } else if (state is AdvertisementLoading) {
+            return const SizedBox.shrink();
+          } else if (state is AdvertisementError) {
+            return Center(child: Text(state.message));
+          } else if (state is AdvertisementLoaded) {
+            if (state.advertisement.isNotEmpty) {
+              Advertisement advertisement = state.advertisement[0];
+              return Stack(
+                clipBehavior: Clip.hardEdge,
+                alignment: Alignment.bottomLeft,
+                children: [
+                  // Container(
+                  //   width: SizeUtils.width,
+                  //   height: 186.v,
+                  //   decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.circular(12.h),
+                  //       color: AppColor.blackColor),
+                  //   child: Padding(
+                  //     padding: EdgeInsets.symmetric(
+                  //         vertical: 8.0.v, horizontal: 10.0.h),
+                  //     child: Column(
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       children: [
+                  //         SizedBox(height: 27.v),
+                  //         Text(
+                  //           advertisement.title,
+                  //           textAlign: TextAlign.center,
+                  //           style: GoogleFonts.roboto(
+                  //             color: Colors.white,
+                  //             fontSize: 16.fSize,
+                  //             fontWeight: FontWeight.w600,
+                  //           ),
+                  //         ),
+                  //         SizedBox(height: 16.v),
+                  //         SizedBox(
+                  //           width: SizeUtils.width - 150.h,
+                  //           child: Text(
+                  //               'Follow Natahsa for exclusive reels and product collaboration',
+                  //               textAlign: TextAlign.start,
+                  //               style: GoogleFonts.roboto(
+                  //                 color: Colors.white,
+                  //                 fontSize: 15.fSize,
+                  //                 fontWeight: FontWeight.w600,
+                  //               )),
+                  //         ),
+                  //         SizedBox(height: 24.v),
+                  //         CustomElevatedButton(
+                  //           text: 'Follow Now',
+                  //           width: 128.h,
+                  //           height: 24.v,
+                  //           buttonTextStyle: TextStyle(
+                  //               fontSize: 10.fSize,
+                  //               color: const Color(0xffAD4B37)),
+                  //           backgroundColor: Colors.white,
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  CustomImageView(
+                    height: 186.v,
+                    width: SizeUtils.width,
+                    radius: BorderRadius.circular(12.h),
+                    imagePath: advertisement.image,
+                    fit: BoxFit.fill,
                   ),
-                ),
-                SizedBox(height: 16.v),
-                SizedBox(
-                  width: SizeUtils.width - 150.h,
-                  child: Text(
-                      'Follow Natahsa for exclusive reels and product collaboration',
-                      textAlign: TextAlign.start,
-                      style: GoogleFonts.roboto(
-                        color: Colors.white,
-                        fontSize: 15.fSize,
-                        fontWeight: FontWeight.w600,
-                      )),
-                ),
-                SizedBox(height: 24.v),
-                CustomElevatedButton(
-                  text: 'Follow Now',
-                  width: 128.h,
-                  height: 24.v,
-                  buttonTextStyle: TextStyle(
-                      fontSize: 10.fSize, color: const Color(0xffAD4B37)),
-                  backgroundColor: Colors.white,
-                ),
-              ],
-            ),
-          ),
-        ),
-        CustomImageView(
-          height: 186.v,
-          width: 186.v,
-          imagePath: ImageConstant.discoverBannerImage,
-        ),
-      ],
+                  // CustomElevatedButton(
+                  //   margin:
+                  //       EdgeInsets.symmetric(horizontal: 10.h, vertical: 20.v),
+                  //   text: 'Follow Now',
+                  //   width: 128.h,
+                  //   height: 24.v,
+                  //   buttonTextStyle: TextStyle(
+                  //       fontSize: 10.fSize, color: const Color(0xffAD4B37)),
+                  //   backgroundColor: Colors.white,
+                  // ),
+                ],
+              );
+            } else {
+              return SizedBox(height: 186.v);
+            }
+          }
+          return const SizedBox.shrink();
+        },
+      ),
     );
   }
 }

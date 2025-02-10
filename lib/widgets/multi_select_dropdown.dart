@@ -13,7 +13,6 @@ class MultiSelectDropdownWithSearch extends StatelessWidget {
     required this.initialItems,
   }) {
     // Initialize the selected items
-    // searchController.selectedItems.addAll(initialItems);
     searchController.selectedItems.addAll(initialItems);
     print("Initial selected items: ${searchController.selectedItems}");
     print("Initial selected items: ${initialItems.length}");

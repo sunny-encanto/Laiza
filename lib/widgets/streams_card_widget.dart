@@ -5,8 +5,13 @@ import '../data/models/live_stream_model.dart/live_stream_model.dart';
 
 class StreamsCard extends StatelessWidget {
   final LiveStreamModel model;
-  const StreamsCard({super.key, this.width, required this.model});
+  final bool isLive;
+
+  const StreamsCard(
+      {super.key, this.width, required this.model, required this.isLive});
+
   final double? width;
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -40,25 +45,26 @@ class StreamsCard extends StatelessWidget {
                     //'https://farm2.staticflickr.com/1533/26541536141_41abe98db3_z_d.jpg',
                     ),
               ),
-              Positioned(
-                top: 5.v,
-                right: -30.h,
-                child: Row(
-                  children: [
-                    Container(
-                      height: 8.v,
-                      width: 8.h,
-                      decoration: const BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.red),
-                    ),
-                    SizedBox(width: 2.h),
-                    Text(
-                      'LIVE',
-                      style: textTheme.bodySmall,
-                    )
-                  ],
+              if (isLive)
+                Positioned(
+                  top: 5.v,
+                  right: -30.h,
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 8.v,
+                        width: 8.h,
+                        decoration: const BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.red),
+                      ),
+                      SizedBox(width: 2.h),
+                      Text(
+                        'LIVE',
+                        style: textTheme.bodySmall,
+                      )
+                    ],
+                  ),
                 ),
-              ),
             ],
           ),
           SizedBox(height: 8.h),
@@ -67,25 +73,27 @@ class StreamsCard extends StatelessWidget {
             style: textTheme.titleLarge!.copyWith(fontSize: 16.fSize),
           ),
           SizedBox(height: 3.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CustomImageView(
-                  imagePath: ImageConstant.visibilityIcon, color: Colors.grey),
-              SizedBox(width: 5.h),
-              Text(
-                '${model.viewCount} viewers',
-                style: textTheme.bodySmall,
-              ),
-            ],
-          ),
+          if (isLive)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomImageView(
+                    imagePath: ImageConstant.visibilityIcon,
+                    color: Colors.grey),
+                SizedBox(width: 5.h),
+                Text(
+                  '${model.viewCount} viewers',
+                  style: textTheme.bodySmall,
+                ),
+              ],
+            ),
           SizedBox(height: 8.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 5.h),
             child: CustomElevatedButton(
               height: 33.v,
               width: 122.h,
-              text: 'Watch Now',
+              text: isLive ? 'Watch Now' : 'Notify Me',
               onPressed: () {
                 Navigator.of(context).pushNamed(AppRoutes.livePage, arguments: {
                   'live_id': model.liveId,

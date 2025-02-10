@@ -78,7 +78,7 @@ class _VideoReelPageState extends State<VideoReelPage> {
                       return Stack(
                         children: [
                           Center(
-                              child: VideoPlayerWidget(
+                              child: ReelVideoPlayerWidget(
                                   videoUrl: state.reels[index].reelPath)),
                           _buildViewCountWidget(textTheme),
                           Align(
@@ -258,16 +258,16 @@ class _VideoReelPageState extends State<VideoReelPage> {
   }
 }
 
-class VideoPlayerWidget extends StatefulWidget {
+class ReelVideoPlayerWidget extends StatefulWidget {
   final String videoUrl;
 
-  const VideoPlayerWidget({super.key, required this.videoUrl});
+  const ReelVideoPlayerWidget({super.key, required this.videoUrl});
 
   @override
-  State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
+  State<ReelVideoPlayerWidget> createState() => _ReelVideoPlayerWidgetState();
 }
 
-class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
+class _ReelVideoPlayerWidgetState extends State<ReelVideoPlayerWidget> {
   late VideoPlayerController _controller;
 
   @override
