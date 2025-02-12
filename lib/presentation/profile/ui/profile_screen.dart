@@ -129,14 +129,15 @@ class ProfileScreen extends StatelessWidget {
         Navigator.of(context).pushNamed(AppRoutes.helpCentreScreen);
         break;
 
+      // case 4:
+      //   Navigator.of(context).pushNamed(AppRoutes.privacyPolicyScreen);
+      //   break;
+
       case 4:
-        Navigator.of(context).pushNamed(AppRoutes.privacyPolicyScreen);
+        Navigator.of(context).pushNamed(AppRoutes.settingScreen);
         break;
 
       case 5:
-        break;
-
-      case 6:
         logOutDialog(context);
         break;
       default:
@@ -149,7 +150,6 @@ List menuItem = [
   'Wishlist',
   'Orders',
   'Help Center',
-  'Privacy',
   'Settings',
   'Log Out',
 ];

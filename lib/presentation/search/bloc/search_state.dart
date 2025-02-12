@@ -11,6 +11,8 @@ final class SearchInitial extends SearchState {}
 
 final class SearchResultLoadingState extends SearchState {}
 
+final class SearchProductResultLoadingState extends SearchState {}
+
 final class SearchErrorState extends SearchState {
   final String message;
   const SearchErrorState(this.message);
@@ -21,6 +23,13 @@ final class SearchErrorState extends SearchState {
 final class SearchResultLoadedState extends SearchState {
   final List<SearchModel> searchResult;
   const SearchResultLoadedState(this.searchResult);
+  @override
+  List<Object> get props => [searchResult];
+}
+
+final class SearchProductResultLoadedState extends SearchState {
+  final List<Product> searchResult;
+  const SearchProductResultLoadedState(this.searchResult);
   @override
   List<Object> get props => [searchResult];
 }

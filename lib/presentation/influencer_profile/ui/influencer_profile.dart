@@ -2,10 +2,10 @@ import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/blocs/influencer_profile_bloc/influencer_profile_bloc.dart';
 import 'package:laiza/data/models/influencer_profile_model/influencer_profile_model.dart';
 import 'package:laiza/data/services/share.dart';
-import 'package:laiza/presentation/influencer_profile/ui/post_view/post_view.dart';
 import 'package:laiza/presentation/influencer_profile/ui/product_view/product_view.dart';
 
 import '../../../data/models/user/user_model.dart';
+import 'post_view/post_view.dart';
 
 class InfluencerProfileScreen extends StatelessWidget {
   final String id;
@@ -331,7 +331,8 @@ class CollectionCardWidget extends StatelessWidget {
       padding: EdgeInsets.only(right: 12.h),
       child: InkWell(
         onTap: () {
-          Navigator.of(context).pushNamed(AppRoutes.collectionViewScreen);
+          Navigator.of(context).pushNamed(AppRoutes.collectionViewScreen,
+              arguments: collection.id);
         },
         child: Container(
           padding: EdgeInsets.all(8.h),
@@ -344,12 +345,15 @@ class CollectionCardWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Main Image
                   collection.reels.isNotEmpty
-                      ? Image.network(
-                          collection.reels[0].reelCoverPath,
-                          fit: BoxFit.cover,
+                      ? CustomImageView(
+                          width: collection.reels.length < 2 ? 124 : 61.h,
+                          height: 124.v,
+                          imagePath: collection.reels[0].reelCoverPath,
+                          fit: BoxFit.fill,
                         )
                       : Container(color: Colors.grey),
                   const SizedBox(width: 4),
@@ -357,51 +361,25 @@ class CollectionCardWidget extends StatelessWidget {
                   Column(
                     children: [
                       if (collection.reels.length > 1)
-                        Image.network(
-                          collection.reels[1].reelCoverPath,
-                          fit: BoxFit.cover,
+                        CustomImageView(
+                          width: 61.h,
+                          height: collection.reels.length < 3 ? 124.v : 60.v,
+                          imagePath: collection.reels[1].reelCoverPath,
+                          fit: BoxFit.fill,
                         ),
                       if (collection.reels.length > 2)
                         const SizedBox(height: 4),
                       if (collection.reels.length > 2)
-                        Image.network(
-                          collection.reels[2].reelCoverPath,
-                          fit: BoxFit.cover,
-                        ),
+                        CustomImageView(
+                          width: 61.h,
+                          height: 60.v,
+                          imagePath: collection.reels[2].reelCoverPath,
+                          fit: BoxFit.fill,
+                        )
                     ],
                   ),
                 ],
               ),
-              // Row(
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     CustomImageView(
-              //       width: 61.h,
-              //       height: 117.v,
-              //       fit: BoxFit.fill,
-              //       imagePath: collection.reels[0].reelCoverPath,
-              //     ),
-              //     SizedBox(width: 2.h),
-              //     Column(
-              //       mainAxisAlignment: MainAxisAlignment.start,
-              //       children: [
-              //         CustomImageView(
-              //           width: 52.h,
-              //           height: 52.v,
-              //           fit: BoxFit.fill,
-              //           imagePath: imagesList[1],
-              //         ),
-              //         SizedBox(height: 2.v),
-              //         CustomImageView(
-              //           width: 52.h,
-              //           height: 62.v,
-              //           fit: BoxFit.fill,
-              //           imagePath: imagesList[2],
-              //         ),
-              //       ],
-              //     )
-              //   ],
-              // ),
               SizedBox(height: 4.v),
               Text(
                 collection.title,

@@ -6,6 +6,9 @@ import 'package:laiza/data/repositories/live_stream_repository/live_stream_repos
 import 'package:laiza/data/services/firebase_services.dart';
 import 'package:laiza/presentation/shimmers/loading_list.dart';
 
+import '../../../data/blocs/following_bloc/following_bloc.dart';
+import '../../../data/models/followers_model/follower.dart';
+import '../../../data/repositories/follow_repository/follow_repository.dart';
 import '../../../widgets/streams_card_widget.dart';
 
 class LiveScreen extends StatelessWidget {
@@ -27,16 +30,38 @@ class LiveScreen extends StatelessWidget {
                 style: textTheme.titleLarge,
               ),
               SizedBox(height: 20.v),
-              SizedBox(
-                  height: 114.v,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 5,
-                    itemBuilder: (context, index) => Padding(
-                      padding: EdgeInsets.only(left: 8.h),
-                      child: profileWidget(context),
-                    ),
-                  )),
+              BlocProvider(
+                create: (context) =>
+                    FollowingBloc(context.read<FollowersRepository>()),
+                child: BlocBuilder<FollowingBloc, FollowingState>(
+                  builder: (context, state) {
+                    if (state is FollowingInitial) {
+                      context.read<FollowingBloc>().add(FetchFollowings());
+                      return HorizontalLoadingListPage(
+                          width: 114.h, height: 114.v);
+                    } else if (state is FollowingLoading) {
+                      return HorizontalLoadingListPage(
+                          width: 114.h, height: 114.v);
+                    } else if (state is FollowingErrorState) {
+                      return Center(child: Text(state.message));
+                    } else if (state is FollowingLoadedState) {
+                      return SizedBox(
+                          height: 114.v,
+                          child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: state.followings.length,
+                              itemBuilder: (context, index) {
+                                Follower following = state.followings[index];
+                                return Padding(
+                                  padding: EdgeInsets.only(left: 8.h),
+                                  child: profileWidget(context, following),
+                                );
+                              }));
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ),
               SizedBox(height: 28.v),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -62,7 +87,8 @@ class LiveScreen extends StatelessWidget {
                   stream: FirebaseServices.getOnGoingLiveStream(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const SizedBox.shrink();
+                      return HorizontalLoadingListPage(
+                          width: 185.h, height: 250.v);
                     } else if (snapshot.hasError) {
                       return const SizedBox.shrink();
                     }
@@ -101,8 +127,11 @@ class LiveScreen extends StatelessWidget {
                       context
                           .read<UpComingStreamBloc>()
                           .add(FetchUpcomingStream());
+                      return HorizontalLoadingListPage(
+                          width: 185.h, height: 250.v);
                     } else if (state is UpComingStreamLoading) {
-                      return const HorizontalLoadingListPage();
+                      return HorizontalLoadingListPage(
+                          width: 185.h, height: 250.v);
                     } else if (state is UpComingStreamLoaded) {
                       List<LiveStreamModel> liveStreamModel =
                           state.upcomingStreams
@@ -139,101 +168,23 @@ class LiveScreen extends StatelessWidget {
     );
   }
 
-  _buildUpComingStreamCardGreen() {
-    return CustomImageView(
-      margin: EdgeInsets.symmetric(horizontal: 2.h),
-      radius: BorderRadius.circular(12.h),
-      imagePath: ImageConstant.sliderImageGreen,
-    );
-  }
+  // _buildUpComingStreamCardGreen() {
+  //   return CustomImageView(
+  //     margin: EdgeInsets.symmetric(horizontal: 2.h),
+  //     radius: BorderRadius.circular(12.h),
+  //     imagePath: ImageConstant.sliderImageGreen,
+  //   );
+  // }
+  //
+  // _buildUpComingStreamCardRed() {
+  //   return CustomImageView(
+  //     margin: EdgeInsets.symmetric(horizontal: 2.h),
+  //     radius: BorderRadius.circular(12.h),
+  //     imagePath: ImageConstant.sliderImageRed,
+  //   );
+  // }
 
-  _buildUpComingStreamCardRed() {
-    return CustomImageView(
-      margin: EdgeInsets.symmetric(horizontal: 2.h),
-      radius: BorderRadius.circular(12.h),
-      imagePath: ImageConstant.sliderImageRed,
-    );
-    // Padding(
-    //   padding: EdgeInsets.symmetric(horizontal: 8.h),
-    //   child: Stack(
-    //     clipBehavior: Clip.hardEdge,
-    //     alignment: Alignment.topRight,
-    //     children: [
-    //       Container(
-    //         width: SizeUtils.width,
-    //         height: 186.v,
-    //         decoration: BoxDecoration(
-    //           borderRadius: BorderRadius.circular(12.h),
-    //           gradient: const LinearGradient(
-    //             begin: Alignment.centerLeft,
-    //             end: Alignment.centerRight,
-    //             colors: [
-    //               Color(0xFFFDC878),
-    //               Color(0xFFFF8E56),
-    //             ],
-    //             stops: [0.0, 0.8627],
-    //           ),
-    //         ),
-    //         child: Padding(
-    //           padding:
-    //               EdgeInsets.symmetric(vertical: 8.0.v, horizontal: 10.0.h),
-    //           child: Column(
-    //             crossAxisAlignment: CrossAxisAlignment.start,
-    //             children: [
-    //               SizedBox(height: 15.v),
-    //               Text(
-    //                 'Unlock Exclusive Deals on GlowGenix\n Skincare—Live with Sharvari',
-    //                 style: GoogleFonts.roboto(
-    //                   color: AppColor.brownColor,
-    //                   fontSize: 12.fSize,
-    //                   fontWeight: FontWeight.w600,
-    //                 ),
-    //               ),
-    //               SizedBox(height: 16.v),
-    //               Text(
-    //                   'Get ready for exclusive deals and live\n interaction—starting in  2h 15m  ',
-    //                   style: GoogleFonts.roboto(
-    //                     color: AppColor.brownColor,
-    //                     fontSize: 12.fSize,
-    //                     fontWeight: FontWeight.w600,
-    //                   )),
-    //               SizedBox(height: 14.v),
-    //               CustomElevatedButton(
-    //                 text: 'Notify me',
-    //                 width: 128.h,
-    //                 height: 21.v,
-    //                 buttonTextStyle: TextStyle(fontSize: 10.fSize),
-    //               )
-    //             ],
-    //           ),
-    //         ),
-    //       ),
-    //       CustomImageView(
-    //         radius: BorderRadius.only(topRight: Radius.circular(12.h)),
-    //         imagePath: ImageConstant.music,
-    //       ),
-    //       Positioned(
-    //         right: 90.h,
-    //         top: 100.v,
-    //         child: CustomImageView(
-    //           height: 80.v,
-    //           imagePath: ImageConstant.giftBox,
-    //           fit: BoxFit.cover,
-    //         ),
-    //       ),
-    //       Padding(
-    //         padding: EdgeInsets.only(right: 30.h),
-    //         child: CustomImageView(
-    //           height: 186.v,
-    //           imagePath: ImageConstant.bannerGirl,
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
-  }
-
-  Widget profileWidget(BuildContext context) {
+  Widget profileWidget(BuildContext context, Follower following) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return InkWell(
       onTap: () {},
@@ -271,7 +222,8 @@ class LiveScreen extends StatelessWidget {
                   radius: BorderRadius.circular(82.h),
                   width: 82.h,
                   height: 82.v,
-                  imagePath: ImageConstant.reelImg,
+                  imagePath: following.profileImg,
+                  fit: BoxFit.fill,
                 ),
               ),
               Positioned(
@@ -293,7 +245,7 @@ class LiveScreen extends StatelessWidget {
           ),
           SizedBox(height: 12.h),
           Text(
-            'Name ',
+            following.name,
             style: textTheme.titleMedium,
           ),
         ],

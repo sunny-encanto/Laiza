@@ -26,6 +26,8 @@ class TrendingCardWidget extends StatelessWidget {
           color: Colors.grey,
           child: CustomImageView(
             width: 123.h,
+            height: 123.v,
+            fit: BoxFit.fill,
             onTap: () {
               if (trendingItems.type == TrendingItemType.PRODUCT) {
                 Navigator.of(context).pushNamed(AppRoutes.productDetailScreen,

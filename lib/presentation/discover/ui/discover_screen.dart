@@ -31,54 +31,54 @@ class DiscoverScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 20.v),
-                SizedBox(
-                  height: 36.v,
-                  child: ListView.separated(
-                    separatorBuilder: (BuildContext context, int index) =>
-                        Divider(height: 2.v),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 5,
-                    itemBuilder: (BuildContext context, index) =>
-                        BlocConsumer<DiscoverBloc, DiscoverState>(
-                      listener: (BuildContext context, DiscoverState state) {
-                        if (state is DiscoverChipSelectState) {
-                          selectedIndex = state.selectedIndex;
-                        }
-                      },
-                      builder: (BuildContext context, DiscoverState state) {
-                        return InkWell(
-                          onTap: () {
-                            context
-                                .read<DiscoverBloc>()
-                                .add(DiscoverChipSelectEvent(index));
-                          },
-                          child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 400),
-                              margin: EdgeInsets.only(right: 12.h),
-                              height: 36.v,
-                              width: 89.h,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.black),
-                                  color: selectedIndex == index
-                                      ? Colors.black
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(24.h)),
-                              child: AnimatedDefaultTextStyle(
-                                duration: const Duration(milliseconds: 400),
-                                style: textTheme.labelSmall!.copyWith(
-                                  color: selectedIndex == index
-                                      ? Colors.white
-                                      : null,
-                                ),
-                                child: const Text('Following'),
-                              )),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                SizedBox(height: 24.v),
+                // SizedBox(
+                //   height: 36.v,
+                //   child: ListView.separated(
+                //     separatorBuilder: (BuildContext context, int index) =>
+                //         Divider(height: 2.v),
+                //     scrollDirection: Axis.horizontal,
+                //     itemCount: 5,
+                //     itemBuilder: (BuildContext context, index) =>
+                //         BlocConsumer<DiscoverBloc, DiscoverState>(
+                //       listener: (BuildContext context, DiscoverState state) {
+                //         if (state is DiscoverChipSelectState) {
+                //           selectedIndex = state.selectedIndex;
+                //         }
+                //       },
+                //       builder: (BuildContext context, DiscoverState state) {
+                //         return InkWell(
+                //           onTap: () {
+                //             context
+                //                 .read<DiscoverBloc>()
+                //                 .add(DiscoverChipSelectEvent(index));
+                //           },
+                //           child: AnimatedContainer(
+                //               duration: const Duration(milliseconds: 400),
+                //               margin: EdgeInsets.only(right: 12.h),
+                //               height: 36.v,
+                //               width: 89.h,
+                //               alignment: Alignment.center,
+                //               decoration: BoxDecoration(
+                //                   border: Border.all(color: Colors.black),
+                //                   color: selectedIndex == index
+                //                       ? Colors.black
+                //                       : Colors.white,
+                //                   borderRadius: BorderRadius.circular(24.h)),
+                //               child: AnimatedDefaultTextStyle(
+                //                 duration: const Duration(milliseconds: 400),
+                //                 style: textTheme.labelSmall!.copyWith(
+                //                   color: selectedIndex == index
+                //                       ? Colors.white
+                //                       : null,
+                //                 ),
+                //                 child: const Text('Following'),
+                //               )),
+                //         );
+                //       },
+                //     ),
+                //   ),
+                // ),
+                // SizedBox(height: 24.v),
                 _buildDiscoverCard(),
                 SizedBox(height: 24.v),
                 Row(
@@ -115,8 +115,9 @@ class DiscoverScreen extends StatelessWidget {
                         context
                             .read<TrendingNowBloc>()
                             .add(FetchTrendingNowEvent());
-                      } else if (state is TrendingNowInitial) {
-                        return const LoadingGridScreen();
+                        return const LoadingGridScreen(radius: 0);
+                      } else if (state is TrendingNowLoading) {
+                        return const LoadingGridScreen(radius: 0);
                       } else if (state is TrendingNowError) {
                         return Center(child: Text(state.message));
                       } else if (state is TrendingNowLoaded) {
@@ -181,8 +182,7 @@ class DiscoverScreen extends StatelessWidget {
                           if (state is ReelInitial) {
                             context.read<ReelBloc>().add(LoadReelEvent());
                           } else if (state is ReelLoading) {
-                            return const Center(
-                                child: CircularProgressIndicator());
+                            return const LoadingGridScreen();
                           } else if (state is ReelError) {
                             return Center(
                               child: Text(state.message),
@@ -235,7 +235,7 @@ class DiscoverScreen extends StatelessWidget {
                   child: BlocBuilder<ProductBloc, ProductState>(
                     builder: (context, state) {
                       if (state is ProductLoading) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const LoadingGridScreen();
                       } else if (state is ProductError) {
                         return Center(child: Text('Error: ${state.message}'));
                       } else if (state is ProductLoaded) {
@@ -276,8 +276,9 @@ class DiscoverScreen extends StatelessWidget {
         builder: (context, state) {
           if (state is AdvertisementInitial) {
             context.read<AdvertisementBloc>().add(FetchAdvertisementEvent());
+            return SizedBox(height: 186.v, width: SizeUtils.width);
           } else if (state is AdvertisementLoading) {
-            return const SizedBox.shrink();
+            return SizedBox(height: 186.v, width: SizeUtils.width);
           } else if (state is AdvertisementError) {
             return Center(child: Text(state.message));
           } else if (state is AdvertisementLoaded) {
@@ -287,54 +288,6 @@ class DiscoverScreen extends StatelessWidget {
                 clipBehavior: Clip.hardEdge,
                 alignment: Alignment.bottomLeft,
                 children: [
-                  // Container(
-                  //   width: SizeUtils.width,
-                  //   height: 186.v,
-                  //   decoration: BoxDecoration(
-                  //       borderRadius: BorderRadius.circular(12.h),
-                  //       color: AppColor.blackColor),
-                  //   child: Padding(
-                  //     padding: EdgeInsets.symmetric(
-                  //         vertical: 8.0.v, horizontal: 10.0.h),
-                  //     child: Column(
-                  //       crossAxisAlignment: CrossAxisAlignment.start,
-                  //       children: [
-                  //         SizedBox(height: 27.v),
-                  //         Text(
-                  //           advertisement.title,
-                  //           textAlign: TextAlign.center,
-                  //           style: GoogleFonts.roboto(
-                  //             color: Colors.white,
-                  //             fontSize: 16.fSize,
-                  //             fontWeight: FontWeight.w600,
-                  //           ),
-                  //         ),
-                  //         SizedBox(height: 16.v),
-                  //         SizedBox(
-                  //           width: SizeUtils.width - 150.h,
-                  //           child: Text(
-                  //               'Follow Natahsa for exclusive reels and product collaboration',
-                  //               textAlign: TextAlign.start,
-                  //               style: GoogleFonts.roboto(
-                  //                 color: Colors.white,
-                  //                 fontSize: 15.fSize,
-                  //                 fontWeight: FontWeight.w600,
-                  //               )),
-                  //         ),
-                  //         SizedBox(height: 24.v),
-                  //         CustomElevatedButton(
-                  //           text: 'Follow Now',
-                  //           width: 128.h,
-                  //           height: 24.v,
-                  //           buttonTextStyle: TextStyle(
-                  //               fontSize: 10.fSize,
-                  //               color: const Color(0xffAD4B37)),
-                  //           backgroundColor: Colors.white,
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
                   CustomImageView(
                     height: 186.v,
                     width: SizeUtils.width,
@@ -342,16 +295,6 @@ class DiscoverScreen extends StatelessWidget {
                     imagePath: advertisement.image,
                     fit: BoxFit.fill,
                   ),
-                  // CustomElevatedButton(
-                  //   margin:
-                  //       EdgeInsets.symmetric(horizontal: 10.h, vertical: 20.v),
-                  //   text: 'Follow Now',
-                  //   width: 128.h,
-                  //   height: 24.v,
-                  //   buttonTextStyle: TextStyle(
-                  //       fontSize: 10.fSize, color: const Color(0xffAD4B37)),
-                  //   backgroundColor: Colors.white,
-                  // ),
                 ],
               );
             } else {

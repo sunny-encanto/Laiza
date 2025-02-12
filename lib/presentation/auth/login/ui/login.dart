@@ -115,7 +115,6 @@ class LoginScreen extends StatelessWidget {
                       if (state is LoginError) {
                         context.showSnackBar(state.message);
                       } else if (state is LoginSuccessState) {
-                        context.showSnackBar('Successfully logged In');
                         if (PrefUtils.getRole() == UserRole.user.name) {
                           Navigator.of(context).pushNamedAndRemoveUntil(
                             AppRoutes.bottomBarScreen,

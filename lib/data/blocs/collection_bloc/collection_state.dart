@@ -28,3 +28,12 @@ final class CollectionError extends CollectionState {
   @override
   List<Object> get props => [message];
 }
+
+final class CollectionDeleteSuccess extends CollectionState {
+  final String message;
+
+  const CollectionDeleteSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

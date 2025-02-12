@@ -2,7 +2,11 @@ import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/models/post_model/post_model.dart';
 import 'package:laiza/data/models/reels_model/reel.dart';
 
-import '../../../../widgets/post_card_widget.dart';
+import '../../../../data/repositories/reel_repository/reel_repository.dart';
+import '../../../../data/services/share.dart';
+import '../../../../widgets/like_button/bloc/like_button_bloc.dart';
+import '../../../../widgets/play_button.dart';
+import '../../../influencer/my_reel_view/my_reel_view.dart';
 
 class PostView extends StatelessWidget {
   final List<Reel> reel;
@@ -15,29 +19,29 @@ class PostView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 24.v),
-        Row(
-          children: [
-            Expanded(
-              child: CustomTextFormField(
-                prefixConstraints: BoxConstraints(maxWidth: 25.h),
-                prefix: Padding(
-                  padding: EdgeInsets.only(left: 10.h),
-                  child: CustomImageView(
-                    width: 15.h,
-                    imagePath: ImageConstant.searchIcon,
-                  ),
-                ),
-                hintText: 'Search for  398 Post',
-              ),
-            ),
-            SizedBox(width: 16.h),
-            CustomIconButton(
-              icon: ImageConstant.menuIcon,
-              onTap: () {},
-            ),
-          ],
-        ),
+        // SizedBox(height: 24.v),
+        // Row(
+        //   children: [
+        //     Expanded(
+        //       child: CustomTextFormField(
+        //         prefixConstraints: BoxConstraints(maxWidth: 25.h),
+        //         prefix: Padding(
+        //           padding: EdgeInsets.only(left: 10.h),
+        //           child: CustomImageView(
+        //             width: 15.h,
+        //             imagePath: ImageConstant.searchIcon,
+        //           ),
+        //         ),
+        //         hintText: 'Search for  398 Post',
+        //       ),
+        //     ),
+        //     SizedBox(width: 16.h),
+        //     CustomIconButton(
+        //       icon: ImageConstant.menuIcon,
+        //       onTap: () {},
+        //     ),
+        //   ],
+        // ),
         SizedBox(height: 24.v),
         Text(
           'Trending Post',
@@ -54,9 +58,36 @@ class PostView extends StatelessWidget {
                     id: reel[index].id,
                     url: reel[index].reelCoverPath,
                     isVideo: true);
+
                 return Padding(
                   padding: EdgeInsets.only(right: 24.h),
-                  child: PostCardWidget(post: post),
+                  child: SizedBox(
+                    width: 185.h,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        CustomImageView(
+                          height: 261.v,
+                          width: 185.h,
+                          fit: BoxFit.fill,
+                          radius: BorderRadius.circular(6.h),
+                          imagePath: post.url,
+                        ),
+                        PlayButton(
+                          isVisible: post.isVideo,
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  VideoReelPageOtherInfluencer(
+                                reels: reel,
+                                initialIndex: index,
+                              ),
+                            ));
+                          },
+                        )
+                      ],
+                    ),
+                  ),
                 );
               }),
         ),
@@ -109,7 +140,29 @@ class PostView extends StatelessWidget {
                   id: reel[index].id,
                   url: reel[index].reelCoverPath,
                   isVideo: true);
-              return PostCardWidget(post: post);
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  CustomImageView(
+                    height: 261.v,
+                    width: 185.h,
+                    fit: BoxFit.fill,
+                    radius: BorderRadius.circular(6.h),
+                    imagePath: post.url,
+                  ),
+                  PlayButton(
+                    isVisible: post.isVideo,
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => VideoReelPageOtherInfluencer(
+                          reels: reel,
+                          initialIndex: index,
+                        ),
+                      ));
+                    },
+                  )
+                ],
+              );
             },
           ),
         ),
@@ -117,67 +170,195 @@ class PostView extends StatelessWidget {
       ],
     );
   }
+}
 
-  Padding _buildCollectionCard(BuildContext context) {
+class VideoReelPageOtherInfluencer extends StatefulWidget {
+  final List<Reel> reels;
+  final int initialIndex;
+
+  const VideoReelPageOtherInfluencer(
+      {super.key, required this.initialIndex, required this.reels});
+
+  @override
+  State<VideoReelPageOtherInfluencer> createState() =>
+      _VideoReelPageOtherInfluencer();
+}
+
+class _VideoReelPageOtherInfluencer
+    extends State<VideoReelPageOtherInfluencer> {
+  late PageController _pageController;
+  late int _currentIndex;
+  bool _isLiked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: _currentIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return Padding(
-      padding: EdgeInsets.only(right: 12.h),
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).pushNamed(AppRoutes.collectionViewScreen);
-        },
-        child: Container(
-          padding: EdgeInsets.all(8.h),
-          // width: 125.h,
-          height: 167.v,
-          decoration: BoxDecoration(
-              color: AppColor.offWhite,
-              borderRadius: BorderRadius.circular(6.h)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomImageView(
-                    width: 61.h,
-                    height: 117.v,
-                    fit: BoxFit.fill,
-                    imagePath: imagesList[0],
-                  ),
-                  SizedBox(width: 2.h),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      CustomImageView(
-                        width: 52.h,
-                        height: 52.v,
-                        fit: BoxFit.fill,
-                        imagePath: imagesList[1],
-                      ),
-                      SizedBox(height: 2.v),
-                      CustomImageView(
-                        width: 52.h,
-                        height: 62.v,
-                        fit: BoxFit.fill,
-                        imagePath: imagesList[2],
-                      ),
-                    ],
-                  )
-                ],
+    return Scaffold(
+        appBar: AppBar(
+          iconTheme: const IconThemeData(color: Colors.white),
+          backgroundColor: Colors.transparent,
+        ),
+        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.black,
+        body: PageView.builder(
+          scrollDirection: Axis.vertical,
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          itemCount: widget.reels.length,
+          itemBuilder: (context, index) {
+            return Stack(
+              children: [
+                Center(
+                    child: ReelVideoPlayerWidget(
+                        videoUrl: widget.reels[index].reelPath)),
+                _buildViewCountWidget(textTheme),
+                Align(
+                    alignment: Alignment.bottomRight,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildRightControl(index, context, widget.reels)
+                      ],
+                    )),
+                SizedBox(height: 36.h),
+                SizedBox(height: 12.h),
+              ],
+            );
+          },
+        ));
+  }
+
+  Align _buildRightControl(int index, BuildContext context, List<Reel> reel) {
+    _isLiked = reel[index].likeStatus == 1;
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Padding(
+        padding: EdgeInsets.only(right: 5.h, bottom: SizeUtils.height * 0.1),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            //Like button
+
+            BlocProvider(
+              create: (context) =>
+                  LikeButtonBloc(context.read<ReelRepository>()),
+              child: BlocBuilder<LikeButtonBloc, LikeButtonState>(
+                buildWhen: (previous, current) =>
+                    current is LikeButtonPressState,
+                builder: (context, state) {
+                  if (state is LikeButtonPressState) {
+                    return Container(
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(12)),
+                      child: IconButton(
+                          onPressed: () {
+                            _isLiked = !_isLiked;
+
+                            context.read<LikeButtonBloc>().add(
+                                LikeButtonPressEvent(
+                                    reelId: reel[index].id, isLiked: _isLiked));
+                          },
+                          icon: Icon(
+                            state.isLIked
+                                ? Icons.favorite
+                                : Icons.favorite_border_outlined,
+                            color: state.isLIked ? Colors.red : Colors.white,
+                          )),
+                    );
+                  }
+                  return Container(
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(12)),
+                    child: IconButton(
+                        onPressed: () {
+                          _isLiked = !_isLiked;
+
+                          context.read<LikeButtonBloc>().add(
+                              LikeButtonPressEvent(
+                                  reelId: reel[index].id, isLiked: _isLiked));
+                        },
+                        icon: Icon(
+                          _isLiked
+                              ? Icons.favorite
+                              : Icons.favorite_border_outlined,
+                          color: _isLiked ? Colors.red : Colors.white,
+                        )),
+                  );
+                },
               ),
-              SizedBox(height: 4.v),
-              Text(
-                'Party Wear',
-                style: textTheme.titleMedium,
-              ),
-              SizedBox(height: 2.v),
-              Text(
-                '4 Post',
-                style: textTheme.bodySmall,
-              ),
-            ],
-          ),
+            ),
+
+            SizedBox(height: 24.h),
+            //Comment button
+            CustomIconButton(
+                icon: ImageConstant.commnet__,
+                color: Colors.black,
+                iconColor: Colors.white,
+                onTap: () {
+                  Navigator.of(context)
+                      .pushNamed(AppRoutes.commentsScreen,
+                          arguments: reel[index].id)
+                      .then((_) {});
+                }),
+            SizedBox(height: 24.h),
+            //Share button
+            CustomIconButton(
+                icon: ImageConstant.share__,
+                color: Colors.black,
+                iconColor: Colors.white,
+                onTap: () async {
+                  await shareContent(reel[index].reelPath);
+                }),
+            SizedBox(height: 24.h),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Align _buildViewCountWidget(TextTheme textTheme) {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Container(
+        margin: EdgeInsets.only(left: 5.h, top: 80.v),
+        padding: EdgeInsets.symmetric(horizontal: 10.h, vertical: 5.v),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15.h),
+            color: Colors.black.withOpacity(.65)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.visibility_outlined,
+              color: Colors.white,
+              size: 15.h,
+            ),
+            SizedBox(width: 3.h),
+            Text(
+              '7.5k Views',
+              style: textTheme.bodySmall!.copyWith(color: Colors.white),
+            )
+          ],
         ),
       ),
     );

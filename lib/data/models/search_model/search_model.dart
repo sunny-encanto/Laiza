@@ -1,5 +1,3 @@
-import 'package:laiza/core/app_export.dart';
-
 class SearchModel {
   final int id;
   final String name;
@@ -13,23 +11,23 @@ class SearchModel {
       required this.profile});
 }
 
-List<SearchModel> searchResult = <SearchModel>[
-  SearchModel(
-    id: 1,
-    name: 'Kristen Stewart ',
-    followersCount: '100K Followers',
-    profile: ImageConstant.profileBg,
-  ),
-  SearchModel(
-    id: 1,
-    name: 'Stewart ',
-    followersCount: '100K Followers',
-    profile: ImageConstant.profileBg,
-  ),
-  SearchModel(
-    id: 1,
-    name: 'Riya Stewart ',
-    followersCount: '100K Followers',
-    profile: ImageConstant.profileBg,
-  ),
-];
+// List<SearchModel> searchResult = <SearchModel>[
+//   SearchModel(
+//     id: 1,
+//     name: 'Kristen Stewart ',
+//     followersCount: '100K Followers',
+//     profile: ImageConstant.profileBg,
+//   ),
+//   SearchModel(
+//     id: 1,
+//     name: 'Stewart ',
+//     followersCount: '100K Followers',
+//     profile: ImageConstant.profileBg,
+//   ),
+//   SearchModel(
+//     id: 1,
+//     name: 'Riya Stewart ',
+//     followersCount: '100K Followers',
+//     profile: ImageConstant.profileBg,
+//   ),
+// ];

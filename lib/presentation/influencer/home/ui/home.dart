@@ -53,54 +53,54 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 12.v),
-                SizedBox(
-                  height: 46.v,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 3,
-                    itemBuilder: (context, index) => Padding(
-                      padding: EdgeInsets.only(right: 12.h),
-                      child: index == 0
-                          ? Chip(
-                              backgroundColor: AppColor.primary,
-                              label: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  CustomImageView(
-                                    imagePath: ImageConstant.menuIcon,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(width: 5.h),
-                                  Text(
-                                    'Filters',
-                                    style: textTheme.bodySmall!
-                                        .copyWith(color: Colors.white),
-                                  )
-                                ],
-                              ))
-                          : Chip(
-                              shape: StadiumBorder(
-                                  side: BorderSide(color: AppColor.primary)),
-                              backgroundColor: Colors.white,
-                              label: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    getFilterName(index),
-                                    style: textTheme.bodySmall!
-                                        .copyWith(color: AppColor.primary),
-                                  ),
-                                  SizedBox(width: 5.h),
-                                  Icon(
-                                    Icons.arrow_drop_down,
-                                    color: AppColor.primary,
-                                  )
-                                ],
-                              )),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 24.v),
+                // SizedBox(
+                //   height: 46.v,
+                //   child: ListView.builder(
+                //     scrollDirection: Axis.horizontal,
+                //     itemCount: 3,
+                //     itemBuilder: (context, index) => Padding(
+                //       padding: EdgeInsets.only(right: 12.h),
+                //       child: index == 0
+                //           ? Chip(
+                //               backgroundColor: AppColor.primary,
+                //               label: Row(
+                //                 mainAxisSize: MainAxisSize.min,
+                //                 children: [
+                //                   CustomImageView(
+                //                     imagePath: ImageConstant.menuIcon,
+                //                     color: Colors.white,
+                //                   ),
+                //                   SizedBox(width: 5.h),
+                //                   Text(
+                //                     'Filters',
+                //                     style: textTheme.bodySmall!
+                //                         .copyWith(color: Colors.white),
+                //                   )
+                //                 ],
+                //               ))
+                //           : Chip(
+                //               shape: StadiumBorder(
+                //                   side: BorderSide(color: AppColor.primary)),
+                //               backgroundColor: Colors.white,
+                //               label: Row(
+                //                 mainAxisSize: MainAxisSize.min,
+                //                 children: [
+                //                   Text(
+                //                     getFilterName(index),
+                //                     style: textTheme.bodySmall!
+                //                         .copyWith(color: AppColor.primary),
+                //                   ),
+                //                   SizedBox(width: 5.h),
+                //                   Icon(
+                //                     Icons.arrow_drop_down,
+                //                     color: AppColor.primary,
+                //                   )
+                //                 ],
+                //               )),
+                //     ),
+                //   ),
+                // ),
+                // SizedBox(height: 24.v),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

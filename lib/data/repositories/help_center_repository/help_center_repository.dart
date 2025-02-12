@@ -31,4 +31,22 @@ class HelpCenterRepository {
       throw Exception('Failed to get FAQ');
     }
   }
+
+  Future<String> getPrivacyPolicy() async {
+    try {
+      Response response = await _apiClient.get(ApiConstant.getPrivacy);
+
+      if (response.statusCode == 200) {
+        return response.data.toString();
+      } else {
+        return response.data.toString();
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during  get privacy', e.toString());
+      throw Exception('Failed to get privacy ');
+    }
+  }
 }

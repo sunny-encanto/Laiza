@@ -8,33 +8,52 @@ class ProductView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
+    // TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 24.v),
-        Row(
-          children: [
-            Expanded(
-              child: CustomTextFormField(
-                prefixConstraints: BoxConstraints(maxWidth: 25.h),
-                prefix: Padding(
-                  padding: EdgeInsets.only(left: 10.h),
-                  child: CustomImageView(
-                    width: 15.h,
-                    imagePath: ImageConstant.searchIcon,
-                  ),
+        SizedBox(height: 15.h),
+        products.isEmpty
+            ? const Center(
+                child: Text('No Data Found'),
+              )
+            : GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing: 12.h,
+                    childAspectRatio: 175.v / 320.h,
+                    crossAxisCount: 2),
+                itemCount: products.length,
+                itemBuilder: (context, index) => Padding(
+                  padding: EdgeInsets.only(top: index.isEven ? 30.v : 0),
+                  child: ProductCardWidget(product: products[index]),
                 ),
-                hintText: 'Search for  398 Post',
               ),
-            ),
-            SizedBox(width: 16.h),
-            CustomIconButton(
-              icon: ImageConstant.menuIcon,
-              onTap: () {},
-            ),
-          ],
-        ),
+        SizedBox(height: 24.v),
+        // SizedBox(height: 24.v),
+        // Row(
+        //   children: [
+        //     Expanded(
+        //       child: CustomTextFormField(
+        //         prefixConstraints: BoxConstraints(maxWidth: 25.h),
+        //         prefix: Padding(
+        //           padding: EdgeInsets.only(left: 10.h),
+        //           child: CustomImageView(
+        //             width: 15.h,
+        //             imagePath: ImageConstant.searchIcon,
+        //           ),
+        //         ),
+        //         hintText: 'Search for  398 Post',
+        //       ),
+        //     ),
+        //     SizedBox(width: 16.h),
+        //     CustomIconButton(
+        //       icon: ImageConstant.menuIcon,
+        //       onTap: () {},
+        //     ),
+        //   ],
+        // ),
         // SizedBox(height: 24.v),
         // Text(
         //   'Trending Products',
@@ -127,32 +146,16 @@ class ProductView extends StatelessWidget {
         //     ),
         //   ),
         // ),
-        SizedBox(height: 24.v),
-        Text(
-          'Recent Posts',
-          style: textTheme.titleMedium,
-        ),
-        SizedBox(height: 4.v),
-        Text(
-          '398 Posts',
-          style: textTheme.bodySmall,
-        ),
-        SizedBox(height: 15.h),
-        //TODO: Need To Uncomment
-        GridView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisSpacing: 12.h,
-              childAspectRatio: 175.v / 320.h,
-              crossAxisCount: 2),
-          itemCount: products.length,
-          itemBuilder: (context, index) => Padding(
-            padding: EdgeInsets.only(top: index.isEven ? 30.v : 0),
-            child: ProductCardWidget(product: products[index]),
-          ),
-        ),
-        SizedBox(height: 24.v),
+        // SizedBox(height: 24.v),
+        // Text(
+        //   'Recent Posts',
+        //   style: textTheme.titleMedium,
+        // ),
+        // SizedBox(height: 4.v),
+        // Text(
+        //   '398 Posts',
+        //   style: textTheme.bodySmall,
+        // ),
       ],
     );
   }

@@ -1,15 +1,19 @@
 import 'package:flutter/cupertino.dart';
+import 'package:laiza/data/blocs/collection_bloc/collection_bloc.dart';
 import 'package:laiza/data/blocs/influencer_profile_bloc/influencer_profile_bloc.dart';
 import 'package:laiza/data/repositories/collection_repository/collection_repository.dart';
 import 'package:laiza/data/repositories/comments_repository/comments_repository.dart';
 import 'package:laiza/data/repositories/connections_repository/connections_repository.dart';
 import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
+import 'package:laiza/data/repositories/help_center_repository/help_center_repository.dart';
 import 'package:laiza/data/repositories/live_stream_repository/live_stream_repository.dart';
 import 'package:laiza/data/repositories/product_repository/product_repository.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
+import 'package:laiza/presentation/privacy_policy/ui/bloc/privacy_policy_bloc.dart';
 
 import '../core/app_export.dart';
 import '../presentation/auth/change_password/ui/create_password.dart';
+import '../presentation/auth/settings_page/ui/settings_page.dart';
 import '../presentation/influencer/order_management/bloc/influencer_orders_bloc.dart';
 
 class AppRoutes {
@@ -128,6 +132,7 @@ class AppRoutes {
   static const String orderManagementScreen = '/orderManagement_screen';
 
   static const String imageViewScreen = '/imageView_Screen';
+  static const String settingScreen = '/setting_Screen';
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -243,8 +248,12 @@ class AppRoutes {
                 ));
 
       case collectionViewScreen:
+        int id = settings.arguments as int;
         return CupertinoPageRoute(
-            builder: (context) => const CollectionViewScreen());
+            builder: (context) => BlocProvider(
+                create: (context) =>
+                    CollectionBloc(context.read<CollectionRepository>()),
+                child: CollectionViewScreen(id: id)));
 
       case allTrendingScreen:
         return CupertinoPageRoute(
@@ -307,7 +316,8 @@ class AppRoutes {
         return CupertinoPageRoute(
             fullscreenDialog: true,
             builder: (context) => BlocProvider(
-                  create: (context) => SearchBloc(),
+                  create: (context) =>
+                      SearchBloc(context.read<UserRepository>()),
                   child: SearchScreen(),
                 ));
 
@@ -324,7 +334,10 @@ class AppRoutes {
 
       case privacyPolicyScreen:
         return CupertinoPageRoute(
-            builder: (context) => const PrivacyPolicyScreen());
+            builder: (context) => BlocProvider(
+                create: (context) =>
+                    PrivacyPolicyBloc(context.read<HelpCenterRepository>()),
+                child: const PrivacyPolicyScreen()));
 
       case helpCentreScreen:
         return CupertinoPageRoute(
@@ -494,6 +507,13 @@ class AppRoutes {
             builder: (context) => BlocProvider(
                   create: (context) => InfluencerOrdersBloc(),
                   child: const OrderManagementScreen(),
+                ));
+
+      case settingScreen:
+        return CupertinoPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) => InfluencerOrdersBloc(),
+                  child: const SettingPage(),
                 ));
       default:
         return null;

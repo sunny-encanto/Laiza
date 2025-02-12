@@ -7,6 +7,7 @@ import 'package:laiza/data/repositories/product_repository/product_repository.da
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 import 'package:laiza/presentation/creator/bloc/creator_bloc.dart';
 import 'package:laiza/presentation/shimmers/loading_grid.dart';
+import 'package:laiza/presentation/shimmers/loading_list.dart';
 import 'package:laiza/widgets/influencer_card_widget.dart';
 
 import '../../../data/blocs/following_bloc/following_bloc.dart';
@@ -46,8 +47,11 @@ class CreatorScreen extends StatelessWidget {
                     builder: (context, state) {
                       if (state is FollowingInitial) {
                         context.read<FollowingBloc>().add(FetchFollowings());
+                        return HorizontalLoadingListPage(
+                            width: 130.h, height: 130.v);
                       } else if (state is FollowingLoading) {
-                        return const LoadingGridScreen();
+                        return HorizontalLoadingListPage(
+                            width: 130.h, height: 130.v);
                       } else if (state is FollowingErrorState) {
                         return Center(child: Text(state.message));
                       } else if (state is FollowingLoadedState) {
@@ -129,8 +133,11 @@ class CreatorScreen extends StatelessWidget {
                         context
                             .read<ProductFromInfluencerBloc>()
                             .add(FetchProductFromInfluencer());
+                        return HorizontalLoadingListPage(
+                            height: 240.v, width: 150.h);
                       } else if (state is ProductFromInfluencerLoading) {
-                        return const SizedBox.shrink();
+                        return HorizontalLoadingListPage(
+                            height: 240.v, width: 150.h);
                       } else if (state is ProductFromInfluencerError) {
                         return Center(child: Text(state.message));
                       } else if (state is ProductFromInfluencerLoaded) {
@@ -143,41 +150,49 @@ class CreatorScreen extends StatelessWidget {
                               ReelProduct product = state.products[index];
                               return Padding(
                                 padding: EdgeInsets.only(right: 10.h),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CustomImageView(
-                                      radius: BorderRadius.circular(6.h),
-                                      height: 150.v,
-                                      width: 150.h,
-                                      fit: BoxFit.fill,
-                                      imagePath: product.productImage,
-                                    ),
-                                    SizedBox(height: 4.v),
-                                    // Text(
-                                    //   product.,
-                                    //   style: textTheme.bodySmall,
-                                    // ),
-                                    SizedBox(height: 6.v),
-                                    Text(
-                                      product.productName,
-                                      style: textTheme.titleMedium,
-                                    ),
-                                    SizedBox(height: 6.v),
-                                    Text(
-                                      '₹ ${product.price}',
-                                      style: textTheme.bodySmall,
-                                    ),
-                                    SizedBox(height: 8.v),
-                                    Center(
-                                      child: CustomElevatedButton(
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                        AppRoutes.productDetailScreen,
+                                        arguments: product.id);
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomImageView(
+                                        radius: BorderRadius.circular(6.h),
+                                        height: 150.v,
                                         width: 150.h,
-                                        height: 26.v,
-                                        text: 'Buy Now',
-                                        buttonTextStyle: textTheme.titleSmall,
+                                        fit: BoxFit.fill,
+                                        imagePath: product.productImage,
                                       ),
-                                    )
-                                  ],
+                                      SizedBox(height: 4.v),
+                                      // Text(
+                                      //   product.,
+                                      //   style: textTheme.bodySmall,
+                                      // ),
+                                      SizedBox(height: 6.v),
+                                      Text(
+                                        product.productName,
+                                        style: textTheme.titleMedium,
+                                      ),
+                                      SizedBox(height: 6.v),
+                                      Text(
+                                        '₹ ${product.price}',
+                                        style: textTheme.bodySmall,
+                                      ),
+                                      SizedBox(height: 8.v),
+                                      Center(
+                                        child: CustomElevatedButton(
+                                          width: 150.h,
+                                          height: 26.v,
+                                          text: 'Buy Now',
+                                          buttonTextStyle: textTheme.titleSmall,
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               );
                             },
@@ -209,8 +224,11 @@ class CreatorScreen extends StatelessWidget {
                         context
                             .read<ReelFromFollowedInfluencerBloc>()
                             .add(FetchReelFromFollowedInfluencer());
+                        return HorizontalLoadingListPage(
+                            height: 261.v, width: 185.h);
                       } else if (state is ReelFromFollowedInfluencerLoading) {
-                        return const SizedBox.shrink();
+                        return HorizontalLoadingListPage(
+                            height: 261.v, width: 185.h);
                       } else if (state is ReelFromFollowedInfluencerError) {
                         return Center(child: Text(state.message));
                       } else if (state is ReelFromFollowedInfluencerLoaded) {
@@ -247,6 +265,7 @@ class CreatorScreen extends StatelessWidget {
                         context
                             .read<AllInfluencerBloc>()
                             .add(FetchAllInfluencer());
+                        return const LoadingGridScreen();
                       }
                       if (state is AllInfluencerLoading) {
                         return const LoadingGridScreen();

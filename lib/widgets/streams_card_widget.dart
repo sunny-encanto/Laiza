@@ -95,13 +95,15 @@ class StreamsCard extends StatelessWidget {
               width: 122.h,
               text: isLive ? 'Watch Now' : 'Notify Me',
               onPressed: () {
-                Navigator.of(context).pushNamed(AppRoutes.livePage, arguments: {
-                  'live_id': model.liveId,
-                  'is_host': false,
-                });
-
-                FirebaseServices.updateOnGoingLiveStream(
-                    id: model.liveId ?? "", isAdd: true);
+                if (isLive) {
+                  Navigator.of(context)
+                      .pushNamed(AppRoutes.livePage, arguments: {
+                    'live_id': model.liveId,
+                    'is_host': false,
+                  });
+                  FirebaseServices.updateOnGoingLiveStream(
+                      id: model.liveId ?? "", isAdd: true);
+                }
               },
               buttonTextStyle: textTheme.titleSmall,
             ),

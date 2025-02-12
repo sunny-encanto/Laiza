@@ -57,4 +57,51 @@ class CollectionRepository {
       throw Exception('Failed to get collection');
     }
   }
+
+  Future<List<Collection>> getCollectionDetails(int id) async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+
+      Response response = await _apiClient.get(
+          '${ApiConstant.getCollectionDetails}/$id',
+          queryParameters: {'paginate': false});
+      if (response.statusCode == 200) {
+        CollectionModel model = CollectionModel.fromJson(response.data);
+        return model.collection;
+      } else {
+        CollectionModel model = CollectionModel.fromJson(response.data);
+        return model.collection;
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during  get collection Details', e.toString());
+      throw Exception('Failed to get collection Details');
+    }
+  }
+
+  Future<CommonModel> deleteCollection(int id) async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+
+      Response response =
+          await _apiClient.delete('${ApiConstant.deleteCollection}/$id');
+      if (response.statusCode == 200) {
+        CommonModel model = CommonModel.fromJson(response.data);
+        return model;
+      } else {
+        CommonModel model = CommonModel.fromJson(response.data);
+        return model;
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during delete collection ', e.toString());
+      throw Exception('Failed to delete collection');
+    }
+  }
 }

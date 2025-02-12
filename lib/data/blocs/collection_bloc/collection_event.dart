@@ -8,3 +8,21 @@ sealed class CollectionEvent extends Equatable {
 }
 
 class FetchCollection extends CollectionEvent {}
+
+class FetchCollectionDetails extends CollectionEvent {
+  final int id;
+
+  const FetchCollectionDetails(this.id);
+
+  @override
+  List<Object?> get props => [id];
+}
+
+class DeleteCollection extends CollectionEvent {
+  final int id;
+
+  const DeleteCollection(this.id);
+
+  @override
+  List<Object?> get props => [id];
+}

@@ -72,4 +72,7 @@ class ApiConstant {
   static String getAllStream = 'api/user/stream/list';
   static String addCollection = 'api/user/collection/create-with-reels';
   static String getCollection = 'api/user/collection';
+  static String getCollectionDetails = 'api/user/collection/details';
+  static String deleteCollection = 'api/user/collection/delete';
+  static String getPrivacy = 'api/privacy_policies';
 }

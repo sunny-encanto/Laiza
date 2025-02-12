@@ -3,7 +3,9 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/app_export.dart';
 
 class LoadingGridScreen extends StatelessWidget {
-  const LoadingGridScreen({super.key});
+  final double? radius;
+
+  const LoadingGridScreen({super.key, this.radius});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class LoadingGridScreen extends StatelessWidget {
             return Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.0),
+                borderRadius: BorderRadius.circular(radius ?? 8.0),
                 color: Colors.white,
               ),
             );

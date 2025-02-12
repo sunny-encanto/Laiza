@@ -210,8 +210,8 @@ class ProductDetailScreen extends StatelessWidget {
                       trimMode: TrimMode.Line,
                       trimLines: 2,
                       colorClickableText: Colors.black,
-                      trimCollapsedText: 'Read more',
-                      trimExpandedText: 'Read less',
+                      trimCollapsedText: ' Read more',
+                      trimExpandedText: ' Read less',
                       moreStyle:
                           textTheme.bodySmall!.copyWith(color: Colors.black),
                     ),

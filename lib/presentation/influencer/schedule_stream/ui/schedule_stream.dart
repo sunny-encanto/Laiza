@@ -134,6 +134,7 @@ class ScheduleStreamScreen extends StatelessWidget {
                     );
                   },
                 ),
+                SizedBox(height: 20.v),
                 Text('Select Time', style: textTheme.titleMedium),
                 SizedBox(height: 8.v),
                 BlocBuilder<ScheduleStreamBloc, ScheduleStreamState>(
@@ -151,7 +152,7 @@ class ScheduleStreamScreen extends StatelessWidget {
                         padding: EdgeInsets.symmetric(
                             horizontal: 8.h, vertical: 18.v),
                         child: Text(
-                          'AM',
+                          _timeController.text.contains('PM') ? 'PM' : 'AM',
                           style:
                               TextStyle(fontSize: 20.fSize, color: Colors.grey),
                         ),
@@ -175,12 +176,12 @@ class ScheduleStreamScreen extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: 20.v),
-                Text('Product link', style: textTheme.titleMedium),
-                SizedBox(height: 8.v),
-                CustomTextFormField(
-                  controller: _productLinkController,
-                  hintText: 'Paste the link of the product (optional)',
-                ),
+                // Text('Product link', style: textTheme.titleMedium),
+                // SizedBox(height: 8.v),
+                // CustomTextFormField(
+                //   controller: _productLinkController,
+                //   hintText: 'Paste the link of the product (optional)',
+                // ),
                 SizedBox(height: 100.v)
               ],
             ),

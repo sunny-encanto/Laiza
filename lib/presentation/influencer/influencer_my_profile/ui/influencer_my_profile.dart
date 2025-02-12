@@ -71,197 +71,239 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                   backgroundColor: Colors.white,
                   expandedHeight: SizeUtils.height - 60.v,
                   flexibleSpace: FlexibleSpaceBar(
-                    background: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomImageView(
-                          width: SizeUtils.width,
-                          height: 150.v,
-                          imagePath: ImageConstant.profileBg,
-                        ),
-                        _buildProfileCard(context),
-                        SizedBox(height: 12.h),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.h),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Fashion & Lifestyle Influencer | Trend Curator 🛍️',
-                                style: textTheme.titleMedium,
-                              ),
-                              SizedBox(height: 4.h),
-                              Text(
-                                'Every Day Style to make you feel your best believer, mama, runner, ice cream lover ',
-                                style: textTheme.bodySmall,
-                              ),
-                              SizedBox(height: 12.v),
-                              Row(
-                                children: [
-                                  CustomImageView(
-                                    onTap: () {
-                                      context
-                                          .read<InfluencerMyProfileBloc>()
-                                          .add(OnInstagramIconTap());
-                                    },
-                                    height: 36.v,
-                                    width: 36.v,
-                                    imagePath: ImageConstant.instagram,
-                                  ),
-                                  SizedBox(width: 24.h),
-                                  CustomImageView(
-                                    onTap: () {
-                                      context
-                                          .read<InfluencerMyProfileBloc>()
-                                          .add(OnXIconTap());
-                                    },
-                                    height: 36.v,
-                                    width: 36.v,
-                                    imagePath: ImageConstant.xIcon,
-                                  ),
-                                  SizedBox(width: 24.h),
-                                  CustomImageView(
-                                    onTap: () {
-                                      context
-                                          .read<InfluencerMyProfileBloc>()
-                                          .add(OnFBIconTap());
-                                    },
-                                    height: 36.v,
-                                    width: 36.v,
-                                    imagePath: ImageConstant.fb,
-                                  ),
-                                  SizedBox(width: 24.h),
-                                  CustomImageView(
-                                    onTap: () {
-                                      context
-                                          .read<InfluencerMyProfileBloc>()
-                                          .add(OnSnapIconTap());
-                                    },
-                                    height: 36.v,
-                                    width: 36.v,
-                                    imagePath: ImageConstant.snap,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 24.h),
-                              BlocProvider(
-                                create: (context) => CollectionBloc(
-                                    context.read<CollectionRepository>()),
-                                child: BlocBuilder<CollectionBloc,
-                                    CollectionState>(
-                                  builder: (context, state) {
-                                    if (state is CollectionInitial) {
-                                      context
-                                          .read<CollectionBloc>()
-                                          .add(FetchCollection());
-                                    } else if (state is CollectionLoading) {
-                                      return const HorizontalLoadingListPage();
-                                    } else if (state is CollectionError) {
-                                      return Center(
-                                        child: Text(state.message),
-                                      );
-                                    } else if (state is CollectionLoaded) {
-                                      return SizedBox(
-                                          height: 185.v,
-                                          child: ListView.builder(
-                                            itemCount: state.collection.length,
-                                            scrollDirection: Axis.horizontal,
-                                            itemBuilder: (context, index) =>
-                                                index == 0
-                                                    ? InkWell(
-                                                        onTap: () {
-                                                          Navigator.of(context)
-                                                              .pushNamed(AppRoutes
-                                                                  .createConnectionsScreen);
-                                                        },
-                                                        child: Container(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          width: 125.h,
-                                                          decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                  color: AppColor
-                                                                      .offWhite)),
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              Icon(
-                                                                Icons.add,
-                                                                size: 40.h,
-                                                                color:
-                                                                    Colors.grey,
-                                                              ),
-                                                              SizedBox(
-                                                                  height: 5.h),
-                                                              const Text(
-                                                                  'Add New \nCollection')
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      )
-                                                    : CollectionCardWidget(
-                                                        collection: state
-                                                            .collection[index],
-                                                      ),
-                                          ));
-                                    }
-                                    return const SizedBox.shrink();
-                                  },
+                    background: BlocProvider(
+                      create: (context) =>
+                          ProfileApiBloc(context.read<UserRepository>()),
+                      child: BlocBuilder<ProfileApiBloc, ProfileApiState>(
+                        builder: (context, state) {
+                          if (state is ProfileApiInitial) {
+                            context
+                                .read<ProfileApiBloc>()
+                                .add(FetchProfileApi());
+                            return const SizedBox.shrink();
+                          } else if (state is ProfileApiLoadingState) {
+                            return const SizedBox.shrink();
+                          } else if (state is ProfileApiError) {
+                            return Text(state.message);
+                          } else if (state is ProfileApiLoadedState) {
+                            _userModel = state.userModel;
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomImageView(
+                                  width: SizeUtils.width,
+                                  height: 150.v,
+                                  imagePath: ImageConstant.profileBg,
                                 ),
-                              ),
-                              SizedBox(height: 24.v),
-                              CustomOutlineButton(
-                                  onPressed: () async {
-                                    Navigator.of(context).pushNamed(
-                                        AppRoutes.uploadReelScreen,
-                                        arguments: {
-                                          'reel': null,
-                                          'path': null
-                                        }).then((_) {
-                                      context
-                                          .read<MyReelBloc>()
-                                          .add(LoadMyReelEvent());
-                                    });
-                                    // Media? media = await MediaServices
-                                    //     .pickVideoPathAndExtension();
-                                    // if (media != null) {
-                                    //   Navigator.of(context).pushNamed(
-                                    //       AppRoutes.uploadReelScreen,
-                                    //       arguments: {
-                                    //         'reel': null,
-                                    //         'path': media.path
-                                    //       }).then((_) {
-                                    //     context
-                                    //         .read<MyReelBloc>()
-                                    //         .add(LoadMyReelEvent());
-                                    //   });
-                                    // }
-                                  },
-                                  leftIcon: CustomImageView(
-                                    margin: EdgeInsets.only(right: 20.h),
-                                    height: 20.h,
-                                    width: 20.h,
-                                    imagePath: ImageConstant.uploadIcon,
-                                    color: Colors.black,
+                                _buildProfileCard(context),
+                                SizedBox(height: 12.h),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 20.h),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        state.userModel.username ?? '',
+                                        style: textTheme.titleMedium,
+                                      ),
+                                      SizedBox(height: 4.h),
+                                      Text(
+                                        state.userModel.bio ?? '',
+                                        style: textTheme.bodySmall,
+                                      ),
+                                      SizedBox(height: 12.v),
+                                      Row(
+                                        children: [
+                                          CustomImageView(
+                                            onTap: () {
+                                              context
+                                                  .read<
+                                                      InfluencerMyProfileBloc>()
+                                                  .add(OnInstagramIconTap());
+                                            },
+                                            height: 36.v,
+                                            width: 36.v,
+                                            imagePath: ImageConstant.instagram,
+                                          ),
+                                          SizedBox(width: 24.h),
+                                          CustomImageView(
+                                            onTap: () {
+                                              context
+                                                  .read<
+                                                      InfluencerMyProfileBloc>()
+                                                  .add(OnXIconTap());
+                                            },
+                                            height: 36.v,
+                                            width: 36.v,
+                                            imagePath: ImageConstant.xIcon,
+                                          ),
+                                          SizedBox(width: 24.h),
+                                          CustomImageView(
+                                            onTap: () {
+                                              context
+                                                  .read<
+                                                      InfluencerMyProfileBloc>()
+                                                  .add(OnFBIconTap());
+                                            },
+                                            height: 36.v,
+                                            width: 36.v,
+                                            imagePath: ImageConstant.fb,
+                                          ),
+                                          SizedBox(width: 24.h),
+                                          CustomImageView(
+                                            onTap: () {
+                                              context
+                                                  .read<
+                                                      InfluencerMyProfileBloc>()
+                                                  .add(OnSnapIconTap());
+                                            },
+                                            height: 36.v,
+                                            width: 36.v,
+                                            imagePath: ImageConstant.snap,
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 24.h),
+                                      BlocProvider(
+                                        create: (context) => CollectionBloc(
+                                            context
+                                                .read<CollectionRepository>()),
+                                        child: BlocBuilder<CollectionBloc,
+                                            CollectionState>(
+                                          builder: (context, state) {
+                                            if (state is CollectionInitial) {
+                                              context
+                                                  .read<CollectionBloc>()
+                                                  .add(FetchCollection());
+                                            } else if (state
+                                                is CollectionLoading) {
+                                              return HorizontalLoadingListPage(
+                                                width: 125.h,
+                                                height: 185.v,
+                                                radius: 0,
+                                              );
+                                            } else if (state
+                                                is CollectionError) {
+                                              return Center(
+                                                child: Text(state.message),
+                                              );
+                                            } else if (state
+                                                is CollectionLoaded) {
+                                              return SizedBox(
+                                                  height: 185.v,
+                                                  child: ListView.builder(
+                                                    itemCount: state
+                                                            .collection.length +
+                                                        1,
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    itemBuilder: (context,
+                                                            index) =>
+                                                        index == 0
+                                                            ? InkWell(
+                                                                onTap: () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pushNamed(
+                                                                          AppRoutes
+                                                                              .createConnectionsScreen)
+                                                                      .then(
+                                                                          (_) {
+                                                                    context
+                                                                        .read<
+                                                                            CollectionBloc>()
+                                                                        .add(
+                                                                            FetchCollection());
+                                                                  });
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .center,
+                                                                  width: 125.h,
+                                                                  decoration: BoxDecoration(
+                                                                      border: Border.all(
+                                                                          color:
+                                                                              AppColor.offWhite)),
+                                                                  child: Column(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      Icon(
+                                                                        Icons
+                                                                            .add,
+                                                                        size: 40
+                                                                            .h,
+                                                                        color: Colors
+                                                                            .grey,
+                                                                      ),
+                                                                      SizedBox(
+                                                                          height:
+                                                                              5.h),
+                                                                      const Text(
+                                                                          'Add New \nCollection')
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : CollectionCardWidget(
+                                                                collection: state
+                                                                        .collection[
+                                                                    index - 1],
+                                                              ),
+                                                  ));
+                                            }
+                                            return const SizedBox.shrink();
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(height: 24.v),
+                                      CustomOutlineButton(
+                                          onPressed: () async {
+                                            Navigator.of(context).pushNamed(
+                                                AppRoutes.uploadReelScreen,
+                                                arguments: {
+                                                  'reel': null,
+                                                  'path': null
+                                                }).then((_) {
+                                              context
+                                                  .read<MyReelBloc>()
+                                                  .add(LoadMyReelEvent());
+                                            });
+                                          },
+                                          leftIcon: CustomImageView(
+                                            margin:
+                                                EdgeInsets.only(right: 20.h),
+                                            height: 20.h,
+                                            width: 20.h,
+                                            imagePath: ImageConstant.uploadIcon,
+                                            color: Colors.black,
+                                          ),
+                                          text: 'Upload a Reel'),
+                                      SizedBox(height: 16.v),
+                                      CustomOutlineButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pushNamed(
+                                                AppRoutes.scheduleStreamScreen);
+                                          },
+                                          leftIcon: CustomImageView(
+                                            imagePath: ImageConstant.liveIcon,
+                                            color: Colors.black,
+                                          ),
+                                          text: 'Schedule a stream'),
+                                    ],
                                   ),
-                                  text: 'Upload a Reel'),
-                              SizedBox(height: 16.v),
-                              CustomOutlineButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pushNamed(
-                                        AppRoutes.scheduleStreamScreen);
-                                  },
-                                  leftIcon: CustomImageView(
-                                    imagePath: ImageConstant.liveIcon,
-                                    color: Colors.black,
-                                  ),
-                                  text: 'Schedule a stream'),
-                            ],
-                          ),
-                        )
-                      ],
+                                )
+                              ],
+                            );
+                          }
+                          return SizedBox.fromSize();
+                        },
+                      ),
                     ),
                   ),
                 ),
@@ -341,15 +383,6 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                             .then((_) {
                           context.read<MyReelBloc>().add(LoadMyReelEvent());
                         });
-                        // Navigator.of(context)
-                        //     .push(MaterialPageRoute(
-                        //   builder: (context) => MyReelViewScreen(
-                        //     reelId: state.reels[index].id,
-                        //   ),
-                        // ))
-                        //     .then((_) {
-                        //   context.read<MyReelBloc>().add(LoadMyReelEvent());
-                        // });
                       },
                     ),
                   ],
@@ -514,70 +547,6 @@ class InfluencerMyProfileScreen extends StatelessWidget {
             ],
           )
         ],
-      ),
-    );
-  }
-
-  Padding _buildCollectionCard(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
-    return Padding(
-      padding: EdgeInsets.only(right: 12.h),
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).pushNamed(AppRoutes.collectionViewScreen);
-        },
-        child: Container(
-          padding: EdgeInsets.all(8.h),
-          height: 167.v,
-          decoration: BoxDecoration(
-              color: AppColor.offWhite,
-              borderRadius: BorderRadius.circular(6.h)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomImageView(
-                    width: 61.h,
-                    height: 117.v,
-                    fit: BoxFit.fill,
-                    imagePath: imagesList[0],
-                  ),
-                  SizedBox(width: 2.h),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      CustomImageView(
-                        width: 52.h,
-                        height: 52.v,
-                        fit: BoxFit.fill,
-                        imagePath: imagesList[1],
-                      ),
-                      SizedBox(height: 2.v),
-                      CustomImageView(
-                        width: 52.h,
-                        height: 62.v,
-                        fit: BoxFit.fill,
-                        imagePath: imagesList[2],
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              SizedBox(height: 4.v),
-              Text(
-                'Party Wear',
-                style: textTheme.titleMedium,
-              ),
-              SizedBox(height: 2.v),
-              Text(
-                '4 Post',
-                style: textTheme.bodySmall,
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

@@ -46,15 +46,14 @@ class _LoadingListPageState extends State<LoadingListPage> {
   }
 }
 
-class HorizontalLoadingListPage extends StatefulWidget {
-  const HorizontalLoadingListPage({super.key});
+class HorizontalLoadingListPage extends StatelessWidget {
+  final double? height;
+  final double? width;
+  final double? radius;
 
-  @override
-  State<HorizontalLoadingListPage> createState() =>
-      _HorizontalLoadingListPage();
-}
+  const HorizontalLoadingListPage(
+      {super.key, this.height, this.width, this.radius});
 
-class _HorizontalLoadingListPage extends State<HorizontalLoadingListPage> {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
@@ -62,16 +61,16 @@ class _HorizontalLoadingListPage extends State<HorizontalLoadingListPage> {
         highlightColor: Colors.grey.shade100,
         enabled: true,
         child: SizedBox(
-            height: 250.v,
+            height: height ?? 250.v,
             child: ListView.builder(
               padding: EdgeInsets.zero,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) => Container(
                 margin: EdgeInsets.only(right: 10.h, bottom: 15.v),
-                width: 250.h,
+                width: width ?? 250.h,
                 height: 130.v,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(radius ?? 8.0),
                   color: Colors.white,
                 ),
               ),
