@@ -175,4 +175,7 @@ class ImageConstant {
   static String commnet__ = '$imagePath/Group 1000003113.svg';
   static String uploadReel = '$imagePath/upload_reel.svg';
   static String imageNotFound = '$imagePath/image_not_found.png';
+  static String brands = '$imagePath/brands.svg';
+  static String returns = '$imagePath/returns.svg';
+  static String secure = '$imagePath/secure.svg';
 }

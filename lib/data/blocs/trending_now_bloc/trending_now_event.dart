@@ -8,3 +8,12 @@ sealed class TrendingNowEvent extends Equatable {
 }
 
 class FetchTrendingNowEvent extends TrendingNowEvent {}
+
+class ToggleTrendingNowEvent extends TrendingNowEvent {
+  final int id;
+
+  const ToggleTrendingNowEvent(this.id);
+
+  @override
+  List<Object?> get props => [id];
+}

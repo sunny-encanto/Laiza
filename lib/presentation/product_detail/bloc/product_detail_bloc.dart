@@ -26,6 +26,7 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
 
   FutureOr<void> _onPageChangeEvent(
       OnPageChangedEvent event, Emitter<ProductDetailState> emit) {
+    print('event ${event.index}');
     emit(OnPageChangedState(event.index));
   }
 

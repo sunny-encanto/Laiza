@@ -9,8 +9,6 @@ sealed class ProductEvent extends Equatable {
 
 class LoadProducts extends ProductEvent {}
 
-class FetchNextPage extends ProductEvent {}
-
 class ResetPagination extends ProductEvent {}
 
 class ToggleWishListEvent extends ProductEvent {

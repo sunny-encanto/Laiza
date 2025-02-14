@@ -28,3 +28,12 @@ final class InfluencerProfileError extends InfluencerProfileState {
   @override
   List<Object> get props => [message];
 }
+
+final class InfluencerProfileToggleFollowState extends InfluencerProfileState {
+  final bool isFollowed;
+
+  const InfluencerProfileToggleFollowState(this.isFollowed);
+
+  @override
+  List<Object> get props => [isFollowed];
+}

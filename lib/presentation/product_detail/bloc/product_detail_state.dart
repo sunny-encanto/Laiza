@@ -33,6 +33,9 @@ final class OnPageChangedState extends ProductDetailState {
   final int index;
 
   const OnPageChangedState(this.index);
+
+  @override
+  List<Object> get props => [index];
 }
 
 class ProductLikeToggleState extends ProductDetailState {

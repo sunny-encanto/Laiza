@@ -54,7 +54,7 @@ class FollowersRepository {
     }
   }
 
-  Future<CommonModel> follower(String id) async {
+  Future<CommonModel> follow(String id) async {
     try {
       _apiClient
           .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});

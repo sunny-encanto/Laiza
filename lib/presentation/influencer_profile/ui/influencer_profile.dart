@@ -10,7 +10,9 @@ import 'post_view/post_view.dart';
 class InfluencerProfileScreen extends StatelessWidget {
   final String id;
 
-  const InfluencerProfileScreen({super.key, required this.id});
+  InfluencerProfileScreen({super.key, required this.id});
+
+  bool _isFollowed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +21,11 @@ class InfluencerProfileScreen extends StatelessWidget {
       length: 2,
       child: Scaffold(
         body: BlocBuilder<InfluencerProfileBloc, InfluencerProfileState>(
+          buildWhen: (previous, current) =>
+              (current is InfluencerProfileInitial ||
+                  current is InfluencerProfileLoading ||
+                  current is InfluencerProfileError ||
+                  current is InfluencerProfileLoaded),
           builder: (context, state) {
             if (state is InfluencerProfileInitial) {
               context
@@ -30,6 +37,9 @@ class InfluencerProfileScreen extends StatelessWidget {
             } else if (state is InfluencerProfileError) {
               return Center(child: Text(state.message));
             } else if (state is InfluencerProfileLoaded) {
+              _isFollowed =
+                  state.influencerProfileModel.data.influencer.isFollowed ??
+                      false;
               return NestedScrollView(
                 headerSliverBuilder:
                     (BuildContext context, bool innerBoxIsScrolled) {
@@ -69,14 +79,19 @@ class InfluencerProfileScreen extends StatelessWidget {
                         background: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            //Profile Background
                             CustomImageView(
                               width: SizeUtils.width,
                               height: 150.v,
                               imagePath: ImageConstant.profileBg,
                             ),
-                            _buildProfileCard(textTheme,
-                                state.influencerProfileModel.data.influencer),
+                            //Profile Card
+                            _buildProfileCard(
+                                textTheme,
+                                state.influencerProfileModel.data.influencer,
+                                context),
                             SizedBox(height: 12.h),
+                            //Bio
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20.h),
                               child: Column(
@@ -260,7 +275,8 @@ class InfluencerProfileScreen extends StatelessWidget {
   //   );
   // }
 
-  Row _buildProfileCard(TextTheme textTheme, UserModel user) {
+  Row _buildProfileCard(
+      TextTheme textTheme, UserModel user, BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -298,11 +314,38 @@ class InfluencerProfileScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 12.v),
-                CustomElevatedButton(
-                    buttonTextStyle: textTheme.titleSmall,
-                    height: 38.v,
-                    width: 122.h,
-                    text: 'Follow ')
+                BlocBuilder<InfluencerProfileBloc, InfluencerProfileState>(
+                  builder: (context, followState) {
+                    if (followState is InfluencerProfileToggleFollowState) {
+                      // _isFollowed = followState.isFollowed;
+                      return CustomElevatedButton(
+                        buttonTextStyle: textTheme.titleSmall,
+                        height: 38.v,
+                        width: 122.h,
+                        text: followState.isFollowed ? "Following" : 'Follow',
+                        onPressed: () {
+                          _isFollowed = !_isFollowed;
+                          context.read<InfluencerProfileBloc>().add(
+                              InfluencerProfileToggleFollowEvent(
+                                  id: user.id ?? "", isFollowed: _isFollowed));
+                        },
+                      );
+                    }
+
+                    return CustomElevatedButton(
+                      buttonTextStyle: textTheme.titleSmall,
+                      height: 38.v,
+                      width: 122.h,
+                      text: _isFollowed ? "Following" : 'Follow',
+                      onPressed: () {
+                        _isFollowed = !_isFollowed;
+                        context.read<InfluencerProfileBloc>().add(
+                            InfluencerProfileToggleFollowEvent(
+                                id: user.id ?? "", isFollowed: _isFollowed));
+                      },
+                    );
+                  },
+                )
               ],
             ),
           ],

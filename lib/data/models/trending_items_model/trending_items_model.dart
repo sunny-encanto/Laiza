@@ -33,19 +33,29 @@ class TrendingItems {
   TrendingItemType type;
   String image;
   String? reelPath;
+  int isLike;
 
   TrendingItems({
     required this.id,
     required this.type,
     required this.image,
     required this.reelPath,
+    required this.isLike,
   });
+
+  TrendingItems copyWith({int? isLike}) => TrendingItems(
+      id: id,
+      type: type,
+      image: image,
+      reelPath: reelPath,
+      isLike: isLike ?? this.isLike);
 
   factory TrendingItems.fromJson(Map<String, dynamic> json) => TrendingItems(
         id: json["id"],
         type: typeValues.map[json["type"]]!,
         image: json["image"],
         reelPath: json["reel_path"],
+        isLike: json["is_like"] ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -53,6 +63,7 @@ class TrendingItems {
         "type": typeValues.reverse[type],
         "image": image,
         "reel_path": reelPath,
+        "is_like": isLike,
       };
 }
 

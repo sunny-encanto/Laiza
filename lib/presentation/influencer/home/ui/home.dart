@@ -127,7 +127,9 @@ class HomeScreen extends StatelessWidget {
                     ..add(LoadProducts()),
                   child: BlocBuilder<ProductBloc, ProductState>(
                     builder: (context, state) {
-                      if (state is ProductLoading) {
+                      if (state is ProductInitial) {
+                        return const HorizontalLoadingListPage();
+                      } else if (state is ProductLoading) {
                         return const HorizontalLoadingListPage();
                       } else if (state is ProductError) {
                         return Center(child: Text('Error: ${state.message}'));
@@ -179,6 +181,7 @@ class HomeScreen extends StatelessWidget {
                         context
                             .read<ConnectionsBloc>()
                             .add(FetchConnectionsEvent());
+                        return const LoadingListPage();
                       } else if (state is ConnectionsLoadingSate) {
                         return const LoadingListPage();
                       } else if (state is ConnectionsErrorState) {
@@ -212,7 +215,9 @@ class HomeScreen extends StatelessWidget {
                     ..add(LoadProducts()),
                   child: BlocBuilder<ProductBloc, ProductState>(
                     builder: (context, state) {
-                      if (state is ProductLoading) {
+                      if (state is ProductInitial) {
+                        return const HorizontalLoadingListPage();
+                      } else if (state is ProductLoading) {
                         return const HorizontalLoadingListPage();
                       } else if (state is ProductError) {
                         return Center(child: Text('Error: ${state.message}'));
@@ -265,6 +270,7 @@ class HomeScreen extends StatelessWidget {
                         context
                             .read<AllSellerBloc>()
                             .add(FetchAllSellerEvent());
+                        return const HorizontalLoadingListPage();
                       } else if (state is AllSellerLoading) {
                         return const HorizontalLoadingListPage();
                       } else if (state is AllSellerError) {
@@ -513,9 +519,7 @@ class PromotionProductCard extends StatelessWidget {
             Center(
               child: CustomElevatedButton(
                 height: 26.v,
-                text: product.promotionalStatus == 0
-                    ? 'Ask for Promotion'
-                    : "Requested",
+                text: product.isAsked ? 'Requested' : "Ask for Promotion",
                 buttonTextStyle: textTheme.titleSmall,
                 onPressed: () {
                   context

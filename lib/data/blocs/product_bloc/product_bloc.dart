@@ -18,7 +18,6 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
   ProductBloc(this._productRepository) : super(ProductInitial()) {
     on<LoadProducts>(_onLoadProducts);
-    on<FetchNextPage>(_onFetchNextPage);
     on<ResetPagination>(_onResetPagination);
     on<ToggleWishListEvent>(_onToggleWishList);
     on<AskForPromotionEvent>(_onAskForPromotion);
@@ -28,30 +27,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       LoadProducts event, Emitter<ProductState> emit) async {
     emit(ProductLoading());
     try {
-      products = await _productRepository.getAllProduct(page: _currentPage);
+      products = await _productRepository.getAllProduct();
       _hasMore = products.length == _pageSize;
       emit(ProductLoaded(products: products, hasMore: _hasMore));
-    } catch (e) {
-      emit(ProductError(e.toString()));
-    }
-  }
-
-  Future<void> _onFetchNextPage(
-    FetchNextPage event,
-    Emitter<ProductState> emit,
-  ) async {
-    if (!_hasMore) return;
-    try {
-      final currentState = state as ProductLoaded;
-      final List<Product> newProducts =
-          await _productRepository.getAllProduct(page: _currentPage + 1);
-      _currentPage++;
-      _hasMore = newProducts.length == _pageSize;
-      products = currentState.products + newProducts;
-      emit(ProductLoaded(
-        products: products,
-        hasMore: _hasMore,
-      ));
     } catch (e) {
       emit(ProductError(e.toString()));
     }
@@ -85,8 +63,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     products = products.map((item) {
       if (item.id == event.id) {
         _productRepository.askForPromotion(event.id);
-        return item.copyWith(
-            promotionalStatus: item.promotionalStatus == 1 ? 0 : 1);
+        return item.copyWith(isAsked: !item.isAsked);
       }
       return item;
     }).toList();

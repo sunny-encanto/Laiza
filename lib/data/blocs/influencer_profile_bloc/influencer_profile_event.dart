@@ -15,3 +15,14 @@ class FetchInfluencerProfileEvent extends InfluencerProfileEvent {
   @override
   List<Object?> get props => [id];
 }
+
+class InfluencerProfileToggleFollowEvent extends InfluencerProfileEvent {
+  final String id;
+  final bool isFollowed;
+
+  const InfluencerProfileToggleFollowEvent(
+      {required this.id, required this.isFollowed});
+
+  @override
+  List<Object?> get props => [id, isFollowed];
+}

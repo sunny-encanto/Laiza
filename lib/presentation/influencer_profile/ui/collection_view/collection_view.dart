@@ -1,4 +1,5 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/data/models/reels_model/reel.dart';
 import 'package:laiza/presentation/shimmers/loading_grid.dart';
 
@@ -46,25 +47,27 @@ class CollectionViewScreen extends StatelessWidget {
                     style: textTheme.titleMedium,
                   ),
                   actions: [
-                    CustomPopupMenuButton(
-                      menuItems: [
-                        PopupMenuItem<int>(
-                          value: 0,
-                          child: Text(
-                            'Delete Collection',
-                            style: textTheme.titleMedium,
+                    if (state.collection[0].userId.toString() ==
+                        PrefUtils.getId())
+                      CustomPopupMenuButton(
+                        menuItems: [
+                          PopupMenuItem<int>(
+                            value: 0,
+                            child: Text(
+                              'Delete Collection',
+                              style: textTheme.titleMedium,
+                            ),
                           ),
-                        ),
-                      ],
-                      onItemSelected: (value) {
-                        if (value == 0) {
-                          context
-                              .read<CollectionBloc>()
-                              .add(DeleteCollection(id));
-                          Navigator.of(context).pop();
-                        }
-                      },
-                    )
+                        ],
+                        onItemSelected: (value) {
+                          if (value == 0) {
+                            context
+                                .read<CollectionBloc>()
+                                .add(DeleteCollection(id));
+                            Navigator.of(context).pop();
+                          }
+                        },
+                      )
                   ],
                 ),
                 // will Show based on previous screen
@@ -91,13 +94,17 @@ class CollectionViewScreen extends StatelessWidget {
                           PlayButton(
                             isVisible: true,
                             onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    VideoReelPageOtherInfluencer(
-                                  reels: state.collection[0].reels,
-                                  initialIndex: index,
-                                ),
-                              ));
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        VideoReelPageOtherInfluencer(
+                                      reels: state.collection[0].reels,
+                                      initialIndex: index,
+                                    ),
+                                  ))
+                                  .then((_) => context
+                                      .read<CollectionBloc>()
+                                      .add(FetchCollectionDetails(id)));
                             },
                           )
                         ],

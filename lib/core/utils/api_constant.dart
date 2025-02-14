@@ -75,4 +75,5 @@ class ApiConstant {
   static String getCollectionDetails = 'api/user/collection/details';
   static String deleteCollection = 'api/user/collection/delete';
   static String getPrivacy = 'api/privacy_policies';
+  static String addRating = 'api/user/rate_product';
 }

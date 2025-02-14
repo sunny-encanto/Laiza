@@ -7,10 +7,8 @@ import 'package:laiza/presentation/shimmers/loading_grid.dart';
 
 import '../../../core/app_export.dart';
 import '../../../data/blocs/product_bloc/product_bloc.dart';
-import '../../../data/blocs/trending_now_bloc/trending_now_bloc.dart';
 import '../../../data/repositories/reel_repository/reel_repository.dart';
 import '../../../widgets/influencer_card_widget.dart';
-import '../../../widgets/trending_card_widget.dart';
 import '../../reels/bloc/reel_bloc.dart';
 
 class DiscoverScreen extends StatelessWidget {
@@ -106,43 +104,11 @@ class DiscoverScreen extends StatelessWidget {
                   style: textTheme.bodySmall,
                 ),
                 SizedBox(height: 20.h),
-                BlocProvider(
-                  create: (context) =>
-                      TrendingNowBloc(context.read<PostRepository>()),
-                  child: BlocBuilder<TrendingNowBloc, TrendingNowState>(
-                    builder: (context, state) {
-                      if (state is TrendingNowInitial) {
-                        context
-                            .read<TrendingNowBloc>()
-                            .add(FetchTrendingNowEvent());
-                        return const LoadingGridScreen(radius: 0);
-                      } else if (state is TrendingNowLoading) {
-                        return const LoadingGridScreen(radius: 0);
-                      } else if (state is TrendingNowError) {
-                        return Center(child: Text(state.message));
-                      } else if (state is TrendingNowLoaded) {
-                        return SizedBox(
-                          height: 500.v,
-                          child: MasonryGridView.count(
-                            shrinkWrap: true,
-                            itemCount: state.trendingNow.length,
-                            physics: const NeverScrollableScrollPhysics(),
-                            crossAxisCount: 3,
-                            mainAxisSpacing: 0,
-                            crossAxisSpacing: 0,
-                            itemBuilder: (BuildContext context, index) {
-                              return TrendingCardWidget(
-                                trendingItems: state.trendingNow[index],
-                                extent: (index % 2 + 1) * 100,
-                              );
-                            },
-                          ),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  ),
-                ),
+                SizedBox(
+                    height: 500.v,
+                    child: const TrendingItemGridWidget(
+                        physics: NeverScrollableScrollPhysics())),
+
                 SizedBox(height: 40.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -247,10 +213,6 @@ class DiscoverScreen extends StatelessWidget {
                           mainAxisSpacing: 15.v,
                           crossAxisSpacing: 10.h,
                           itemBuilder: (BuildContext context, int index) {
-                            if (index == state.products.length - 1) {
-                              // Fetch next page when reaching the end
-                              context.read<ProductBloc>().add(FetchNextPage());
-                            }
                             final Product product = state.products[index];
                             return ProductCardWidget(product: product);
                           },

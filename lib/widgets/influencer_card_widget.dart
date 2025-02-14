@@ -20,7 +20,7 @@ class InfluencerCardWidget extends StatelessWidget {
         decoration: BoxDecoration(
             image: DecorationImage(
                 fit: BoxFit.fill, image: NetworkImage(reel.reelCoverPath)),
-            color: Colors.grey,
+            color: Colors.grey.shade100,
             borderRadius: BorderRadius.circular(12.h)),
         child: Padding(
           padding: EdgeInsets.all(8.0.h),

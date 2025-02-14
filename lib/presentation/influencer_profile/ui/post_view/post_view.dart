@@ -256,7 +256,6 @@ class _VideoReelPageOtherInfluencer
           mainAxisSize: MainAxisSize.min,
           children: [
             //Like button
-
             BlocProvider(
               create: (context) =>
                   LikeButtonBloc(context.read<ReelRepository>()),

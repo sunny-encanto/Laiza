@@ -304,7 +304,7 @@ class CreatorScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(AppRoutes.influencerProfileScreen,
-            arguments: following.id.toString());
+            arguments: following.followedId.toString());
       },
       child: Column(
         children: [

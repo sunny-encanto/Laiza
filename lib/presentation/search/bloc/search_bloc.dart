@@ -18,6 +18,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   List<Product> filteredProductList = <Product>[];
   List<SearchModel> searchResult = <SearchModel>[];
   List<Product> productList = <Product>[];
+
   SearchBloc(this._userRepository) : super(SearchInitial()) {
     on<SearchUserInteractionEvent>(_onSearchUserInteraction);
     on<SearchProductInteractionEvent>(_onSearchProductInteraction);
@@ -33,9 +34,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           .where((element) =>
               element.name.toLowerCase().contains(event.query.toLowerCase()))
           .toList();
-      if (event.query.isEmpty) {
-        filteredList.clear();
-      }
       emit(SearchResultLoadedState(filteredList));
     } catch (e) {
       emit(SearchErrorState('Failed to Search $e'));
@@ -60,7 +58,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   FutureOr<void> _onFetchSearchItemsProducts(
       FetchSearchItemsProducts event, Emitter<SearchState> emit) async {
     emit(SearchProductResultLoadingState());
-    productList = await _productRepository.getAllProduct(page: 1);
+    productList = await _productRepository.getAllProduct();
     emit(SearchProductResultLoadedState(productList));
   }
 
@@ -72,12 +70,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
               .toLowerCase()
               .contains(event.query.toLowerCase()))
           .toList();
-      if (event.query.isEmpty) {
-        filteredProductList.clear();
-      }
       emit(SearchProductResultLoadedState(filteredProductList));
     } catch (e) {
-      print('Error $e');
       emit(SearchErrorState('Failed to Search $e'));
     }
   }

@@ -102,8 +102,11 @@ class MyOrderScreen extends StatelessWidget {
                   SizedBox(height: 12.v),
                   InkWell(
                     onTap: () {
+                      // Navigator.of(context)
+                      //     .pushNamed(AppRoutes.orderTrackScreen);
+                      //TODO: add id here
                       Navigator.of(context)
-                          .pushNamed(AppRoutes.orderTrackScreen);
+                          .pushNamed(AppRoutes.addRatingScreen, arguments: 58);
                     },
                     child: Text(
                       'Track Order',

@@ -90,13 +90,18 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                ///Profile Background
                                 CustomImageView(
                                   width: SizeUtils.width,
                                   height: 150.v,
                                   imagePath: ImageConstant.profileBg,
                                 ),
+
+                                ///Profile Card
                                 _buildProfileCard(context),
                                 SizedBox(height: 12.h),
+
+                                ///bio
                                 Padding(
                                   padding:
                                       EdgeInsets.symmetric(horizontal: 20.h),
@@ -114,6 +119,8 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                                         style: textTheme.bodySmall,
                                       ),
                                       SizedBox(height: 12.v),
+
+                                      /// Social Icons
                                       Row(
                                         children: [
                                           CustomImageView(
@@ -166,6 +173,8 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                                         ],
                                       ),
                                       SizedBox(height: 24.h),
+
+                                      ///Collections
                                       BlocProvider(
                                         create: (context) => CollectionBloc(
                                             context
@@ -177,6 +186,11 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                                               context
                                                   .read<CollectionBloc>()
                                                   .add(FetchCollection());
+                                              return HorizontalLoadingListPage(
+                                                width: 125.h,
+                                                height: 185.v,
+                                                radius: 0,
+                                              );
                                             } else if (state
                                                 is CollectionLoading) {
                                               return HorizontalLoadingListPage(
@@ -208,7 +222,7 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                                                                           context)
                                                                       .pushNamed(
                                                                           AppRoutes
-                                                                              .createConnectionsScreen)
+                                                                              .createCollectionScreen)
                                                                       .then(
                                                                           (_) {
                                                                     context
@@ -262,6 +276,8 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                                         ),
                                       ),
                                       SizedBox(height: 24.v),
+
+                                      /// Upload Reel
                                       CustomOutlineButton(
                                           onPressed: () async {
                                             Navigator.of(context).pushNamed(

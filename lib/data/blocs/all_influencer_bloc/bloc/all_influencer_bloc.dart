@@ -38,7 +38,7 @@ class AllInfluencerBloc extends Bloc<AllInfluencerEvent, AllInfluencerState> {
         if ((item.isFollowed ?? false)) {
           _followersRepository.unFollow(event.id);
         } else {
-          _followersRepository.follower(event.id);
+          _followersRepository.follow(event.id);
         }
         return item.copyWith(
             isFollowed: (item.isFollowed ?? false) ? false : true);

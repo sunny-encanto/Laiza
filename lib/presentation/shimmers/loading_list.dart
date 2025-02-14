@@ -14,7 +14,7 @@ class _LoadingListPageState extends State<LoadingListPage> {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-        baseColor: Colors.grey.shade300,
+        baseColor: Colors.grey.shade100,
         highlightColor: Colors.grey.shade100,
         enabled: true,
         child: SingleChildScrollView(
@@ -57,7 +57,7 @@ class HorizontalLoadingListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-        baseColor: Colors.grey.shade300,
+        baseColor: Colors.grey.shade100,
         highlightColor: Colors.grey.shade100,
         enabled: true,
         child: SizedBox(

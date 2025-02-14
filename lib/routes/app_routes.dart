@@ -8,10 +8,13 @@ import 'package:laiza/data/repositories/follow_repository/follow_repository.dart
 import 'package:laiza/data/repositories/help_center_repository/help_center_repository.dart';
 import 'package:laiza/data/repositories/live_stream_repository/live_stream_repository.dart';
 import 'package:laiza/data/repositories/product_repository/product_repository.dart';
+import 'package:laiza/data/repositories/rating_repository/rating_repository.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
+import 'package:laiza/presentation/add_review/bloc/add_rating_bloc.dart';
 import 'package:laiza/presentation/privacy_policy/ui/bloc/privacy_policy_bloc.dart';
 
 import '../core/app_export.dart';
+import '../presentation/add_review/ui/add_rating.dart';
 import '../presentation/auth/change_password/ui/create_password.dart';
 import '../presentation/auth/settings_page/ui/settings_page.dart';
 import '../presentation/influencer/order_management/bloc/influencer_orders_bloc.dart';
@@ -87,7 +90,7 @@ class AppRoutes {
 
   static const String commentsScreen = '/comments_screen';
 
-  static const String createConnectionsScreen = '/create_connections_screen';
+  static const String createCollectionScreen = '/create_collection_screen';
 
   static const String influenceProfileSetupScreen =
       '/influence_profile_setup_screen';
@@ -132,7 +135,10 @@ class AppRoutes {
   static const String orderManagementScreen = '/orderManagement_screen';
 
   static const String imageViewScreen = '/imageView_Screen';
+
   static const String settingScreen = '/setting_Screen';
+
+  static const String addRatingScreen = '/add_rating_Screen';
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -376,7 +382,7 @@ class AppRoutes {
                   child: ConnectionsScreen(),
                 ));
 
-      case createConnectionsScreen:
+      case createCollectionScreen:
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => CreateCollectionBloc(
@@ -510,11 +516,15 @@ class AppRoutes {
                 ));
 
       case settingScreen:
+        return CupertinoPageRoute(builder: (context) => const SettingPage());
+
+      case addRatingScreen:
+        final int id = settings.arguments as int;
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => InfluencerOrdersBloc(),
-                  child: const SettingPage(),
-                ));
+                create: (context) =>
+                    AddRatingBloc(context.read<RatingRepository>()),
+                child: AddRatingScreen(productId: id)));
       default:
         return null;
     }

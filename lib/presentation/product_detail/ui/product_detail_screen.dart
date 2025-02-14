@@ -1,6 +1,7 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/core/utils/api_constant.dart';
 import 'package:laiza/data/models/product_model/product.dart';
+import 'package:laiza/data/models/rating_model/rating_model.dart';
 import 'package:readmore/readmore.dart';
 
 import '../../../data/services/helper_services.dart';
@@ -14,7 +15,6 @@ class ProductDetailScreen extends StatelessWidget {
 
   ProductDetailScreen({super.key, required this.id});
 
-  int _currentIndex = 0;
   bool _isLiked = false;
   int _selectedSize = 1;
   int _selectedColor = 0;
@@ -64,63 +64,94 @@ class ProductDetailScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 20.v),
-                    customSlider(
-                        autoPlay: false,
-                        height: 300.v,
-                        onPageChanged: (index, reason) {
-                          _currentIndex = index;
-                          context
-                              .read<ProductDetailBloc>()
-                              .add(OnPageChangedEvent(index));
-                        },
-                        childList: List.generate(
-                          product.images.length,
-                          (index) => BlocConsumer<ProductDetailBloc,
-                              ProductDetailState>(
-                            buildWhen: (previous, current) =>
-                                current is OnPageChangedState,
-                            listener: (context, state) {
-                              if (state is OnPageChangedState) {
-                                _currentIndex = state.index;
-                              }
-                            },
-                            builder: (context, state) {
-                              return Stack(
-                                alignment: Alignment.bottomCenter,
-                                children: [
-                                  //Product Image
-                                  CustomImageView(
+
+                    ///Slider
+                    BlocBuilder<ProductDetailBloc, ProductDetailState>(
+                      buildWhen: (previous, current) =>
+                          current is OnPageChangedState,
+                      builder: (context, state) {
+                        if (state is OnPageChangedState) {
+                          return Column(
+                            children: [
+                              customSlider(
+                                  autoPlay: false,
+                                  height: 300.v,
+                                  onPageChanged: (index, reason) {
+                                    context
+                                        .read<ProductDetailBloc>()
+                                        .add(OnPageChangedEvent(index));
+                                  },
+                                  childList: List.generate(
+                                    product.images.length,
+                                    (index) => CustomImageView(
+                                      width: SizeUtils.width,
+                                      height: 300.v,
+                                      imagePath:
+                                          product.images[state.index].imagePath,
+                                    ),
+                                  )),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(
+                                  product.images.length,
+                                  (dotIndex) => Container(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 5.h, vertical: 10.v),
+                                    height: 7.v,
+                                    width:
+                                        state.index == dotIndex ? 30.h : 10.h,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5.h),
+                                      color: state.index == dotIndex
+                                          ? Colors.black
+                                          : Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                        return Column(
+                          children: [
+                            customSlider(
+                                autoPlay: false,
+                                height: 300.v,
+                                onPageChanged: (index, reason) {
+                                  context
+                                      .read<ProductDetailBloc>()
+                                      .add(OnPageChangedEvent(index));
+                                },
+                                childList: List.generate(
+                                  product.images.length,
+                                  (index) => CustomImageView(
                                     width: SizeUtils.width,
                                     height: 300.v,
-                                    imagePath:
-                                        product.images[_currentIndex].imagePath,
+                                    imagePath: product.images[0].imagePath,
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: List.generate(
-                                      product.images.length,
-                                      (dotIndex) => Container(
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 5.h, vertical: 10.v),
-                                        height: 7.v,
-                                        width: _currentIndex == dotIndex
-                                            ? 30.h
-                                            : 10.h,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.h),
-                                          color: _currentIndex == dotIndex
-                                              ? Colors.black
-                                              : Colors.grey,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              );
-                            },
-                          ),
-                        )),
+                                )),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(
+                                product.images.length,
+                                (dotIndex) => Container(
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal: 5.h, vertical: 10.v),
+                                  height: 7.v,
+                                  width: 0 == dotIndex ? 30.h : 10.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5.h),
+                                    color: 0 == dotIndex
+                                        ? Colors.black
+                                        : Colors.grey,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
 
                     SizedBox(height: 20.v),
                     //Product Title
@@ -255,8 +286,8 @@ class ProductDetailScreen extends StatelessWidget {
                                     .add(ProductSizeChangeEvent(index + 1));
                               },
                               child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 8.h),
                                 height: 48.v,
-                                width: 48.h,
                                 margin: EdgeInsets.only(right: 8.h),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
@@ -277,6 +308,7 @@ class ProductDetailScreen extends StatelessWidget {
                       ),
                     ),
 
+                    /// Colors Selection
                     SizedBox(height: 24.h),
                     Text(
                       'Colors',
@@ -330,6 +362,8 @@ class ProductDetailScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 28.h),
+
+                    /// Product Features
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -366,154 +400,143 @@ class ProductDetailScreen extends StatelessWidget {
                     SizedBox(height: 12.v),
                     const Divider(),
                     SizedBox(height: 12.v),
-                    Text(
-                      'Delivery & Return Details',
-                      style: textTheme.titleMedium,
-                    ),
-                    SizedBox(height: 12.v),
-                    CustomTextFormField(
-                      hintText: 'Pin Code',
-                      suffix: SizedBox(
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 22.v, right: 12.h),
-                          child: Text(
-                            'Check Delivery Date',
-                            style: textTheme.bodySmall,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 16.v),
-                    Column(
+
+                    ///
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
+                        Column(
                           children: [
-                            CustomImageView(
-                              imagePath: ImageConstant.shippingIcon,
-                            ),
-                            SizedBox(width: 8.h),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Shipping & Delivery Estimation',
-                                  style: textTheme.bodySmall,
-                                ),
-                                SizedBox(height: 4.v),
-                                SizedBox(
-                                  width: SizeUtils.width - 100.h,
-                                  child: Text(
-                                    'Order today and get it by Sept 23 – Free Shipping!',
-                                    style: textTheme.titleMedium,
-                                  ),
-                                ),
-                              ],
+                            CustomImageView(imagePath: ImageConstant.returns),
+                            SizedBox(height: 12.v),
+                            Text(
+                              '30-Day Free\nReturns/Exchange ',
+                              style: textTheme.bodySmall!.copyWith(),
+                              textAlign: TextAlign.center,
                             )
                           ],
                         ),
-                        SizedBox(height: 12.v),
-                        Row(
+                        Column(
                           children: [
-                            CustomImageView(
-                              imagePath: ImageConstant.shippingIcon1,
-                            ),
-                            SizedBox(width: 8.h),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Shipping & Delivery Estimation',
-                                  style: textTheme.bodySmall,
-                                ),
-                                SizedBox(height: 4.v),
-                                SizedBox(
-                                  width: SizeUtils.width - 100.h,
-                                  child: Text(
-                                    '30-Day Free Returns – Get a full refund or exchange within 30 days of purchase.',
-                                    style: textTheme.titleMedium,
-                                  ),
-                                ),
-                              ],
-                            ),
+                            CustomImageView(imagePath: ImageConstant.secure),
+                            SizedBox(height: 12.v),
+                            Text(
+                              'Secure\ntransaction',
+                              style: textTheme.bodySmall!.copyWith(),
+                              textAlign: TextAlign.center,
+                            )
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            CustomImageView(imagePath: ImageConstant.brands),
+                            SizedBox(height: 12.v),
+                            Text(
+                              'Top\nBrands',
+                              style: textTheme.bodySmall!.copyWith(),
+                              textAlign: TextAlign.center,
+                            )
                           ],
                         ),
                       ],
                     ),
                     SizedBox(height: 12.v),
                     const Divider(),
+
+                    /// Additional Information
                     SizedBox(height: 12.v),
-                    Text(
-                      'Customer Reviews & Ratings',
-                      style: textTheme.titleMedium,
-                    ),
-                    SizedBox(height: 28.v),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  '4.1',
-                                  style: textTheme.titleMedium!
-                                      .copyWith(fontSize: 36.fSize),
-                                ),
-                                const Icon(
-                                  Icons.star,
-                                  color: Colors.black,
-                                )
-                              ],
-                            ),
-                            Text(
-                              '1k Ratings',
-                              style: textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                        SizedBox(width: 16.h),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Customer Words',
-                              style: textTheme.titleMedium,
-                            ),
-                            SizedBox(height: 12.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'How was the product fit?',
-                                  style: textTheme.bodySmall,
-                                ),
-                                SizedBox(width: 12.h),
-                                Text(
-                                  'Perfect',
-                                  style: textTheme.titleMedium,
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 8.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Product Quality',
-                                  style: textTheme.bodySmall,
-                                ),
-                                SizedBox(width: 12.h),
-                                Text(
-                                  'Very Good',
-                                  style: textTheme.titleMedium,
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 120.v),
+                    _buildAdditionInfo(context, product.additionalInfo),
+                    // Text(
+                    //   'Delivery & Return Details',
+                    //   style: textTheme.titleMedium,
+                    // ),
+                    // SizedBox(height: 12.v),
+                    // CustomTextFormField(
+                    //   hintText: 'Pin Code',
+                    //   suffix: SizedBox(
+                    //     child: Padding(
+                    //       padding: EdgeInsets.only(top: 22.v, right: 12.h),
+                    //       child: Text(
+                    //         'Check Delivery Date',
+                    //         style: textTheme.bodySmall,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    SizedBox(height: 16.v),
+
+                    SizedBox(height: 12.v),
+                    const Divider(),
+                    SizedBox(height: 12.v),
+
+                    _buildRatingAndReview(textTheme, product),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     Column(
+                    //       children: [
+                    //         Row(
+                    //           children: [
+                    //             Text(
+                    //               '4.1',
+                    //               style: textTheme.titleMedium!
+                    //                   .copyWith(fontSize: 36.fSize),
+                    //             ),
+                    //             const Icon(
+                    //               Icons.star,
+                    //               color: Colors.black,
+                    //             )
+                    //           ],
+                    //         ),
+                    //         Text(
+                    //           '1k Ratings',
+                    //           style: textTheme.bodySmall,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //     SizedBox(width: 16.h),
+                    //     Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Text(
+                    //           'Customer Words',
+                    //           style: textTheme.titleMedium,
+                    //         ),
+                    //         SizedBox(height: 12.h),
+                    //         Row(
+                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //           children: [
+                    //             Text(
+                    //               'How was the product fit?',
+                    //               style: textTheme.bodySmall,
+                    //             ),
+                    //             SizedBox(width: 12.h),
+                    //             Text(
+                    //               'Perfect',
+                    //               style: textTheme.titleMedium,
+                    //             ),
+                    //           ],
+                    //         ),
+                    //         SizedBox(height: 8.h),
+                    //         Row(
+                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //           children: [
+                    //             Text(
+                    //               'Product Quality',
+                    //               style: textTheme.bodySmall,
+                    //             ),
+                    //             SizedBox(width: 12.h),
+                    //             Text(
+                    //               'Very Good',
+                    //               style: textTheme.titleMedium,
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ],
+                    //     )
+                    //   ],
+                    // ),
+                    // SizedBox(height: 120.v),
                   ],
                 ),
               );
@@ -646,12 +669,127 @@ class ProductDetailScreen extends StatelessWidget {
               ),
               SizedBox(height: 5.v),
               Text(
-                'Tip : If you dont find an exact match, go for the next size',
+                "Tip : If you don't find an exact match, go for the next size",
                 style: textTheme.bodySmall,
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  _buildAdditionInfo(
+      BuildContext context, ProductAdditionalInfo? additionalInfo) {
+    TextTheme textTheme = Theme.of(context).textTheme;
+    return additionalInfo == null
+        ? const SizedBox.shrink()
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            // padding: const EdgeInsets.all(16.0),
+            children: [
+              // Additional Information Section
+              Text('Additional Information', style: textTheme.titleMedium),
+              SizedBox(height: 16.v),
+              buildInfoRow(
+                  'Manufacturer', additionalInfo.manufacture, textTheme),
+              buildInfoRow('Packer', additionalInfo.packer, textTheme),
+              buildInfoRow('Importer', additionalInfo.importer, textTheme),
+              buildInfoRow('Item Weight', additionalInfo.itemWeight, textTheme),
+              buildInfoRow('Item Dimensions LxWxH',
+                  additionalInfo.itemDimensions, textTheme),
+              buildInfoRow(
+                  'Net Quantity', additionalInfo.netQuantity, textTheme),
+              buildInfoRow(
+                  'Generic Name', additionalInfo.genericName, textTheme),
+              const SizedBox(height: 24),
+            ],
+          );
+  }
+
+  _buildRatingAndReview(TextTheme textTheme, Product product) {
+    return Column(
+      children: [
+        // Customer Reviews & Ratings Section
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Customer Reviews & Ratings',
+              style: textTheme.titleMedium,
+            ),
+            Row(
+              children: [
+                Icon(Icons.star, color: AppColor.primary, size: 20.h),
+                SizedBox(width: 4.h),
+                Text('${product.averageRating}', style: textTheme.bodySmall),
+                Text(
+                  '(${product.totalRatings} Ratings)',
+                  style: textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        ...List.generate(
+          product.ratings.length,
+          (index) => buildReviewCard(product.ratings[index], textTheme),
+        )
+      ],
+    );
+  }
+
+  Widget buildInfoRow(String label, String value, TextTheme textTheme) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('• ', style: textTheme.bodySmall!.copyWith(fontSize: 12.fSize)),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                text: '$label:  ',
+                style: textTheme.bodySmall,
+                children: [
+                  TextSpan(
+                    text: value,
+                    style: textTheme.bodySmall!.copyWith(fontSize: 14.fSize),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildReviewCard(Rating rating, TextTheme textTheme) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(rating.user.name ?? '', style: textTheme.titleMedium),
+              Row(
+                children: List.generate(5, (index) {
+                  return Icon(
+                    index < rating.rating ? Icons.star : Icons.star_border,
+                    color: AppColor.primary,
+                    size: 20,
+                  );
+                }),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(rating.review, style: textTheme.bodySmall),
+        ],
       ),
     );
   }

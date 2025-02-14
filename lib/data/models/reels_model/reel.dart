@@ -55,7 +55,9 @@ class Reel {
   factory Reel.fromJson(Map<String, dynamic> json) => Reel(
         id: json["id"],
         userId: json["user_id"],
-        productId: List<String>.from(json["product_id"].map((x) => x)),
+        productId: json["product_id"] == null
+            ? <String>[]
+            : List<String>.from(json["product_id"].map((x) => x)),
         catId: json["category_id"] ?? 0,
         reelTitle: json["reel_title"],
         reelPath: json["reel_path"],

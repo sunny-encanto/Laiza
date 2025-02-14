@@ -1,3 +1,4 @@
+import 'package:laiza/data/models/user/user_model.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 import 'package:laiza/presentation/reels/bloc/reel_bloc.dart';
 import 'package:laiza/widgets/slider_widget.dart';
@@ -89,7 +90,8 @@ class ReelScreen extends StatelessWidget {
                                                 ),
                                               ),
                                               SizedBox(height: 36.h),
-                                              _buildFollowBanner(context),
+                                              _buildFollowBanner(context,
+                                                  state.reels[index].user),
                                               SizedBox(height: 12.h),
                                             ],
                                           ),
@@ -294,7 +296,7 @@ class ReelScreen extends StatelessWidget {
     );
   }
 
-  Container _buildFollowBanner(BuildContext context) {
+  Container _buildFollowBanner(BuildContext context, UserModel user) {
     return Container(
       width: SizeUtils.width,
       height: 56.h,
@@ -304,9 +306,8 @@ class ReelScreen extends StatelessWidget {
           SizedBox(width: 20.h),
           CustomImageView(
             onTap: () {
-              //TODO: Add Id in argument
-              Navigator.of(context)
-                  .pushNamed(AppRoutes.influencerProfileScreen);
+              Navigator.of(context).pushNamed(AppRoutes.influencerProfileScreen,
+                  arguments: user.id ?? '');
             },
             height: 40.h,
             width: 40.h,
@@ -315,7 +316,7 @@ class ReelScreen extends StatelessWidget {
           ),
           SizedBox(width: 12.h),
           Text(
-            'Daniel George',
+            user.name ?? '',
             style: TextStyle(color: Colors.white, fontSize: 16.fSize),
           ),
           SizedBox(width: 20.h),
