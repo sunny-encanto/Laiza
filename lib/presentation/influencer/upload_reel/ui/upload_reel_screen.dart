@@ -2,12 +2,12 @@ import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/models/product_model/product.dart';
 import 'package:laiza/data/models/selectionPopupModel/selection_popup_model.dart';
 import 'package:laiza/data/repositories/product_repository/product_repository.dart';
-import 'package:laiza/presentation/user/video_player/ui/video_player.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 import '../../../../data/blocs/product_bloc/product_bloc.dart';
 import '../../../../data/models/reels_model/reel.dart';
 import '../../../../widgets/multi_select_dropdown.dart';
+import '../../../user/video_player/ui/video_player.dart';
 
 class UploadReelScreen extends StatelessWidget {
   final String? mediaPath;
@@ -108,35 +108,29 @@ class UploadReelScreen extends StatelessWidget {
                     onTap: () {
                       context.read<UploadReelBloc>().add(AddReelEvent());
                     },
-                    child: BlocBuilder<UploadReelBloc, UploadReelState>(
-                      buildWhen: (previous, current) =>
-                          current is UploadReelCoverPhotoSelectedSate,
-                      builder: (context, state) {
-                        return Row(
-                          children: [
-                            Container(
-                              height: 92.h,
-                              width: 92.h,
-                              padding: EdgeInsets.all(30.h),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6.h),
-                                border: Border.all(color: Colors.grey),
-                              ),
-                              child: CustomImageView(
-                                height: 32.h,
-                                width: 32.h,
-                                imagePath: ImageConstant.uploadReel,
-                              ),
-                            ),
-                            SizedBox(width: 32.h),
-                            Text(
-                              'Add Your POP',
-                              style: textTheme.titleLarge!
-                                  .copyWith(fontSize: 16.fSize),
-                            )
-                          ],
-                        );
-                      },
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 92.h,
+                          width: 92.h,
+                          padding: EdgeInsets.all(30.h),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6.h),
+                            border: Border.all(color: Colors.grey),
+                          ),
+                          child: CustomImageView(
+                            height: 32.h,
+                            width: 32.h,
+                            imagePath: ImageConstant.uploadReel,
+                          ),
+                        ),
+                        SizedBox(width: 32.h),
+                        Text(
+                          'Add Your POP',
+                          style: textTheme.titleLarge!
+                              .copyWith(fontSize: 16.fSize),
+                        )
+                      ],
                     ),
                   ),
                 SizedBox(height: 20.v),

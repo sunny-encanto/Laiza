@@ -7,6 +7,7 @@ import 'package:laiza/data/models/reels_model/reels_model.dart';
 
 import '../../../core/network/dio_client.dart';
 import '../../../core/utils/api_constant.dart';
+import '../../models/trending_items_model/trending_items_model.dart';
 
 class ReelRepository {
   final ApiClient _apiClient = ApiClient();
@@ -210,6 +211,29 @@ class ReelRepository {
     } catch (e) {
       Logger.log('Error during update Reels', e.toString());
       throw Exception('Failed to update Reels');
+    }
+  }
+
+  Future<List<TrendingItems>> reelFromMyInfluencer() async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+
+      Response response =
+          await _apiClient.get(ApiConstant.reelsFromMyInfluencer);
+      if (response.statusCode == 200) {
+        TrendingItemsModel model = TrendingItemsModel.fromJson(response.data);
+        return model.items;
+      } else {
+        TrendingItemsModel model = TrendingItemsModel.fromJson(response.data);
+        return model.items;
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during get Reel From Influencer', e.toString());
+      throw Exception('Failed to get Reel From Influencer');
     }
   }
 }

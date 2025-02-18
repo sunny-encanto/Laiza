@@ -50,6 +50,7 @@ class EditProfileScreen extends StatelessWidget {
               _xController.text = state.user.xComLink ?? '';
               _bioController.text = state.user.bio ?? '';
               _selectedImage = state.user.profileImg ?? '';
+              _selectedBgImage = state.user.profileBg ?? '';
               _userModel = state.user;
               return Column(
                 children: [
@@ -97,6 +98,7 @@ class EditProfileScreen extends StatelessWidget {
                             imagePath: _selectedBgImage.isEmpty
                                 ? ImageConstant.profileBg
                                 : _selectedBgImage,
+                            fit: BoxFit.fill,
                           ),
                           InkWell(
                             onTap: () {
@@ -298,6 +300,9 @@ class EditProfileScreen extends StatelessWidget {
                 _userModel?.bio = _bioController.text;
                 if (_selectedImage.isNotEmpty) {
                   _userModel?.profileImg = _selectedImage;
+                }
+                if (_selectedBgImage.isNotEmpty) {
+                  _userModel?.profileBg = _selectedBgImage;
                 }
                 if (!_formKey.currentState!.validate()) {
                   return;

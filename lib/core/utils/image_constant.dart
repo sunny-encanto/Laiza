@@ -178,4 +178,5 @@ class ImageConstant {
   static String brands = '$imagePath/brands.svg';
   static String returns = '$imagePath/returns.svg';
   static String secure = '$imagePath/secure.svg';
+  static String noPostFound = '$imagePath/no_post_found.svg';
 }

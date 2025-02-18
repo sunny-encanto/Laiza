@@ -132,64 +132,67 @@ class _SearchScreenState extends State<SearchScreen>
                           return const Center(
                               child: CircularProgressIndicator());
                         } else if (state is SearchProductResultLoadedState) {
-                          return GridView.builder(
-                            itemCount: state.searchResult.length,
-                            padding: EdgeInsets.all(20.h),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              childAspectRatio: 130.h / 208.v,
-                              mainAxisSpacing: 15.h,
-                              crossAxisSpacing: 15.h,
-                              crossAxisCount: 2,
-                            ),
-                            itemBuilder: (context, index) => Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomImageView(
-                                    radius: BorderRadius.circular(6.h),
-                                    height: 150.v,
-                                    width: SizeUtils.width,
-                                    fit: BoxFit.fill,
-                                    imagePath:
-                                        state.searchResult[index].images.isEmpty
-                                            ? ImageConstant.imageNotFound
-                                            : state.searchResult[index]
-                                                .images[0].imagePath),
-                                SizedBox(height: 4.v),
-                                Text(
-                                  state.searchResult[index].productName,
-                                  style: textTheme.bodySmall!.copyWith(
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                                SizedBox(height: 6.v),
-                                Text(
-                                  state.searchResult[index].description,
-                                  style: textTheme.titleMedium!.copyWith(
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                                SizedBox(height: 6.v),
-                                Text(
-                                  '₹ ${state.searchResult[index].price}',
-                                  style: textTheme.bodySmall,
-                                ),
-                                SizedBox(height: 8.v),
-                                Center(
-                                  child: CustomElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pushNamed(
-                                          AppRoutes.productDetailScreen,
-                                          arguments:
-                                              state.searchResult[index].id);
-                                    },
-                                    width: 208.h,
-                                    height: 36.v,
-                                    text: 'Continue',
-                                    buttonTextStyle: textTheme.titleSmall,
+                          return state.searchResult.isEmpty
+                              ? const NoSearchFoundScreen()
+                              : GridView.builder(
+                                  itemCount: state.searchResult.length,
+                                  padding: EdgeInsets.all(20.h),
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    childAspectRatio: 130.h / 208.v,
+                                    mainAxisSpacing: 15.h,
+                                    crossAxisSpacing: 15.h,
+                                    crossAxisCount: 2,
                                   ),
-                                )
-                              ],
-                            ),
-                          );
+                                  itemBuilder: (context, index) => Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomImageView(
+                                          radius: BorderRadius.circular(6.h),
+                                          height: 150.v,
+                                          width: SizeUtils.width,
+                                          fit: BoxFit.fill,
+                                          imagePath: state.searchResult[index]
+                                                  .images.isEmpty
+                                              ? ImageConstant.imageNotFound
+                                              : state.searchResult[index]
+                                                  .images[0].imagePath),
+                                      SizedBox(height: 4.v),
+                                      Text(
+                                        state.searchResult[index].productName,
+                                        style: textTheme.bodySmall!.copyWith(
+                                            overflow: TextOverflow.ellipsis),
+                                      ),
+                                      SizedBox(height: 6.v),
+                                      Text(
+                                        state.searchResult[index].description,
+                                        style: textTheme.titleMedium!.copyWith(
+                                            overflow: TextOverflow.ellipsis),
+                                      ),
+                                      SizedBox(height: 6.v),
+                                      Text(
+                                        '₹ ${state.searchResult[index].price}',
+                                        style: textTheme.bodySmall,
+                                      ),
+                                      SizedBox(height: 8.v),
+                                      Center(
+                                        child: CustomElevatedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pushNamed(
+                                                AppRoutes.productDetailScreen,
+                                                arguments: state
+                                                    .searchResult[index].id);
+                                          },
+                                          width: 208.h,
+                                          height: 36.v,
+                                          text: 'Continue',
+                                          buttonTextStyle: textTheme.titleSmall,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
                         }
                         return const SizedBox.shrink();
                       },

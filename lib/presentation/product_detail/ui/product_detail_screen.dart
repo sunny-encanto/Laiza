@@ -286,6 +286,7 @@ class ProductDetailScreen extends StatelessWidget {
                                     .add(ProductSizeChangeEvent(index + 1));
                               },
                               child: Container(
+                                constraints: BoxConstraints(minWidth: 48.h),
                                 padding: EdgeInsets.symmetric(horizontal: 8.h),
                                 height: 48.v,
                                 margin: EdgeInsets.only(right: 8.h),
@@ -388,9 +389,11 @@ class ProductDetailScreen extends StatelessWidget {
                                     shape: BoxShape.circle, color: Colors.grey),
                               ),
                               SizedBox(width: 5.h),
-                              Text(
-                                product.features[index],
-                                style: textTheme.bodySmall,
+                              Expanded(
+                                child: Text(
+                                  product.features[index],
+                                  style: textTheme.bodySmall,
+                                ),
                               )
                             ],
                           ),

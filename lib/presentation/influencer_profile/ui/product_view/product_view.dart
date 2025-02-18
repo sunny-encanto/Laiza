@@ -8,14 +8,28 @@ class ProductView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TextTheme textTheme = Theme.of(context).textTheme;
+    TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 15.h),
         products.isEmpty
-            ? const Center(
-                child: Text('No Data Found'),
+            ? Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 115.v),
+                    CustomImageView(
+                      imagePath: ImageConstant.noPostFound,
+                      height: 100.v,
+                    ),
+                    SizedBox(height: 15.v),
+                    Text(
+                      'No Product Yet',
+                      style: textTheme.titleMedium,
+                    )
+                  ],
+                ),
               )
             : GridView.builder(
                 physics: const NeverScrollableScrollPhysics(),

@@ -76,4 +76,5 @@ class ApiConstant {
   static String deleteCollection = 'api/user/collection/delete';
   static String getPrivacy = 'api/privacy_policies';
   static String addRating = 'api/user/rate_product';
+  static String reelsFromMyInfluencer = 'api/user/my_influencer_reels';
 }

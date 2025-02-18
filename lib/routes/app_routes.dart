@@ -18,6 +18,8 @@ import '../presentation/add_review/ui/add_rating.dart';
 import '../presentation/auth/change_password/ui/create_password.dart';
 import '../presentation/auth/settings_page/ui/settings_page.dart';
 import '../presentation/influencer/order_management/bloc/influencer_orders_bloc.dart';
+import '../presentation/report_user/ui/report_user_screen.dart';
+import '../presentation/user_edit_porfile/ui/user_edit_profile.dart';
 
 class AppRoutes {
   static const String splashScreen = '/splash_screen';
@@ -139,6 +141,10 @@ class AppRoutes {
   static const String settingScreen = '/setting_Screen';
 
   static const String addRatingScreen = '/add_rating_Screen';
+
+  static const String editUserProfileScreen = '/user_edit_profile_screen';
+
+  static const String reportUserScreen = '/report_user_screen';
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -324,7 +330,7 @@ class AppRoutes {
             builder: (context) => BlocProvider(
                   create: (context) =>
                       SearchBloc(context.read<UserRepository>()),
-                  child: SearchScreen(),
+                  child: const SearchScreen(),
                 ));
 
       case filterScreen:
@@ -517,6 +523,18 @@ class AppRoutes {
 
       case settingScreen:
         return CupertinoPageRoute(builder: (context) => const SettingPage());
+
+      case reportUserScreen:
+        final String id = settings.arguments as String;
+        return CupertinoPageRoute(
+            builder: (context) => ReportUserScreen(reportedUserId: id));
+
+      case editUserProfileScreen:
+        return CupertinoPageRoute(
+            builder: (context) => BlocProvider(
+                create: (context) =>
+                    EditProfileBloc(context.read<UserRepository>()),
+                child: UserEditProfileScreen()));
 
       case addRatingScreen:
         final int id = settings.arguments as int;

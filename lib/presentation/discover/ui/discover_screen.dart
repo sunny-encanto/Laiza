@@ -7,9 +7,10 @@ import 'package:laiza/presentation/shimmers/loading_grid.dart';
 
 import '../../../core/app_export.dart';
 import '../../../data/blocs/product_bloc/product_bloc.dart';
+import '../../../data/blocs/reel_from_followed_influencer/reel_from_followed_influencer_bloc.dart';
+import '../../../data/models/reels_model/reel.dart';
 import '../../../data/repositories/reel_repository/reel_repository.dart';
 import '../../../widgets/influencer_card_widget.dart';
-import '../../reels/bloc/reel_bloc.dart';
 
 class DiscoverScreen extends StatelessWidget {
   const DiscoverScreen({super.key});
@@ -104,8 +105,8 @@ class DiscoverScreen extends StatelessWidget {
                   style: textTheme.bodySmall,
                 ),
                 SizedBox(height: 20.h),
-                SizedBox(
-                    height: 500.v,
+                Container(
+                    constraints: BoxConstraints(maxHeight: 500.v),
                     child: const TrendingItemGridWidget(
                         physics: NeverScrollableScrollPhysics())),
 
@@ -117,17 +118,16 @@ class DiscoverScreen extends StatelessWidget {
                       'From Your Favorite Influencers',
                       style: textTheme.titleMedium,
                     ),
-                    //Need to unComment
-                    // InkWell(
-                    //   onTap: () {
-                    //     Navigator.of(context)
-                    //         .pushNamed(AppRoutes.allFavInfluencerScreen);
-                    //   },
-                    //   child: Text(
-                    //     'View All',
-                    //     style: textTheme.bodySmall,
-                    //   ),
-                    // ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(AppRoutes.allFavInfluencerScreen);
+                      },
+                      child: Text(
+                        'View All',
+                        style: textTheme.bodySmall,
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 2.v),
@@ -137,53 +137,102 @@ class DiscoverScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20.h),
                 BlocProvider(
-                    create: (context) =>
-                        ReelBloc(context.read<ReelRepository>()),
-                    child: BlocBuilder<ReelBloc, ReelState>(
-                        buildWhen: (previous, current) =>
-                            (current is ReelLoading ||
-                                current is ReelLoaded ||
-                                current is ReelError),
-                        builder: (context, state) {
-                          if (state is ReelInitial) {
-                            context.read<ReelBloc>().add(LoadReelEvent());
-                          } else if (state is ReelLoading) {
-                            return const LoadingGridScreen();
-                          } else if (state is ReelError) {
-                            return Center(
-                              child: Text(state.message),
-                            );
-                          } else if (state is ReelLoaded) {
-                            return SizedBox(
-                              height: 690.v,
-                              child: GridView.custom(
-                                shrinkWrap: true,
-                                padding: const EdgeInsets.all(0),
-                                physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate: SliverWovenGridDelegate.count(
-                                  crossAxisCount: 2,
-                                  mainAxisSpacing: 0,
-                                  crossAxisSpacing: 0,
-                                  pattern: [
-                                    const WovenGridTile(1),
-                                    const WovenGridTile(
-                                      5 / 7,
-                                      crossAxisRatio: 0.9,
-                                      alignment: AlignmentDirectional.centerEnd,
-                                    ),
-                                  ],
+                  create: (context) => ReelFromFollowedInfluencerBloc(
+                      context.read<ReelRepository>()),
+                  child: BlocBuilder<ReelFromFollowedInfluencerBloc,
+                      ReelFromFollowedInfluencerState>(
+                    builder: (context, state) {
+                      if (state is ReelFromFollowedInfluencerInitial) {
+                        context
+                            .read<ReelFromFollowedInfluencerBloc>()
+                            .add(FetchReelFromFollowedInfluencer());
+                        return const LoadingGridScreen();
+                      } else if (state is ReelFromFollowedInfluencerLoading) {
+                        return const LoadingGridScreen();
+                      } else if (state is ReelFromFollowedInfluencerError) {
+                        return Center(child: Text(state.message));
+                      } else if (state is ReelFromFollowedInfluencerLoaded) {
+                        return Container(
+                          constraints: BoxConstraints(maxHeight: 690.v),
+                          child: GridView.custom(
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.all(0),
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate: SliverWovenGridDelegate.count(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 0,
+                              crossAxisSpacing: 0,
+                              pattern: [
+                                const WovenGridTile(1),
+                                const WovenGridTile(
+                                  5 / 7,
+                                  crossAxisRatio: 0.9,
+                                  alignment: AlignmentDirectional.centerEnd,
                                 ),
-                                childrenDelegate: SliverChildBuilderDelegate(
-                                  childCount: state.reels.length,
-                                  (BuildContext context, int index) =>
-                                      InfluencerCardWidget(
-                                          reel: state.reels[index]),
-                                ),
-                              ),
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        })),
+                              ],
+                            ),
+                            childrenDelegate: SliverChildBuilderDelegate(
+                                childCount: state.reel.length,
+                                (BuildContext context, int index) {
+                              Reel reel = state.reel[index];
+                              return InfluencerCardWidget(reel: reel);
+                            }),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ),
+                // BlocProvider(
+                //     create: (context) =>
+                //         ReelBloc(context.read<ReelRepository>()),
+                //     child: BlocBuilder<ReelBloc, ReelState>(
+                //         buildWhen: (previous, current) =>
+                //             (current is ReelLoading ||
+                //                 current is ReelLoaded ||
+                //                 current is ReelError),
+                //         builder: (context, state) {
+                //           if (state is ReelInitial) {
+                //             context.read<ReelBloc>().add(LoadReelEvent());
+                //           } else if (state is ReelLoading) {
+                //             return const LoadingGridScreen();
+                //           } else if (state is ReelError) {
+                //             return Center(
+                //               child: Text(state.message),
+                //             );
+                //           } else if (state is ReelLoaded) {
+                //             return
+                //               SizedBox(
+                //               height: 690.v,
+                //               child: GridView.custom(
+                //                 shrinkWrap: true,
+                //                 padding: const EdgeInsets.all(0),
+                //                 physics: const NeverScrollableScrollPhysics(),
+                //                 gridDelegate: SliverWovenGridDelegate.count(
+                //                   crossAxisCount: 2,
+                //                   mainAxisSpacing: 0,
+                //                   crossAxisSpacing: 0,
+                //                   pattern: [
+                //                     const WovenGridTile(1),
+                //                     const WovenGridTile(
+                //                       5 / 7,
+                //                       crossAxisRatio: 0.9,
+                //                       alignment: AlignmentDirectional.centerEnd,
+                //                     ),
+                //                   ],
+                //                 ),
+                //                 childrenDelegate: SliverChildBuilderDelegate(
+                //                   childCount: state.reels.length,
+                //                   (BuildContext context, int index) =>
+                //                       InfluencerCardWidget(
+                //                           reel: state.reels[index]),
+                //                 ),
+                //               ),
+                //             );
+                //           }
+                //           return const SizedBox.shrink();
+                //         })),
                 SizedBox(height: 24.v),
                 Text(
                   'Explore More Products',

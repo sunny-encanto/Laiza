@@ -96,7 +96,7 @@ class FollowingScreen extends StatelessWidget {
                                                   ImageConstant.groupIcon),
                                           SizedBox(width: 4.v),
                                           Text(
-                                            '10K Followers',
+                                            '${state.followings[index].followersCount} Followers',
                                             style: textTheme.bodySmall,
                                           ),
                                         ],

@@ -73,8 +73,8 @@ class LivePage extends StatelessWidget {
           return CustomImageView(
             radius: BorderRadius.circular(30.h),
             fit: BoxFit.fill,
-            imagePath: user.profile.toString().isNotEmpty
-                ? user.profile
+            imagePath: user.profileImg.toString().isNotEmpty
+                ? user.profileImg
                 : ImageConstant.defaultProfile,
           );
         });

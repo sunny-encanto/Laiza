@@ -62,27 +62,6 @@ class LiveScreen extends StatelessWidget {
                   },
                 ),
               ),
-              SizedBox(height: 28.v),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Ongoing Streams',
-                    style: textTheme.titleLarge,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context)
-                          .pushNamed(AppRoutes.allOngoingStreamsScreen);
-                    },
-                    child: Text(
-                      'View All',
-                      style: textTheme.bodySmall,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 28.v),
               StreamBuilder<QuerySnapshot>(
                   stream: FirebaseServices.getOnGoingLiveStream(),
                   builder: (context, snapshot) {
@@ -97,20 +76,49 @@ class LiveScreen extends StatelessWidget {
                         .map((e) => LiveStreamModel.fromMap(
                             e.data() as Map<String, dynamic>))
                         .toList();
-                    return SizedBox(
-                      height: liveStreamModel.isNotEmpty ? 250.v : 0.v,
-                      child: ListView.builder(
-                        itemCount: liveStreamModel.length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) => Padding(
-                          padding: EdgeInsets.only(right: 10.h),
-                          child: StreamsCard(
-                            isLive: true,
-                            model: liveStreamModel[index],
-                          ),
-                        ),
-                      ),
-                    );
+                    return liveStreamModel.isNotEmpty
+                        ? Column(
+                            children: [
+                              SizedBox(height: 28.v),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Ongoing Streams',
+                                    style: textTheme.titleLarge,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).pushNamed(
+                                          AppRoutes.allOngoingStreamsScreen);
+                                    },
+                                    child: Text(
+                                      'View All',
+                                      style: textTheme.bodySmall,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 28.v),
+                              SizedBox(
+                                height:
+                                    liveStreamModel.isNotEmpty ? 250.v : 0.v,
+                                child: ListView.builder(
+                                  itemCount: liveStreamModel.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) => Padding(
+                                    padding: EdgeInsets.only(right: 10.h),
+                                    child: StreamsCard(
+                                      isLive: true,
+                                      model: liveStreamModel[index],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : const SizedBox.shrink();
                   }),
               SizedBox(height: 36.v),
               Text(

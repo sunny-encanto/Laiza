@@ -42,6 +42,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           userId: loginModel.data?.user?.id ?? 0,
           isProfileComplete: isFormComplete));
     } catch (e) {
+      print('ERROR=> ${e.toString()}');
       if (e.toString() == 'Account not approved') {
         emit(LoginUserNotApproved());
       } else {
@@ -126,7 +127,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       id: userId,
       name: user?.displayName ?? '',
       email: user?.email ?? "",
-      profile: user?.photoURL ?? "",
+      profileImg: user?.photoURL ?? "",
       token: fcmToken,
       role: PrefUtils.getRole(),
     );

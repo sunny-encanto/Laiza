@@ -71,7 +71,7 @@ class HelpCentreScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.email),
               title: const Text("Email Us"),
-              subtitle: const Text("support@Liza.com"),
+              subtitle: const Text("support@laiza.live"),
               onTap: () {
                 _launchEmail();
               },
@@ -79,7 +79,7 @@ class HelpCentreScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.phone),
               title: const Text("Call Us"),
-              subtitle: const Text("+91 12345 67890"),
+              subtitle: const Text("+917021356804"),
               onTap: () {
                 _launchPhone();
               },
@@ -87,7 +87,7 @@ class HelpCentreScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.language),
               title: const Text("Visit Our Website"),
-              subtitle: const Text("www.Liza.com"),
+              subtitle: const Text("https://laiza.live"),
               onTap: () {
                 _launchWebsite();
               },

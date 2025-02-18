@@ -64,7 +64,8 @@ class ReelScreen extends StatelessWidget {
                                     return Stack(
                                       children: [
                                         child,
-                                        _buildViewCountWidget(textTheme),
+                                        //TODO: Need to uncomment
+                                        // _buildViewCountWidget(textTheme),
                                         Align(
                                           alignment: Alignment.bottomRight,
                                           child: Column(
@@ -90,8 +91,11 @@ class ReelScreen extends StatelessWidget {
                                                 ),
                                               ),
                                               SizedBox(height: 36.h),
-                                              _buildFollowBanner(context,
-                                                  state.reels[index].user),
+                                              if (state.reels[index].user
+                                                      .userType !=
+                                                  'seller')
+                                                _buildFollowBanner(context,
+                                                    state.reels[index].user),
                                               SizedBox(height: 12.h),
                                             ],
                                           ),
@@ -312,7 +316,8 @@ class ReelScreen extends StatelessWidget {
             height: 40.h,
             width: 40.h,
             radius: BorderRadius.circular(20.h),
-            imagePath: ImageConstant.reelImg,
+            imagePath: user.profileImg,
+            fit: BoxFit.fill,
           ),
           SizedBox(width: 12.h),
           Text(

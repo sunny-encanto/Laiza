@@ -47,10 +47,8 @@ class LiveStreamRepository {
 
   Future<List<UpComingStream>> getAllStream() async {
     try {
-      _apiClient.setHeaders({
-        'Authorization':
-            'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNDQyZWM4MzkzYTJhMzczNjRlYWNkZTQ4ZWQyZTVkZjk0MmQ0YjE3NTAzNjVhODlmYTQyM2FiYjYyNTg4NmIxNmNiMWRkYzA3ZTk0OTQ2OTYiLCJpYXQiOjE3Mzg2NTIxNzIuMTY4OTExLCJuYmYiOjE3Mzg2NTIxNzIuMTY4OTEzLCJleHAiOjE3NzAxODgxNzIuMTY2Nzk2LCJzdWIiOiIyOTAiLCJzY29wZXMiOltdfQ.YsUugqExxdrlqLo7R0-0HNbV4JdnU3KtN76lx2ZmXL1W9C5CJ7EiAECxPdwiSHEPjEE14d4ujL9nAD40s-P-nhsJgmB4FBRmfVj135jQj1xlQH_k6fnN2W1KBW2iNNp1Ab7e_hw3G5kCu5UMHhHWDx98dbnyrMQa2mkPiKmgJGhwfzwRCivlRbjVTlPnbyoiWXCKNsg1a1yDtmT_4pzxdVnf1d7aOI6Rf3acRlJPn-kfrhYOkPcESv-LfmHv_UZA6R02MjJIEpyriEAi7MtC64IdqURvGEN73skdY6xDZTlSnOV_2rBiwac_kEM1aEgI6i9Z0yTOXkyhbtHMt57dUP10-qNKCvM1u6p3jYsx_McRrb7d8G8QMUlM4z0rikYM7sMm1mgKUBqdUwYWUFoZ9RJnHB7BDhZAtTfuMQFT9h7KrXu4USBWXZK3D3KLoegPQ3U8tTpjoO9Okd6y8NUurhJtyGBmTqaqgxf7XtQbYMwBKIPfCETEBGPKZdVt0vuZmUBb0k3sgPMRxljaz1nVEluR7kjlvwMpkby2TQWYwSFNHk5sZRPShjzXU4peLcBQfauyBFI5h7dDRgexDElfeCNH5MEZL76PKelj9qEpavTv9RiVPMxeceqOr-e_qRjErUzGXiC8nlNF8v4nOlIMvDAjcudv9s79a9he0xAP0hQ'
-      });
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
       Response response = await _apiClient
           .get(ApiConstant.getAllStream, queryParameters: {'paginate': false});
       if (response.statusCode == 200) {

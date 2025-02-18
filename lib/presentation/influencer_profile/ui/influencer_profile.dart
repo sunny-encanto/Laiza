@@ -1,8 +1,10 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/core/utils/api_constant.dart';
 import 'package:laiza/data/blocs/influencer_profile_bloc/influencer_profile_bloc.dart';
 import 'package:laiza/data/models/influencer_profile_model/influencer_profile_model.dart';
 import 'package:laiza/data/services/share.dart';
 import 'package:laiza/presentation/influencer_profile/ui/product_view/product_view.dart';
+import 'package:laiza/widgets/custom_popup_menu_button.dart';
 
 import '../../../data/models/user/user_model.dart';
 import 'post_view/post_view.dart';
@@ -45,11 +47,21 @@ class InfluencerProfileScreen extends StatelessWidget {
                     (BuildContext context, bool innerBoxIsScrolled) {
                   return <Widget>[
                     SliverAppBar(
-                      actions: const [
-                        Icon(
-                          Icons.more_vert,
-                          color: Colors.black,
-                        )
+                      actions: [
+                        CustomPopupMenuButton(
+                            menuItems: const [
+                              PopupMenuItem(
+                                value: 1,
+                                child: Text('Report User'),
+                              )
+                            ],
+                            onItemSelected: (val) {
+                              if (val == 1) {
+                                Navigator.of(context).pushNamed(
+                                    AppRoutes.reportUserScreen,
+                                    arguments: '1');
+                              }
+                            })
                       ],
                       iconTheme: const IconThemeData(color: Colors.black),
                       pinned: true,
@@ -83,7 +95,9 @@ class InfluencerProfileScreen extends StatelessWidget {
                             CustomImageView(
                               width: SizeUtils.width,
                               height: 150.v,
-                              imagePath: ImageConstant.profileBg,
+                              imagePath: state.influencerProfileModel.data
+                                  .influencer.profileBg,
+                              fit: BoxFit.fill,
                             ),
                             //Profile Card
                             _buildProfileCard(
@@ -117,25 +131,51 @@ class InfluencerProfileScreen extends StatelessWidget {
                                         .copyWith(fontSize: 16.fSize),
                                   ),
                                   SizedBox(height: 24.v),
-                                  SizedBox(
-                                    height: 185.v,
-                                    child: ListView.builder(
-                                        itemCount: state.influencerProfileModel
-                                            .data.collections.length,
-                                        scrollDirection: Axis.horizontal,
-                                        itemBuilder: (context, index) {
-                                          Collection collection = state
-                                              .influencerProfileModel
-                                              .data
-                                              .collections[index];
-                                          return CollectionCardWidget(
-                                              collection: collection);
-                                        }),
-                                  ),
+                                  state.influencerProfileModel.data.collections
+                                          .isEmpty
+                                      ? Center(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              CustomImageView(
+                                                imagePath:
+                                                    ImageConstant.noPostFound,
+                                                height: 100.v,
+                                              ),
+                                              SizedBox(height: 15.v),
+                                              Text(
+                                                'No Post Yet',
+                                                style: textTheme.titleMedium,
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      : SizedBox(
+                                          height: 185.v,
+                                          child: ListView.builder(
+                                              itemCount: state
+                                                  .influencerProfileModel
+                                                  .data
+                                                  .collections
+                                                  .length,
+                                              scrollDirection: Axis.horizontal,
+                                              itemBuilder: (context, index) {
+                                                Collection collection = state
+                                                    .influencerProfileModel
+                                                    .data
+                                                    .collections[index];
+                                                return CollectionCardWidget(
+                                                    collection: collection);
+                                              }),
+                                        ),
                                   // _buildTopProductItem(state
                                   //     .influencerProfileModel.data.collections),
                                   SizedBox(height: 18.v),
-                                  _buildNotifyMeBanner(textTheme),
+                                  _buildNotifyMeBanner(
+                                      textTheme,
+                                      state.influencerProfileModel.data
+                                          .influencer),
                                   SizedBox(height: 24.v),
                                   SizedBox(height: 24.v),
                                 ],
@@ -176,7 +216,7 @@ class InfluencerProfileScreen extends StatelessWidget {
   //   return ;
   // }
 
-  Container _buildNotifyMeBanner(TextTheme textTheme) {
+  Container _buildNotifyMeBanner(TextTheme textTheme, UserModel user) {
     return Container(
       width: SizeUtils.width,
       padding: EdgeInsets.all(8.h),
@@ -196,7 +236,7 @@ class InfluencerProfileScreen extends StatelessWidget {
                         fontSize: 14.fSize),
                     children: <TextSpan>[
                       TextSpan(
-                          text: ' Carol Danvers',
+                          text: ' ${user.name}',
                           style: textTheme.bodySmall!.copyWith(
                             color: Colors.pink,
                             fontWeight: FontWeight.w800,
@@ -238,8 +278,7 @@ class InfluencerProfileScreen extends StatelessWidget {
               width: 80.v,
               height: 80.v,
               fit: BoxFit.fill,
-              imagePath:
-                  'https://as2.ftcdn.net/v2/jpg/03/83/25/83/1000_F_383258331_D8imaEMl8Q3lf7EKU2Pi78Cn0R7KkW9o.jpg',
+              imagePath: user.profileImg,
             ),
           ),
         ],
@@ -352,7 +391,7 @@ class InfluencerProfileScreen extends StatelessWidget {
         ),
         CustomImageView(
           onTap: () {
-            shareContent('Profile url');
+            shareContent('${ApiConstant.baseUrlWeb}/profile?id=${user.id}');
           },
           imagePath: ImageConstant.shareIcon,
           color: Colors.black,

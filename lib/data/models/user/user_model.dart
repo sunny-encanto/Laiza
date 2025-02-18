@@ -4,7 +4,7 @@ class UserModel {
   String? id;
   String? name;
   String? email;
-  String? profile;
+  String? profileBg;
   String? token;
   String? role;
   String? profileImg;
@@ -46,7 +46,7 @@ class UserModel {
     this.id,
     this.name,
     this.email,
-    this.profile,
+    this.profileBg,
     this.token,
     this.role,
     this.profileImg,
@@ -91,7 +91,7 @@ class UserModel {
         id: id,
         name: name,
         email: email,
-        profile: profile,
+        profileBg: profileBg,
         token: token,
         role: role,
         profileImg: profileImg,
@@ -134,7 +134,8 @@ class UserModel {
         id: id,
         name: json['name'] ?? "",
         email: json['email'] ?? "",
-        profile: json['profile'] ?? "",
+        // profile: json['profile'] ?? "",
+        profileBg: json['background_img'] ?? "",
         token: json['token'] ?? "",
         role: json['role'] ?? "",
         profileImg: json['profile_img'],
@@ -170,7 +171,7 @@ class UserModel {
     if (id != null) data['id'] = id;
     if (name != null) data['name'] = name;
     if (email != null) data['email'] = email;
-    if (profile != null) data['profile'] = profile;
+    if (profileBg != null) data['background_img'] = profileBg;
     if (token != null) data['token'] = token;
     if (role != null) data['role'] = role;
     if (profileImg != null) data['profile_img'] = profileImg;

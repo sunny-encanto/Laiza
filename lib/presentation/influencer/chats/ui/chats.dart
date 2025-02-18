@@ -154,9 +154,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
         height: 50.h,
         width: 50.h,
         radius: BorderRadius.circular(50.h),
-        imagePath: user.profile.toString().isEmpty
+        imagePath: user.profileImg.toString().isEmpty
             ? ImageConstant.defaultProfile
-            : user.profile,
+            : user.profileImg,
       ),
       trailing: Visibility(
         visible: count != '',

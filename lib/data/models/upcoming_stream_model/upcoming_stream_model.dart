@@ -58,7 +58,9 @@ class UpComingStream {
         description: json["description"],
         date: json["date"],
         time: json["time"],
-        productId: List<String>.from(json["product_id"].map((x) => x)),
+        productId: json["product_id"] == null
+            ? <String>[]
+            : List<String>.from(json["product_id"].map((x) => x)),
         users: UserModel.fromJson(
             json: json["users"], id: (json['users']['id']).toString()),
       );

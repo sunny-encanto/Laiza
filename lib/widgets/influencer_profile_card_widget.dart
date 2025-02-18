@@ -49,27 +49,27 @@ class InfluencerProfileCardWidget extends StatelessWidget {
                   imagePath: ImageConstant.groupIcon, color: Colors.grey),
               SizedBox(width: 5.h),
               Text(
-                '10K Followers',
+                '${userModel.followersCount} Followers',
                 style: textTheme.bodySmall,
               ),
             ],
           ),
           const Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              3,
-              (index) => CustomImageView(
-                margin: EdgeInsets.only(right: 3.h),
-                height: 50.h,
-                width: 50.v,
-                radius: BorderRadius.circular(6.h),
-                fit: BoxFit.fill,
-                imagePath:
-                    'https://farm9.staticflickr.com/8295/8007075227_dc958c1fe6_z_d.jpg',
-              ),
-            ),
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: List.generate(
+          //     3,
+          //     (index) => CustomImageView(
+          //       margin: EdgeInsets.only(right: 3.h),
+          //       height: 50.h,
+          //       width: 50.v,
+          //       radius: BorderRadius.circular(6.h),
+          //       fit: BoxFit.fill,
+          //       imagePath:
+          //           'https://farm9.staticflickr.com/8295/8007075227_dc958c1fe6_z_d.jpg',
+          //     ),
+          //   ),
+          // ),
           SizedBox(height: 12.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 5.h),

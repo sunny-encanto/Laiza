@@ -55,6 +55,16 @@ class UserRepository {
       } else {
         data.remove('profile_img');
       }
+      // Conditionally add the image key if the bg profile image is available
+      if (user.profileBg != null && !user.profileBg!.contains('https:')) {
+        data['background_img'] = await MultipartFile.fromFile(
+          user.profileBg!,
+          filename: user.profileBg!.split('/').last,
+        );
+      } else {
+        data.remove('background_img');
+      }
+
       // Create FormData from the map
       FormData formData = FormData.fromMap(data);
       Response response =

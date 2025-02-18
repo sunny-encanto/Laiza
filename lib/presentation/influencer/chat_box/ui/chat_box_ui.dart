@@ -13,9 +13,12 @@ import '../../../../data/services/notification_service.dart';
 
 class ChatBoxScreen extends StatelessWidget {
   final String id;
+
   ChatBoxScreen({super.key, required this.id});
+
   final _messageController = TextEditingController();
   final ScrollController listScrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -140,7 +143,7 @@ class ChatBoxScreen extends StatelessWidget {
                       width: 50.h,
                       radius: BorderRadius.circular(50.h),
                       fit: BoxFit.fill,
-                      imagePath: user.profile,
+                      imagePath: user.profileImg,
                     ),
                     SizedBox(width: 5.h),
                     Text(
@@ -168,8 +171,8 @@ class ChatBoxScreen extends StatelessWidget {
             width: 30.h,
             radius: BorderRadius.circular(30.h),
             fit: BoxFit.fill,
-            imagePath: user.profile.toString().isNotEmpty
-                ? user.profile
+            imagePath: user.profileImg.toString().isNotEmpty
+                ? user.profileImg
                 : ImageConstant.defaultProfile,
           );
         });

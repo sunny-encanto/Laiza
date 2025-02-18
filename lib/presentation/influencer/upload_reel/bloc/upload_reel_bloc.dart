@@ -85,6 +85,7 @@ class UploadReelBloc extends Bloc<UploadReelEvent, UploadReelState> {
 
   FutureOr<void> _onReelAdd(
       AddReelEvent event, Emitter<UploadReelState> emit) async {
+    emit(UploadReelLoadingSate());
     Media? media = await MediaServices.pickFilePathAndExtension();
     if (media != null) {
       emit(ReelSelectedState(media.path));
