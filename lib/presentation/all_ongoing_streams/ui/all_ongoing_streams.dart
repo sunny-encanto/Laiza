@@ -32,11 +32,13 @@ class AllOngoingStreamsScreen extends StatelessWidget {
                 .toList();
             return liveStreamModel.isEmpty
                 ? const NoOngoingStreamsScreen()
-                : MasonryGridView.count(
+                : MasonryGridView.builder(
+                    gridDelegate:
+                        SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2),
                     padding: EdgeInsets.all(5.h),
                     shrinkWrap: true,
                     itemCount: liveStreamModel.length,
-                    crossAxisCount: 2,
                     mainAxisSpacing: 5.v,
                     crossAxisSpacing: 5.h,
                     itemBuilder: (context, index) {

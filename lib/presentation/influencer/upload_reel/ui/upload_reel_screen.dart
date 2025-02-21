@@ -2,7 +2,6 @@ import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/models/product_model/product.dart';
 import 'package:laiza/data/models/selectionPopupModel/selection_popup_model.dart';
 import 'package:laiza/data/repositories/product_repository/product_repository.dart';
-import 'package:multi_dropdown/multi_dropdown.dart';
 
 import '../../../../data/blocs/product_bloc/product_bloc.dart';
 import '../../../../data/models/reels_model/reel.dart';
@@ -18,17 +17,13 @@ class UploadReelScreen extends StatelessWidget {
   SelectionPopupModel? selectedProduct;
   final tittleController = TextEditingController();
   final desController = TextEditingController();
-  MultiSelectController<SelectionPopupModel> productController =
-      MultiSelectController<SelectionPopupModel>();
 
-  // final productController = TextEditingController();
+  final productController = TextEditingController();
   final hashTagController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   String coverImage = '';
   String reelPath = '';
   List<SelectionPopupModel> selectedProducts = <SelectionPopupModel>[];
-  List<DropdownItem<SelectionPopupModel>> initialProduct =
-      <DropdownItem<SelectionPopupModel>>[];
 
   @override
   Widget build(BuildContext context) {
@@ -279,26 +274,46 @@ class UploadReelScreen extends StatelessWidget {
                             Product product = state.products
                                 .where((item) => item.id == int.parse(id))
                                 .first;
+
                             SelectionPopupModel model = SelectionPopupModel(
-                                title: product.productName, value: product.id);
-                            initialProduct.add(
-                                DropdownItem<SelectionPopupModel>(
-                                    label: model.title, value: model));
-                            productController.selectedItems.add(
-                                DropdownItem(label: model.title, value: model));
+                                title: product.productName,
+                                value: product.id.toInt());
+                            selectedProducts.add(model);
+                            productController.text = productController
+                                    .text.isEmpty
+                                ? model.title
+                                : "${productController.text},${model.title}";
                           }
                         }
-                        return MultiSelectDropdownWithSearch(
-                          initialItems: initialProduct,
-                          searchController: productController,
-                          items: state.products
-                              .map((Product product) => SelectionPopupModel(
-                                  value: product.id.toInt(),
-                                  title: product.productName))
-                              .toList(),
-                          hint: 'Select Product',
-                          onChanged: (value) {
-                            selectedProducts = value;
+                        return CustomTextFormField(
+                          controller: productController,
+                          hintText: 'Select Product',
+                          readOnly: true,
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => SearchableMultiSelectDialog(
+                                selectedItems: selectedProducts,
+                                items: state.products
+                                    .map((Product product) =>
+                                        SelectionPopupModel(
+                                            value: product.id.toInt(),
+                                            title: product.productName))
+                                    .toList(),
+                                onSelectionChanged: (value) {
+                                  productController.clear();
+                                  selectedProducts.clear();
+                                  selectedProducts = value;
+
+                                  for (var item in selectedProducts) {
+                                    productController.text = productController
+                                            .text.isEmpty
+                                        ? item.title
+                                        : "${productController.text},${item.title}";
+                                  }
+                                },
+                              ),
+                            );
                           },
                         );
                       } else {

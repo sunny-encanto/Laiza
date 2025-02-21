@@ -18,6 +18,12 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
+      backgroundColor: Colors.white,
+      // appBar: AppBar(
+      //   toolbarHeight: 30.v,
+      //   leading:
+      //       IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_back)),
+      // ),
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: BlocProvider(
@@ -176,26 +182,29 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomSheet: Padding(
-        padding: EdgeInsets.all(10.h),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              context.translate('don’t_have_an_account'),
-              style: textTheme.bodySmall?.copyWith(fontSize: 16.fSize),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.of(context).pushNamed(AppRoutes.signUpScreen);
-              },
-              child: Text(
-                context.translate('sign_up'),
-                style: textTheme.titleMedium
-                    ?.copyWith(decoration: TextDecoration.underline),
+      bottomSheet: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: EdgeInsets.all(10.h),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                context.translate('don’t_have_an_account'),
+                style: textTheme.bodySmall?.copyWith(fontSize: 16.fSize),
               ),
-            ),
-          ],
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).pushNamed(AppRoutes.signUpScreen);
+                },
+                child: Text(
+                  context.translate('sign_up'),
+                  style: textTheme.titleMedium
+                      ?.copyWith(decoration: TextDecoration.underline),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

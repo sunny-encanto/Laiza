@@ -36,12 +36,12 @@ class SocialLoginWidgets extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CustomImageView(
-            onTap: () {
-              Navigator.of(context).pushNamed(AppRoutes.logInWithPhoneScreen);
-            },
-            imagePath: ImageConstant.phoneAuth,
-          ),
+          // CustomImageView(
+          //   onTap: () {
+          //     Navigator.of(context).pushNamed(AppRoutes.logInWithPhoneScreen);
+          //   },
+          //   imagePath: ImageConstant.phoneAuth,
+          // ),
           SizedBox(width: 18.v),
           BlocBuilder<LoginBloc, LoginState>(
             buildWhen: (previous, current) => false,

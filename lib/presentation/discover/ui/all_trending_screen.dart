@@ -5,7 +5,7 @@ import '../../../data/models/reels_model/reel.dart';
 import '../../../data/models/trending_items_model/trending_items_model.dart';
 import '../../../data/models/user/user_model.dart';
 import '../../../widgets/play_button.dart';
-import '../../Influencer_profile/ui/post_view/post_view.dart';
+import '../../reels/ui/reel_screen.dart';
 import '../../shimmers/loading_grid.dart';
 
 class AllTrendingScreen extends StatelessWidget {
@@ -53,11 +53,13 @@ class TrendingItemGridWidget extends StatelessWidget {
               onRefresh: () => Future.sync(() {
                 context.read<TrendingNowBloc>().add(FetchTrendingNowEvent());
               }),
-              child: MasonryGridView.count(
+              child: MasonryGridView.builder(
+                gridDelegate:
+                    const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3),
                 physics: physics,
                 shrinkWrap: true,
                 itemCount: state.trendingNow.length,
-                crossAxisCount: 3,
                 mainAxisSpacing: 0,
                 crossAxisSpacing: 0,
                 itemBuilder: (BuildContext context, index) {
@@ -114,9 +116,8 @@ class TrendingItemGridWidget extends StatelessWidget {
                               (item) => item.id == trendingItems.id);
                           if (trendingItems.type == TrendingItemType.REEL) {
                             Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  VideoReelPageOtherInfluencer(
-                                      initialIndex: initialIndex, reels: reels),
+                              builder: (context) => ReelPlayerWidget(
+                                  initialIndex: initialIndex, reels: reels),
                             ));
                           }
                         },

@@ -45,23 +45,49 @@ class LiveScreen extends StatelessWidget {
                     } else if (state is FollowingErrorState) {
                       return Center(child: Text(state.message));
                     } else if (state is FollowingLoadedState) {
-                      return SizedBox(
-                          height: 114.v,
-                          child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: state.followings.length,
-                              itemBuilder: (context, index) {
-                                Follower following = state.followings[index];
-                                return Padding(
-                                  padding: EdgeInsets.only(left: 8.h),
-                                  child: profileWidget(context, following),
-                                );
-                              }));
+                      return state.followings.isEmpty
+                          ? CustomImageView(
+                              imagePath: ImageConstant.noFollowed,
+                            )
+                          : SizedBox(
+                              height: 114.v,
+                              child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: state.followings.length,
+                                  itemBuilder: (context, index) {
+                                    Follower following =
+                                        state.followings[index];
+                                    return Padding(
+                                      padding: EdgeInsets.only(left: 8.h),
+                                      child: profileWidget(context, following),
+                                    );
+                                  }));
                     }
                     return const SizedBox.shrink();
                   },
                 ),
               ),
+              SizedBox(height: 28.v),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Ongoing Streams',
+                    style: textTheme.titleLarge,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context)
+                          .pushNamed(AppRoutes.allOngoingStreamsScreen);
+                    },
+                    child: Text(
+                      'View All',
+                      style: textTheme.bodySmall,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 28.v),
               StreamBuilder<QuerySnapshot>(
                   stream: FirebaseServices.getOnGoingLiveStream(),
                   builder: (context, snapshot) {
@@ -77,48 +103,23 @@ class LiveScreen extends StatelessWidget {
                             e.data() as Map<String, dynamic>))
                         .toList();
                     return liveStreamModel.isNotEmpty
-                        ? Column(
-                            children: [
-                              SizedBox(height: 28.v),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Ongoing Streams',
-                                    style: textTheme.titleLarge,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.of(context).pushNamed(
-                                          AppRoutes.allOngoingStreamsScreen);
-                                    },
-                                    child: Text(
-                                      'View All',
-                                      style: textTheme.bodySmall,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 28.v),
-                              SizedBox(
-                                height:
-                                    liveStreamModel.isNotEmpty ? 250.v : 0.v,
-                                child: ListView.builder(
-                                  itemCount: liveStreamModel.length,
-                                  scrollDirection: Axis.horizontal,
-                                  itemBuilder: (context, index) => Padding(
-                                    padding: EdgeInsets.only(right: 10.h),
-                                    child: StreamsCard(
-                                      isLive: true,
-                                      model: liveStreamModel[index],
-                                    ),
-                                  ),
+                        ? SizedBox(
+                            height: liveStreamModel.isNotEmpty ? 250.v : 0.v,
+                            child: ListView.builder(
+                              itemCount: liveStreamModel.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) => Padding(
+                                padding: EdgeInsets.only(right: 10.h),
+                                child: StreamsCard(
+                                  isLive: true,
+                                  model: liveStreamModel[index],
                                 ),
                               ),
-                            ],
+                            ),
                           )
-                        : const SizedBox.shrink();
+                        : CustomImageView(
+                            imagePath: ImageConstant.noOngoing,
+                          );
                   }),
               SizedBox(height: 36.v),
               Text(
@@ -146,24 +147,29 @@ class LiveScreen extends StatelessWidget {
                               .map((e) => LiveStreamModel(
                                     liveId: e.id.toString(),
                                     userName: e.users.name ?? '',
+                                    title: e.title,
                                     userId: e.users.id,
                                     userProfile: e.users.profileImg,
                                   ))
                               .toList();
-                      return SizedBox(
-                        height: liveStreamModel.isNotEmpty ? 250.v : 0.v,
-                        child: ListView.builder(
-                          itemCount: liveStreamModel.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) => Padding(
-                            padding: EdgeInsets.only(right: 10.h),
-                            child: StreamsCard(
-                              isLive: false,
-                              model: liveStreamModel[index],
-                            ),
-                          ),
-                        ),
-                      );
+                      return liveStreamModel.isNotEmpty
+                          ? SizedBox(
+                              height: liveStreamModel.isNotEmpty ? 250.v : 0.v,
+                              child: ListView.builder(
+                                itemCount: liveStreamModel.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) => Padding(
+                                  padding: EdgeInsets.only(right: 10.h),
+                                  child: StreamsCard(
+                                    isLive: false,
+                                    model: liveStreamModel[index],
+                                  ),
+                                ),
+                              ),
+                            )
+                          : CustomImageView(
+                              imagePath: ImageConstant.noUpcoming,
+                            );
                     }
                     return const SizedBox.shrink();
                   },
@@ -234,21 +240,22 @@ class LiveScreen extends StatelessWidget {
                   fit: BoxFit.fill,
                 ),
               ),
-              Positioned(
-                bottom: -5.v,
-                child: Container(
-                  width: 42.h,
-                  height: 19.v,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color: const Color(0xFFFF4365),
-                      borderRadius: BorderRadius.circular(10.h)),
-                  child: Text(
-                    'Live',
-                    style: TextStyle(color: Colors.white, fontSize: 12.fSize),
-                  ),
-                ),
-              )
+              //TODO:Need to unComment
+              // Positioned(
+              //   bottom: -5.v,
+              //   child: Container(
+              //     width: 42.h,
+              //     height: 19.v,
+              //     alignment: Alignment.center,
+              //     decoration: BoxDecoration(
+              //         color: const Color(0xFFFF4365),
+              //         borderRadius: BorderRadius.circular(10.h)),
+              //     child: Text(
+              //       'Live',
+              //       style: TextStyle(color: Colors.white, fontSize: 12.fSize),
+              //     ),
+              //   ),
+              // )
             ],
           ),
           SizedBox(height: 12.h),

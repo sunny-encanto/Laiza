@@ -2,6 +2,7 @@ class LiveStreamModel {
   final String? liveId;
   final String? userId;
   final String? userName;
+  final String? title;
   final String? userProfile;
   final int? viewCount;
 
@@ -9,6 +10,7 @@ class LiveStreamModel {
     this.liveId,
     this.userId,
     this.userName,
+    this.title,
     this.userProfile,
     this.viewCount,
   });

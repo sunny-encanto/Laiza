@@ -13,7 +13,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   Future<void> _onSplashStarted(
       SplashStarted event, Emitter<SplashState> emit) async {
     // Simulate loading time, e.g., fetching some data or checking authentication
-    await Future.delayed(const Duration(seconds: 10));
+    await Future.delayed(const Duration(seconds: 7));
     // Emit SplashSuccess state after delay
     emit(const SplashSuccess());
   }

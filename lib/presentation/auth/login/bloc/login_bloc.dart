@@ -72,12 +72,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (user != null) {
         LoginModel model = await _authRepository.socialLogin(
             email: user.email ?? '', source: LoginSource.google.name);
-
         PrefUtils.setUserName(user.displayName ?? '');
         PrefUtils.setUserEmail(user.email ?? '');
         PrefUtils.setUserProfile(user.photoURL ?? '');
         PrefUtils.setToken(model.data?.token ?? '');
-
         await setUserInFirebase(
             authResult, model.data?.user?.id?.toString() ?? '');
         UserRepository userRepository = UserRepository();
@@ -85,6 +83,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(SocialLoginSuccessState(profileModel.isProfileComplete == 0));
       }
     } catch (e) {
+      await FirebaseServices.googleSignIn.signOut();
       emit(LoginError(e.toString()));
     }
   }

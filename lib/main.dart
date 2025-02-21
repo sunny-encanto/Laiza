@@ -14,6 +14,7 @@ import 'data/repositories/collection_repository/collection_repository.dart';
 import 'data/repositories/comments_repository/comments_repository.dart';
 import 'data/repositories/connections_repository/connections_repository.dart';
 import 'data/repositories/live_stream_repository/live_stream_repository.dart';
+import 'data/repositories/order_repository/order_repository.dart';
 import 'data/repositories/rating_repository/rating_repository.dart';
 import 'data/services/deeplink_service.dart';
 import 'data/services/firebase_messaging_service.dart';
@@ -100,6 +101,8 @@ class _MyAppState extends State<MyApp> {
               create: (BuildContext context) => CollectionRepository()),
           RepositoryProvider(
               create: (BuildContext context) => RatingRepository()),
+          RepositoryProvider(
+              create: (BuildContext context) => OrderRepository()),
         ],
         child: MultiBlocProvider(
           providers: [

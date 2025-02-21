@@ -1,71 +1,101 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/models/selectionPopupModel/selection_popup_model.dart';
-import 'package:multi_dropdown/multi_dropdown.dart';
 
-class MultiSelectDropdownWithSearch extends StatelessWidget {
-  MultiSelectDropdownWithSearch({
+class SearchableMultiSelectDialog extends StatefulWidget {
+  final List<SelectionPopupModel> items;
+  final List<SelectionPopupModel> selectedItems;
+  final Function(List<SelectionPopupModel>) onSelectionChanged;
+
+  const SearchableMultiSelectDialog({
     super.key,
-    required this.searchController,
     required this.items,
-    required this.hint,
-    this.validator,
-    this.onChanged,
-    required this.initialItems,
-  }) {
-    // Initialize the selected items
-    searchController.selectedItems.addAll(initialItems);
-    print("Initial selected items: ${searchController.selectedItems}");
-    print("Initial selected items: ${initialItems.length}");
+    required this.selectedItems,
+    required this.onSelectionChanged,
+  });
+
+  @override
+  State<SearchableMultiSelectDialog> createState() =>
+      _SearchableMultiSelectDialogState();
+}
+
+class _SearchableMultiSelectDialogState
+    extends State<SearchableMultiSelectDialog> {
+  late List<SelectionPopupModel> _filteredItems;
+  late List<SelectionPopupModel> _selectedItems;
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredItems = [...widget.items];
+    _selectedItems = [...widget.selectedItems];
   }
 
-  final MultiSelectController<SelectionPopupModel> searchController;
-  final List<SelectionPopupModel> items;
-  final String hint;
-  final FormFieldValidator<String>? validator;
-  final ValueChanged<List<SelectionPopupModel>>? onChanged;
-  final List<DropdownItem<SelectionPopupModel>> initialItems;
+  void _filterItems(String query) {
+    setState(() {
+      _filteredItems = widget.items
+          .where(
+              (item) => item.title.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MultiDropdown<SelectionPopupModel>(
-      items: items
-          .map((e) =>
-              DropdownItem<SelectionPopupModel>(label: e.title, value: e))
-          .toList(),
-      controller: searchController,
-      enabled: true,
-      searchEnabled: true,
-      chipDecoration: ChipDecoration(
-        deleteIcon: Icon(
-          Icons.close,
-          color: Colors.white,
-          size: 15.h,
+    return AlertDialog(
+      title: const Text('Select'),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                hintText: 'Search...',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: _filterItems,
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: _filteredItems.length,
+                itemBuilder: (context, index) {
+                  final item = _filteredItems[index];
+                  return CheckboxListTile(
+                    title: Text(item.title),
+                    value: _selectedItems.contains(item),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        if (_selectedItems.contains(item)) {
+                          _selectedItems.remove(item);
+                        } else {
+                          _selectedItems.add(item);
+                        }
+                      });
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
         ),
-        labelStyle: const TextStyle(color: Colors.white),
-        backgroundColor: AppColor.primary,
-        wrap: true,
-        runSpacing: 2,
-        spacing: 10,
       ),
-      fieldDecoration: FieldDecoration(
-        hintText: hint,
-        showClearIcon: false,
-        border: InputBorder.none,
-        focusedBorder: InputBorder.none,
-      ),
-      dropdownDecoration: const DropdownDecoration(
-        marginTop: 2,
-        maxHeight: 500,
-      ),
-      dropdownItemDecoration: DropdownItemDecoration(
-        selectedIcon: const Icon(Icons.check_box, color: Colors.green),
-        disabledIcon: Icon(Icons.lock, color: Colors.grey.shade300),
-      ),
-      onSelectionChange: (List<SelectionPopupModel> selectedItems) {
-        if (onChanged != null) {
-          onChanged!(selectedItems);
-        }
-      },
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () {
+            widget.onSelectionChanged(_selectedItems);
+            Navigator.pop(context);
+          },
+          child: const Text('OK'),
+        ),
+      ],
     );
   }
 }

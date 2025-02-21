@@ -5,6 +5,12 @@ import 'package:laiza/core/utils/date_time_utils.dart';
 import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/data/models/live_stream_model.dart/live_stream_model.dart';
 
+import '../../../../data/blocs/product_bloc/product_bloc.dart';
+import '../../../../data/models/product_model/product.dart';
+import '../../../../data/models/selectionPopupModel/selection_popup_model.dart';
+import '../../../../data/repositories/product_repository/product_repository.dart';
+import '../../../../widgets/multi_select_dropdown.dart';
+
 class ScheduleStreamScreen extends StatelessWidget {
   ScheduleStreamScreen({super.key});
 
@@ -12,8 +18,10 @@ class ScheduleStreamScreen extends StatelessWidget {
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _productLinkController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final TextEditingController productController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  List<SelectionPopupModel> selectedProducts = <SelectionPopupModel>[];
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +87,60 @@ class ScheduleStreamScreen extends StatelessWidget {
                   validator: (value) {
                     return validateField(value: value!, title: 'title');
                   },
+                ),
+                SizedBox(height: 24.v),
+                Text(
+                  'Select Product',
+                  style: textTheme.titleMedium,
+                ),
+                SizedBox(height: 20.v),
+                BlocProvider(
+                  create: (context) =>
+                      ProductBloc(context.read<ProductRepository>()),
+                  child: BlocBuilder<ProductBloc, ProductState>(
+                    builder: (context, state) {
+                      if (state is ProductInitial) {
+                        context.read<ProductBloc>().add(LoadProducts());
+                        return const SizedBox.shrink();
+                      } else if (state is ProductLoading) {
+                        return const SizedBox.shrink();
+                      } else if (state is ProductLoaded) {
+                        return CustomTextFormField(
+                          controller: productController,
+                          hintText: 'Select Product',
+                          readOnly: true,
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => SearchableMultiSelectDialog(
+                                selectedItems: selectedProducts,
+                                items: state.products
+                                    .map((Product product) =>
+                                        SelectionPopupModel(
+                                            value: product.id.toInt(),
+                                            title: product.productName))
+                                    .toList(),
+                                onSelectionChanged: (value) {
+                                  productController.clear();
+                                  selectedProducts.clear();
+                                  selectedProducts = value;
+
+                                  for (var item in selectedProducts) {
+                                    productController.text = productController
+                                            .text.isEmpty
+                                        ? item.title
+                                        : "${productController.text},${item.title}";
+                                  }
+                                },
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    },
+                  ),
                 ),
                 SizedBox(height: 20.v),
                 Text(
@@ -214,7 +276,9 @@ class ScheduleStreamScreen extends StatelessWidget {
                         description: _descriptionController.text,
                         date: _dateController.text,
                         time: _timeController.text,
-                        productIds: [],
+                        productIds: selectedProducts
+                            .map((item) => item.value.toString())
+                            .toList(),
                       ));
                 }
               },

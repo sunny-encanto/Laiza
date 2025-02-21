@@ -160,11 +160,13 @@ class FollowingScreen extends StatelessWidget {
                         child: Text(state.message),
                       );
                     } else if (state is AllInfluencerLoaded) {
-                      return MasonryGridView.count(
+                      return MasonryGridView.builder(
+                        gridDelegate:
+                            const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2),
                         shrinkWrap: true,
                         itemCount: state.influencers.length,
                         physics: const NeverScrollableScrollPhysics(),
-                        crossAxisCount: 2,
                         mainAxisSpacing: 5.v,
                         crossAxisSpacing: 5.h,
                         itemBuilder: (context, index) {

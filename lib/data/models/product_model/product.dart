@@ -12,9 +12,11 @@ class Product {
   String description;
   String hashtags;
   ProductCategory category;
+  int discount;
 
   // Category subcategory;
   String price;
+  String finalPrice;
   int stockQuantity;
   List<String> availableSize;
   List<String> availableColor;
@@ -42,6 +44,7 @@ class Product {
     required this.category,
     // required this.subcategory,
     required this.price,
+    required this.finalPrice,
     required this.stockQuantity,
     required this.availableSize,
     required this.availableColor,
@@ -58,6 +61,7 @@ class Product {
     required this.ratings,
     required this.averageRating,
     required this.totalRatings,
+    required this.discount,
   });
 
   Product copyWith({bool? isAddedToWishlist, bool? isAsked}) {
@@ -85,6 +89,8 @@ class Product {
       ratings: ratings,
       averageRating: averageRating,
       totalRatings: totalRatings,
+      finalPrice: finalPrice,
+      discount: discount,
     );
   }
 
@@ -99,6 +105,7 @@ class Product {
           : ProductCategory.fromJson(json["category"]),
       // subcategory: Category.fromJson(json["subcategory"]),
       price: json["price"],
+      finalPrice: json["final_price"] ?? "",
       stockQuantity: json["stock_quantity"] ?? 0,
       availableSize: json["available_size"] == null
           ? <String>[]
@@ -132,6 +139,7 @@ class Product {
           : List<Rating>.from(json["ratings"].map((x) => Rating.fromJson(x))),
       averageRating: json["average_rating"] ?? 0,
       totalRatings: json["total_ratings"] ?? 0,
+      discount: json["product_discount"] ?? 0,
       additionalInfo: json['additional_info'] == null
           ? null
           : ProductAdditionalInfo.fromJson(json['additional_info']));
@@ -145,6 +153,7 @@ class Product {
         "category": category.toJson(),
         // "subcategory": subcategory.toJson(),
         "price": price,
+        "final_price": finalPrice,
         "stock_quantity": stockQuantity,
         "available_size": List<dynamic>.from(availableSize.map((x) => x)),
         "available_color": List<dynamic>.from(availableColor.map((x) => x)),
@@ -160,6 +169,7 @@ class Product {
         "ratings": List<dynamic>.from(ratings.map((x) => x.toJson())),
         "average_rating": averageRating,
         "total_ratings": totalRatings,
+        "product_discount": discount,
       };
 }
 

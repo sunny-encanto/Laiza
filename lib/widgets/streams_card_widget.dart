@@ -87,6 +87,13 @@ class StreamsCard extends StatelessWidget {
                 ),
               ],
             ),
+          if (!isLive)
+            Center(
+              child: Text(
+                model.title ?? '',
+                style: textTheme.bodySmall,
+              ),
+            ),
           SizedBox(height: 8.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 5.h),

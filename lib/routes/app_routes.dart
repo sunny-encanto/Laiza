@@ -11,6 +11,7 @@ import 'package:laiza/data/repositories/product_repository/product_repository.da
 import 'package:laiza/data/repositories/rating_repository/rating_repository.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 import 'package:laiza/presentation/add_review/bloc/add_rating_bloc.dart';
+import 'package:laiza/presentation/creator/ui/all_creator_screen.dart';
 import 'package:laiza/presentation/privacy_policy/ui/bloc/privacy_policy_bloc.dart';
 
 import '../core/app_export.dart';
@@ -18,6 +19,7 @@ import '../presentation/add_review/ui/add_rating.dart';
 import '../presentation/auth/change_password/ui/create_password.dart';
 import '../presentation/auth/settings_page/ui/settings_page.dart';
 import '../presentation/influencer/order_management/bloc/influencer_orders_bloc.dart';
+import '../presentation/order_summary/ui/order_summary.dart';
 import '../presentation/report_user/ui/report_user_screen.dart';
 import '../presentation/user_edit_porfile/ui/user_edit_profile.dart';
 
@@ -145,6 +147,10 @@ class AppRoutes {
   static const String editUserProfileScreen = '/user_edit_profile_screen';
 
   static const String reportUserScreen = '/report_user_screen';
+
+  static const String orderSummary = '/order_summary_screen';
+
+  static const String allCreatorsScreen = '/all_creators_screen';
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -524,6 +530,9 @@ class AppRoutes {
       case settingScreen:
         return CupertinoPageRoute(builder: (context) => const SettingPage());
 
+      case orderSummary:
+        return CupertinoPageRoute(builder: (context) => OrderSummary());
+
       case reportUserScreen:
         final String id = settings.arguments as String;
         return CupertinoPageRoute(
@@ -543,6 +552,10 @@ class AppRoutes {
                 create: (context) =>
                     AddRatingBloc(context.read<RatingRepository>()),
                 child: AddRatingScreen(productId: id)));
+
+      case allCreatorsScreen:
+        return CupertinoPageRoute(
+            builder: (context) => const AllCreatorScreen());
       default:
         return null;
     }

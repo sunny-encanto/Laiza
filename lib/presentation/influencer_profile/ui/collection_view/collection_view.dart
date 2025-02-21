@@ -7,7 +7,7 @@ import '../../../../data/blocs/collection_bloc/collection_bloc.dart';
 import '../../../../data/repositories/collection_repository/collection_repository.dart';
 import '../../../../widgets/custom_popup_menu_button.dart';
 import '../../../../widgets/play_button.dart';
-import '../post_view/post_view.dart';
+import '../../../reels/ui/reel_screen.dart';
 
 class CollectionViewScreen extends StatelessWidget {
   final int id;
@@ -96,8 +96,7 @@ class CollectionViewScreen extends StatelessWidget {
                             onTap: () {
                               Navigator.of(context)
                                   .push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        VideoReelPageOtherInfluencer(
+                                    builder: (context) => ReelPlayerWidget(
                                       reels: state.collection[0].reels,
                                       initialIndex: index,
                                     ),

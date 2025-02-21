@@ -254,11 +254,13 @@ class DiscoverScreen extends StatelessWidget {
                       } else if (state is ProductError) {
                         return Center(child: Text('Error: ${state.message}'));
                       } else if (state is ProductLoaded) {
-                        return MasonryGridView.count(
+                        return MasonryGridView.builder(
+                          gridDelegate:
+                              const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2),
                           shrinkWrap: true,
                           itemCount: state.products.length,
                           physics: const NeverScrollableScrollPhysics(),
-                          crossAxisCount: 2,
                           mainAxisSpacing: 15.v,
                           crossAxisSpacing: 10.h,
                           itemBuilder: (BuildContext context, int index) {

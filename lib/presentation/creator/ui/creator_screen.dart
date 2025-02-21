@@ -56,17 +56,18 @@ class CreatorScreen extends StatelessWidget {
                         return Center(child: Text(state.message));
                       } else if (state is FollowingLoadedState) {
                         return SizedBox(
-                            height: 130.v,
-                            child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: state.followings.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  Follower following = state.followings[index];
-                                  return Padding(
-                                    padding: EdgeInsets.only(left: 8.h),
-                                    child: profileWidget(context, following),
-                                  );
-                                }));
+                          height: 130.v,
+                          child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: state.followings.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                Follower following = state.followings[index];
+                                return Padding(
+                                  padding: EdgeInsets.only(left: 8.h),
+                                  child: profileWidget(context, following),
+                                );
+                              }),
+                        );
                       }
                       return const SizedBox.shrink();
                     },
@@ -250,9 +251,24 @@ class CreatorScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 28.v),
-                Text(
-                  'Discover and Follow New Creators',
-                  style: textTheme.titleMedium,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Discover and Follow New Creators',
+                      style: textTheme.titleMedium,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(AppRoutes.allCreatorsScreen);
+                      },
+                      child: Text(
+                        'View All',
+                        style: textTheme.bodySmall,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20.v),
                 BlocProvider(
@@ -274,11 +290,17 @@ class CreatorScreen extends StatelessWidget {
                           child: Text(state.message),
                         );
                       } else if (state is AllInfluencerLoaded) {
-                        return MasonryGridView.count(
+                        return MasonryGridView.builder(
+                          gridDelegate:
+                              const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2),
                           shrinkWrap: true,
-                          itemCount: state.influencers.length,
+                          // itemCount: state.influencers.length,
+                          itemCount: state.influencers.length > 4
+                              ? 4
+                              : state.influencers.length,
                           physics: const NeverScrollableScrollPhysics(),
-                          crossAxisCount: 2,
+                          // crossAxisCount: 2,
                           mainAxisSpacing: 5.v,
                           crossAxisSpacing: 5.h,
                           itemBuilder: (BuildContext context, index) {

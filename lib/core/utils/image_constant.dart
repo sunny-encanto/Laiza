@@ -179,4 +179,7 @@ class ImageConstant {
   static String returns = '$imagePath/returns.svg';
   static String secure = '$imagePath/secure.svg';
   static String noPostFound = '$imagePath/no_post_found.svg';
+  static String noFollowed = '$imagePath/no_followed.png';
+  static String noOngoing = '$imagePath/no_ongoing.png';
+  static String noUpcoming = '$imagePath/no_upcoming.png';
 }

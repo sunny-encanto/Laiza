@@ -44,11 +44,14 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           price: double.parse(item.product.price),
           quantity: item.quantity,
           name: item.product.productName,
-          isSelected: false,
+          isSelected: true,
         ),
       );
     }
-    emit(state.copyWith(isLoading: false, items: _cartItemsList));
+    final totalPrice = _cartItemsList.fold(
+        0.0, (total, item) => total + (item.price * item.quantity));
+    emit(state.copyWith(
+        isLoading: false, items: _cartItemsList, totalPrice: totalPrice));
   }
 
   FutureOr<void> _onCheckOutEvent(event, emit) {
@@ -91,7 +94,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       }
       return item;
     }).toList();
-
     emit(_calculateCart(updatedItems));
   }
 

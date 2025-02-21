@@ -34,29 +34,66 @@ class UserEditProfileScreen extends StatelessWidget {
               _phoneNumberController.text = state.userModel.phoneNumber ?? '';
               _selectedBgImage = state.userModel.profileImg ?? '';
               _userModel = state.userModel;
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.h),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ///Image
-                      BlocBuilder<EditProfileBloc, EditProfileState>(
-                        buildWhen: (EditProfileState previous,
-                                EditProfileState current) =>
-                            current is BgPhotoChangedState,
-                        builder:
-                            (BuildContext context, EditProfileState state) {
-                          if (state is BgPhotoChangedState) {
-                            _selectedBgImage = state.imagePath;
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.h),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ///Image
+                        BlocBuilder<EditProfileBloc, EditProfileState>(
+                          buildWhen: (EditProfileState previous,
+                                  EditProfileState current) =>
+                              current is BgPhotoChangedState,
+                          builder:
+                              (BuildContext context, EditProfileState state) {
+                            if (state is BgPhotoChangedState) {
+                              _selectedBgImage = state.imagePath;
+                              return Stack(
+                                alignment: Alignment.bottomRight,
+                                children: [
+                                  CustomImageView(
+                                    width: SizeUtils.width,
+                                    height: 250.v,
+                                    imagePath: state.imagePath,
+                                    radius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(12.h),
+                                      bottomRight: Radius.circular(12.h),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      context
+                                          .read<EditProfileBloc>()
+                                          .add(BgPhotoChangeEvent());
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.all(5.h),
+                                      padding: EdgeInsets.all(5.h),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5.h),
+                                          color: Colors.white),
+                                      child: CustomImageView(
+                                        imagePath: ImageConstant.editIcon,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              );
+                            }
                             return Stack(
                               alignment: Alignment.bottomRight,
                               children: [
                                 CustomImageView(
                                   width: SizeUtils.width,
                                   height: 250.v,
-                                  imagePath: state.imagePath,
+                                  imagePath: _selectedBgImage.isEmpty
+                                      ? ImageConstant.profileBg
+                                      : _selectedBgImage,
+                                  fit: BoxFit.fill,
                                   radius: BorderRadius.only(
                                     bottomLeft: Radius.circular(12.h),
                                     bottomRight: Radius.circular(12.h),
@@ -82,87 +119,53 @@ class UserEditProfileScreen extends StatelessWidget {
                                 )
                               ],
                             );
-                          }
-                          return Stack(
-                            alignment: Alignment.bottomRight,
-                            children: [
-                              CustomImageView(
-                                width: SizeUtils.width,
-                                height: 250.v,
-                                imagePath: _selectedBgImage.isEmpty
-                                    ? ImageConstant.profileBg
-                                    : _selectedBgImage,
-                                fit: BoxFit.fill,
-                                radius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(12.h),
-                                  bottomRight: Radius.circular(12.h),
-                                ),
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  context
-                                      .read<EditProfileBloc>()
-                                      .add(BgPhotoChangeEvent());
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.all(5.h),
-                                  padding: EdgeInsets.all(5.h),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5.h),
-                                      color: Colors.white),
-                                  child: CustomImageView(
-                                    imagePath: ImageConstant.editIcon,
-                                  ),
-                                ),
-                              )
-                            ],
-                          );
-                        },
-                      ),
+                          },
+                        ),
 
-                      ///From
-                      SizedBox(height: 20.v),
-                      Text(
-                        "Name",
-                        style: textTheme.titleMedium,
-                      ),
-                      SizedBox(height: 8.v),
-                      CustomTextFormField(
-                        controller: _nameController,
-                        hintText: 'name',
-                        validator: (String? value) {
-                          return validateName(value!);
-                        },
-                      ),
-                      SizedBox(height: 14.v),
-                      Text(
-                        "Email",
-                        style: textTheme.titleMedium,
-                      ),
-                      SizedBox(height: 8.v),
-                      CustomTextFormField(
-                        readOnly: true,
-                        controller: _emailController,
-                        hintText: context.translate('example@gmail.com'),
-                        validator: (String? value) {
-                          return validateEmail(value!);
-                        },
-                      ),
-                      SizedBox(height: 14.v),
-                      Text(
-                        "Phone",
-                        style: textTheme.titleMedium,
-                      ),
-                      SizedBox(height: 8.v),
-                      CustomTextFormField(
-                        readOnly: true,
-                        controller: _phoneNumberController,
-                        hintText: 'phone',
-                        validator: (String? value) {
-                          return validatePhoneNumber(value!);
-                        },
-                      ),
-                    ],
+                        ///From
+                        SizedBox(height: 20.v),
+                        Text(
+                          "Name",
+                          style: textTheme.titleMedium,
+                        ),
+                        SizedBox(height: 8.v),
+                        CustomTextFormField(
+                          controller: _nameController,
+                          hintText: 'name',
+                          validator: (String? value) {
+                            return validateName(value!);
+                          },
+                        ),
+                        SizedBox(height: 14.v),
+                        Text(
+                          "Email",
+                          style: textTheme.titleMedium,
+                        ),
+                        SizedBox(height: 8.v),
+                        CustomTextFormField(
+                          readOnly: true,
+                          controller: _emailController,
+                          hintText: context.translate('example@gmail.com'),
+                          validator: (String? value) {
+                            return validateEmail(value!);
+                          },
+                        ),
+                        SizedBox(height: 14.v),
+                        Text(
+                          "Phone",
+                          style: textTheme.titleMedium,
+                        ),
+                        SizedBox(height: 8.v),
+                        CustomTextFormField(
+                          // readOnly: true,
+                          controller: _phoneNumberController,
+                          hintText: 'phone',
+                          validator: (String? value) {
+                            return validatePhoneNumber(value!);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );

@@ -115,16 +115,21 @@ class CartScreen extends StatelessWidget {
                         imagePath: ImageConstant.checkOut,
                       ),
                       onPressed: () {
-                        List<CartModel> selectedItems = state.items
-                            .where((item) => item.isSelected)
-                            .toList();
-                        if (selectedItems.isEmpty) {
-                          context
-                              .showSnackBar('No items selected for checkout.');
-                        } else {
-                          Navigator.of(context)
-                              .pushNamed(AppRoutes.checkOutScreen);
-                        }
+                        Navigator.of(context).pushNamed(AppRoutes.orderSummary);
+                        // List<CartModel> selectedItems = state.items
+                        //     .where((item) => item.isSelected)
+                        //     .toList();
+                        // if (selectedItems.isEmpty) {
+                        //   context
+                        //       .showSnackBar('No items selected for checkout.');
+                        // } else {
+                        //   print('length=>${selectedItems.length}');
+                        //   context
+                        //       .read<OrderRepository>()
+                        //       .crateOrder(selectedItems);
+                        //   Navigator.of(context)
+                        //       .pushNamed(AppRoutes.checkOutScreen);
+                        // }
                       },
                       text: 'Check Out'),
                   SizedBox(width: 3.v),
@@ -180,9 +185,18 @@ class CartScreen extends StatelessWidget {
                       style: textTheme.bodySmall,
                     ),
                     SizedBox(height: 8.v),
-                    Text(
-                      '₹${item.price}',
-                      style: textTheme.titleMedium,
+                    Row(
+                      children: [
+                        Text(
+                          '₹${item.price}',
+                          style: textTheme.titleMedium,
+                        ),
+                        SizedBox(width: 15.h),
+                        // Text(
+                        //   '₹${item.}',
+                        //   style: textTheme.titleMedium,
+                        // ),
+                      ],
                     ),
                     SizedBox(height: 12.v),
                     Row(
