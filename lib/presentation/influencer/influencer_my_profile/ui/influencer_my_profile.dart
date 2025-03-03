@@ -65,21 +65,22 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                   iconTheme: const IconThemeData(color: Colors.black),
                   pinned: true,
                   bottom: PreferredSize(
-                      preferredSize: Size(SizeUtils.width, 60.v),
-                      child: Container(
-                        color: Colors.white,
-                        child: TabBar(
-                            indicatorColor: AppColor.primary,
-                            labelColor: AppColor.primary,
-                            tabs: const [
-                              Tab(
-                                text: 'Post',
-                              ),
-                              Tab(
-                                text: 'Product',
-                              ),
-                            ]),
-                      )),
+                    preferredSize: Size(SizeUtils.width, 60.v),
+                    child: Container(
+                      color: Colors.white,
+                      child: TabBar(
+                          indicatorColor: AppColor.primary,
+                          labelColor: AppColor.primary,
+                          tabs: const [
+                            Tab(
+                              text: 'Post',
+                            ),
+                            Tab(
+                              text: 'Product',
+                            ),
+                          ]),
+                    ),
+                  ),
                   backgroundColor: Colors.white,
                   expandedHeight: SizeUtils.height - 60.v,
                   flexibleSpace: FlexibleSpaceBar(
@@ -609,7 +610,7 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              state.userModel.username ?? '',
+                              state.userModel.name ?? '',
                               style: textTheme.titleMedium!
                                   .copyWith(fontSize: 20.fSize),
                             ),

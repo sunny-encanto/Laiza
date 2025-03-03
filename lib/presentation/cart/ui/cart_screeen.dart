@@ -115,21 +115,18 @@ class CartScreen extends StatelessWidget {
                         imagePath: ImageConstant.checkOut,
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushNamed(AppRoutes.orderSummary);
-                        // List<CartModel> selectedItems = state.items
-                        //     .where((item) => item.isSelected)
-                        //     .toList();
-                        // if (selectedItems.isEmpty) {
-                        //   context
-                        //       .showSnackBar('No items selected for checkout.');
-                        // } else {
-                        //   print('length=>${selectedItems.length}');
-                        //   context
-                        //       .read<OrderRepository>()
-                        //       .crateOrder(selectedItems);
-                        //   Navigator.of(context)
-                        //       .pushNamed(AppRoutes.checkOutScreen);
-                        // }
+                        List<CartModel> selectedItems = state.items
+                            .where((item) => item.isSelected)
+                            .toList();
+                        if (selectedItems.isEmpty) {
+                          context
+                              .showSnackBar('No items selected for checkout.');
+                        } else {
+                          Navigator.of(context)
+                              .pushNamed(AppRoutes.orderSummary, arguments: {
+                            'items': selectedItems,
+                          });
+                        }
                       },
                       text: 'Check Out'),
                   SizedBox(width: 3.v),

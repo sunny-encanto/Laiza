@@ -1,21 +1,30 @@
 import 'package:flutter/cupertino.dart';
+import 'package:laiza/data/blocs/city_bloc/city_bloc.dart';
 import 'package:laiza/data/blocs/collection_bloc/collection_bloc.dart';
+import 'package:laiza/data/blocs/country_bloc/country_bloc.dart';
 import 'package:laiza/data/blocs/influencer_profile_bloc/influencer_profile_bloc.dart';
+import 'package:laiza/data/blocs/state_bloc/state_bloc.dart';
+import 'package:laiza/data/models/address_model/address_model.dart';
+import 'package:laiza/data/repositories/address_repository/address_repository.dart';
 import 'package:laiza/data/repositories/collection_repository/collection_repository.dart';
 import 'package:laiza/data/repositories/comments_repository/comments_repository.dart';
 import 'package:laiza/data/repositories/connections_repository/connections_repository.dart';
 import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
 import 'package:laiza/data/repositories/help_center_repository/help_center_repository.dart';
 import 'package:laiza/data/repositories/live_stream_repository/live_stream_repository.dart';
+import 'package:laiza/data/repositories/order_repository/order_repository.dart';
 import 'package:laiza/data/repositories/product_repository/product_repository.dart';
 import 'package:laiza/data/repositories/rating_repository/rating_repository.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 import 'package:laiza/presentation/add_review/bloc/add_rating_bloc.dart';
+import 'package:laiza/presentation/address_screen/bloc/address_bloc.dart';
 import 'package:laiza/presentation/creator/ui/all_creator_screen.dart';
+import 'package:laiza/presentation/my_order/bloc/my_order_bloc.dart';
 import 'package:laiza/presentation/privacy_policy/ui/bloc/privacy_policy_bloc.dart';
 
 import '../core/app_export.dart';
 import '../presentation/add_review/ui/add_rating.dart';
+import '../presentation/address_screen/ui/address_screen.dart';
 import '../presentation/auth/change_password/ui/create_password.dart';
 import '../presentation/auth/settings_page/ui/settings_page.dart';
 import '../presentation/influencer/order_management/bloc/influencer_orders_bloc.dart';
@@ -50,7 +59,7 @@ class AppRoutes {
 
   static const String cartScreen = '/cart_screen';
 
-  static const String checkOutScreen = '/check_out_screen';
+  static const String addressScreen = '/address_screen';
 
   static const String influencerProfileScreen = '/influencer_profile_screen';
 
@@ -253,8 +262,13 @@ class AppRoutes {
                   child: const CartScreen(),
                 ));
 
-      case checkOutScreen:
-        return CupertinoPageRoute(builder: (context) => const CheckOutScreen());
+      case addressScreen:
+        return CupertinoPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) =>
+                      AddressBloc(context.read<AddressRepository>()),
+                  child: const AddressScreen(),
+                ));
 
       case influencerProfileScreen:
         String id = settings.arguments as String;
@@ -282,10 +296,24 @@ class AppRoutes {
             builder: (context) => const FollowingScreen());
 
       case addAddressScreen:
+        Address? address = settings.arguments as Address?;
         return CupertinoPageRoute(
-            builder: (context) => BlocProvider(
-                  create: (context) => AddAddressBloc(),
-                  child: AddAddressScreen(),
+            builder: (context) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                        create: (context) =>
+                            AddAddressBloc(context.read<AddressRepository>())),
+                    BlocProvider(
+                        create: (context) =>
+                            CountryBloc(context.read<RegionRepository>())),
+                    BlocProvider(
+                        create: (context) =>
+                            StateBloc(context.read<RegionRepository>())),
+                    BlocProvider(
+                        create: (context) =>
+                            CityBloc(context.read<RegionRepository>())),
+                  ],
+                  child: AddAddressScreen(address: address),
                 ));
 
       case forgotPasswordScreen:
@@ -317,7 +345,12 @@ class AppRoutes {
             builder: (context) => const OrderTrackScreen());
 
       case myOrderScreen:
-        return CupertinoPageRoute(builder: (context) => const MyOrderScreen());
+        return CupertinoPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) =>
+                      MyOrderBloc(context.read<OrderRepository>()),
+                  child: const MyOrderScreen(),
+                ));
 
       case orderPlacedScreen:
         return CupertinoPageRoute(
@@ -531,7 +564,10 @@ class AppRoutes {
         return CupertinoPageRoute(builder: (context) => const SettingPage());
 
       case orderSummary:
-        return CupertinoPageRoute(builder: (context) => OrderSummary());
+        final Map<String, dynamic> data =
+            settings.arguments as Map<String, dynamic>;
+        return CupertinoPageRoute(
+            builder: (context) => OrderSummary(items: data['items']));
 
       case reportUserScreen:
         final String id = settings.arguments as String;

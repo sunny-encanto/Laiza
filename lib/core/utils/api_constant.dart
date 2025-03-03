@@ -78,4 +78,11 @@ class ApiConstant {
   static String addRating = 'api/user/rate_product';
   static String reelsFromMyInfluencer = 'api/user/my_influencer_reels';
   static String createOrder = 'api/user/create-order';
+  static String myOrder = 'api/user/my-orders';
+  static String addAddress = 'api/user/delivery_address/add/update';
+  static String getAddress = 'api/user/delivery_address';
+  static String getAddressType = 'api/admin/delivery_address_types';
+  static String getDefaultAddress = 'api/user/default_delivery_address';
+  static String deleteAddress = 'api/user/delivery_address/delete';
+  static String couponDetails = 'api/user/coupon/details_by_code';
 }

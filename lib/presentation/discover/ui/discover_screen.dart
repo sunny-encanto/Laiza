@@ -152,33 +152,39 @@ class DiscoverScreen extends StatelessWidget {
                       } else if (state is ReelFromFollowedInfluencerError) {
                         return Center(child: Text(state.message));
                       } else if (state is ReelFromFollowedInfluencerLoaded) {
-                        return Container(
-                          constraints: BoxConstraints(maxHeight: 690.v),
-                          child: GridView.custom(
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.all(0),
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate: SliverWovenGridDelegate.count(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 0,
-                              crossAxisSpacing: 0,
-                              pattern: [
-                                const WovenGridTile(1),
-                                const WovenGridTile(
-                                  5 / 7,
-                                  crossAxisRatio: 0.9,
-                                  alignment: AlignmentDirectional.centerEnd,
+                        return state.reel.isEmpty
+                            ? CustomImageView(
+                                alignment: Alignment.center,
+                                height: 120.v,
+                                imagePath: ImageConstant.noPostFound)
+                            : Container(
+                                constraints: BoxConstraints(maxHeight: 690.v),
+                                child: GridView.custom(
+                                  shrinkWrap: true,
+                                  padding: const EdgeInsets.all(0),
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  gridDelegate: SliverWovenGridDelegate.count(
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: 0,
+                                    crossAxisSpacing: 0,
+                                    pattern: [
+                                      const WovenGridTile(1),
+                                      const WovenGridTile(
+                                        5 / 7,
+                                        crossAxisRatio: 0.9,
+                                        alignment:
+                                            AlignmentDirectional.centerEnd,
+                                      ),
+                                    ],
+                                  ),
+                                  childrenDelegate: SliverChildBuilderDelegate(
+                                      childCount: state.reel.length,
+                                      (BuildContext context, int index) {
+                                    Reel reel = state.reel[index];
+                                    return InfluencerCardWidget(reel: reel);
+                                  }),
                                 ),
-                              ],
-                            ),
-                            childrenDelegate: SliverChildBuilderDelegate(
-                                childCount: state.reel.length,
-                                (BuildContext context, int index) {
-                              Reel reel = state.reel[index];
-                              return InfluencerCardWidget(reel: reel);
-                            }),
-                          ),
-                        );
+                              );
                       }
                       return const SizedBox.shrink();
                     },
@@ -254,20 +260,25 @@ class DiscoverScreen extends StatelessWidget {
                       } else if (state is ProductError) {
                         return Center(child: Text('Error: ${state.message}'));
                       } else if (state is ProductLoaded) {
-                        return MasonryGridView.builder(
-                          gridDelegate:
-                              const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2),
-                          shrinkWrap: true,
-                          itemCount: state.products.length,
-                          physics: const NeverScrollableScrollPhysics(),
-                          mainAxisSpacing: 15.v,
-                          crossAxisSpacing: 10.h,
-                          itemBuilder: (BuildContext context, int index) {
-                            final Product product = state.products[index];
-                            return ProductCardWidget(product: product);
-                          },
-                        );
+                        return state.products.isEmpty
+                            ? CustomImageView(
+                                alignment: Alignment.center,
+                                height: 120.v,
+                                imagePath: ImageConstant.noPostFound)
+                            : MasonryGridView.builder(
+                                gridDelegate:
+                                    const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2),
+                                shrinkWrap: true,
+                                itemCount: state.products.length,
+                                physics: const NeverScrollableScrollPhysics(),
+                                mainAxisSpacing: 15.v,
+                                crossAxisSpacing: 10.h,
+                                itemBuilder: (BuildContext context, int index) {
+                                  final Product product = state.products[index];
+                                  return ProductCardWidget(product: product);
+                                },
+                              );
                       }
                       return const SizedBox.shrink();
                     },

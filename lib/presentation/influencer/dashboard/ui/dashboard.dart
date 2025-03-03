@@ -1,4 +1,5 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/data/models/user/user_model.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -16,49 +17,68 @@ class DashboardScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Card(
-              child: Padding(
-                padding: EdgeInsets.all(8.0.h),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(5.h),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(100.h),
-                      ),
-                      child: CustomImageView(
-                        radius: BorderRadius.circular(100.h),
-                        width: 68.v,
-                        height: 68.v,
-                        fit: BoxFit.fill,
-                        imagePath:
-                            'https://as2.ftcdn.net/v2/jpg/03/83/25/83/1000_F_383258331_D8imaEMl8Q3lf7EKU2Pi78Cn0R7KkW9o.jpg',
-                      ),
-                    ),
-                    SizedBox(width: 4.v),
-                    Column(
-                      children: [
-                        Text(
-                          'Carol Danvers',
-                          style: textTheme.titleMedium,
+            BlocProvider(
+              create: (context) =>
+                  ProfileApiBloc(context.read<UserRepository>()),
+              child: BlocBuilder<ProfileApiBloc, ProfileApiState>(
+                builder: (context, state) {
+                  if (state is ProfileApiInitial) {
+                    context.read<ProfileApiBloc>().add(FetchProfileApi());
+                    return const SizedBox.shrink();
+                  } else if (state is ProfileApiLoadingState) {
+                    return const SizedBox.shrink();
+                  } else if (state is ProfileApiError) {
+                    return Text(state.message);
+                  } else if (state is ProfileApiLoadedState) {
+                    UserModel user = state.userModel;
+                    return Card(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0.h),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(5.h),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(100.h),
+                              ),
+                              child: CustomImageView(
+                                radius: BorderRadius.circular(100.h),
+                                width: 68.v,
+                                height: 68.v,
+                                fit: BoxFit.fill,
+                                imagePath: user.profileImg,
+                              ),
+                            ),
+                            SizedBox(width: 4.v),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.name ?? '',
+                                  style: textTheme.titleMedium,
+                                ),
+                                SizedBox(height: 4.v),
+                                Text(
+                                  '${user.followersCount ?? 0} Followers',
+                                  style: textTheme.bodySmall,
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            CustomIconButton(
+                                icon: ImageConstant.request,
+                                onTap: () {
+                                  Navigator.of(context).pushNamed(
+                                      AppRoutes.connectionsRequestScreen);
+                                }),
+                          ],
                         ),
-                        SizedBox(height: 4.v),
-                        Text(
-                          '425K Followers',
-                          style: textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    CustomIconButton(
-                        icon: ImageConstant.request,
-                        onTap: () {
-                          Navigator.of(context)
-                              .pushNamed(AppRoutes.connectionsRequestScreen);
-                        }),
-                  ],
-                ),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
               ),
             ),
             Padding(

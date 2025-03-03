@@ -4,7 +4,7 @@ import 'package:laiza/core/app_export.dart';
 import 'package:laiza/presentation/auth/sign_up/bloc/sign_up_states.dart';
 
 import '../../../../core/utils/pref_utils.dart';
-import '../../login/ui/socail_login_widget.dart';
+import '../../login/ui/social_login_widget.dart';
 import '../bloc/sign_up_event.dart';
 
 class SignUpScreen extends StatelessWidget {

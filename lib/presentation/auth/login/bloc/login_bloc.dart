@@ -38,6 +38,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       bool isFormComplete =
           (loginModel.data?.user?.isProfileComplete ?? 0) == 1;
       PrefUtils.setIsFormComplete(isFormComplete);
+      //-----//
+      String fcmToken = await FirebaseMessagingService.generateToken() ?? "";
+      UserModel userModel = UserModel(
+          id: loginModel.data?.user?.id.toString() ?? '', token: fcmToken);
+      await FirebaseServices.updateUser(userModel);
+      //-----//
       emit(LoginSuccessState(
           userId: loginModel.data?.user?.id ?? 0,
           isProfileComplete: isFormComplete));
@@ -113,7 +119,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(SocialLoginSuccessState(profileModel.isProfileComplete == 0));
       }
     } catch (e) {
-      emit(const LoginError('Login Failed'));
+      emit(LoginError(e.toString()));
     }
   }
 

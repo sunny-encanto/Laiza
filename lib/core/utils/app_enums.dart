@@ -1,3 +1,3 @@
-enum UserRole { user, influencer }
+enum UserRole { user, influencer, seller }
 
 enum LoginSource { google, apple }

@@ -30,6 +30,13 @@ class SettingPage extends StatelessWidget {
                 },
               ),
               SettingsTile(
+                title: 'Change Address',
+                icon: Icons.location_on_rounded,
+                onTap: () {
+                  Navigator.of(context).pushNamed(AppRoutes.addressScreen);
+                },
+              ),
+              SettingsTile(
                 title: 'Change Password',
                 icon: Icons.lock,
                 onTap: () {

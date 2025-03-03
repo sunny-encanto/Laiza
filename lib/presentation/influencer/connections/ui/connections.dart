@@ -68,7 +68,7 @@ class ConnectionsScreen extends StatelessWidget {
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
                     Connection item = connections[index];
-                    return _buildConnectionItem(item, textTheme);
+                    return _buildConnectionItem(item, context);
                   },
                 ),
         )
@@ -76,9 +76,23 @@ class ConnectionsScreen extends StatelessWidget {
     );
   }
 
-  ListTile _buildConnectionItem(Connection item, TextTheme textTheme) {
+  ListTile _buildConnectionItem(Connection item, BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     return ListTile(
-      onTap: () {},
+      onTap: () async {
+        Navigator.of(context)
+            .pushNamed(AppRoutes.chatBoxScreen, arguments: item.id.toString());
+        //Todo: this thing need to be done from admin side
+        // UserModel userModel = UserModel(
+        //   id: item.id.toString(),
+        //   name: item.name,
+        //   email: "email",
+        //   profileImg: item.profileImg,
+        //   token: 'ff',
+        //   role: UserRole.seller.name,
+        // );
+        // await FirebaseServices.addUser(userModel);
+      },
       contentPadding: const EdgeInsets.all(0),
       leading: CustomImageView(
         onTap: () {},

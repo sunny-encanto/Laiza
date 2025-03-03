@@ -8,13 +8,12 @@ sealed class AddAddressEvent extends Equatable {
 }
 
 class AddAddressSubmitEvent extends AddAddressEvent {
-  final String address;
-  final bool isDefault;
+  final Address address;
 
-  const AddAddressSubmitEvent({required this.address, required this.isDefault});
+  const AddAddressSubmitEvent({required this.address});
 
   @override
-  List<Object?> get props => [address, isDefault];
+  List<Object?> get props => [address];
 }
 
 class DefaultAddressToggleEvent extends AddAddressEvent {

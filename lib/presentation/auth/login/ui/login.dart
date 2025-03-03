@@ -1,6 +1,6 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/presentation/auth/login/bloc/login_state.dart';
-import 'package:laiza/presentation/auth/login/ui/socail_login_widget.dart';
+import 'package:laiza/presentation/auth/login/ui/social_login_widget.dart';
 
 import '../../../../core/utils/pref_utils.dart';
 import '../bloc/login_event.dart';

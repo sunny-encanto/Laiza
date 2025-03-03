@@ -15,7 +15,7 @@ class ReelScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TextTheme textTheme = Theme.of(context).textTheme;
+    TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       backgroundColor: Colors.black,
       body: BlocProvider(
@@ -32,7 +32,27 @@ class ReelScreen extends StatelessWidget {
                 } else if (state is ReelError) {
                   return Center(child: Text(state.message));
                 } else if (state is ReelLoaded) {
-                  return ReelPlayerWidget(reels: state.reels, initialIndex: 0);
+                  return state.reels.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Welcome To Laiza',
+                                style: textTheme.titleSmall!
+                                    .copyWith(fontSize: 20.fSize),
+                              ),
+                              SizedBox(height: 20.v),
+                              CustomImageView(
+                                  height: 120,
+                                  imagePath: ImageConstant.noPostFound),
+                              SizedBox(height: 20.v),
+                              Text('No Reels Found',
+                                  style: textTheme.titleSmall),
+                            ],
+                          ),
+                        )
+                      : ReelPlayerWidget(reels: state.reels, initialIndex: 0);
                   // return
                   //   PageView.builder(
                   //     itemCount: state.reels.length,

@@ -142,63 +142,70 @@ class CreatorScreen extends StatelessWidget {
                       } else if (state is ProductFromInfluencerError) {
                         return Center(child: Text(state.message));
                       } else if (state is ProductFromInfluencerLoaded) {
-                        return SizedBox(
-                          height: 240.v,
-                          child: ListView.builder(
-                            itemCount: state.products.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              ReelProduct product = state.products[index];
-                              return Padding(
-                                padding: EdgeInsets.only(right: 10.h),
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).pushNamed(
-                                        AppRoutes.productDetailScreen,
-                                        arguments: product.id);
-                                  },
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      CustomImageView(
-                                        radius: BorderRadius.circular(6.h),
-                                        height: 150.v,
-                                        width: 150.h,
-                                        fit: BoxFit.fill,
-                                        imagePath: product.productImage,
-                                      ),
-                                      SizedBox(height: 4.v),
-                                      // Text(
-                                      //   product.,
-                                      //   style: textTheme.bodySmall,
-                                      // ),
-                                      SizedBox(height: 6.v),
-                                      Text(
-                                        product.productName,
-                                        style: textTheme.titleMedium,
-                                      ),
-                                      SizedBox(height: 6.v),
-                                      Text(
-                                        '₹ ${product.price}',
-                                        style: textTheme.bodySmall,
-                                      ),
-                                      SizedBox(height: 8.v),
-                                      Center(
-                                        child: CustomElevatedButton(
-                                          width: 150.h,
-                                          height: 26.v,
-                                          text: 'Buy Now',
-                                          buttonTextStyle: textTheme.titleSmall,
+                        return state.products.isEmpty
+                            ? CustomImageView(
+                                alignment: Alignment.center,
+                                height: 120.v,
+                                imagePath: ImageConstant.noPostFound)
+                            : SizedBox(
+                                height: 240.v,
+                                child: ListView.builder(
+                                  itemCount: state.products.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    ReelProduct product = state.products[index];
+                                    return Padding(
+                                      padding: EdgeInsets.only(right: 10.h),
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.of(context).pushNamed(
+                                              AppRoutes.productDetailScreen,
+                                              arguments: product.id);
+                                        },
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            CustomImageView(
+                                              radius:
+                                                  BorderRadius.circular(6.h),
+                                              height: 150.v,
+                                              width: 150.h,
+                                              fit: BoxFit.fill,
+                                              imagePath: product.productImage,
+                                            ),
+                                            SizedBox(height: 4.v),
+                                            // Text(
+                                            //   product.,
+                                            //   style: textTheme.bodySmall,
+                                            // ),
+                                            SizedBox(height: 6.v),
+                                            Text(
+                                              product.productName,
+                                              style: textTheme.titleMedium,
+                                            ),
+                                            SizedBox(height: 6.v),
+                                            Text(
+                                              '₹ ${product.price}',
+                                              style: textTheme.bodySmall,
+                                            ),
+                                            SizedBox(height: 8.v),
+                                            Center(
+                                              child: CustomElevatedButton(
+                                                width: 150.h,
+                                                height: 26.v,
+                                                text: 'Buy Now',
+                                                buttonTextStyle:
+                                                    textTheme.titleSmall,
+                                              ),
+                                            )
+                                          ],
                                         ),
-                                      )
-                                    ],
-                                  ),
+                                      ),
+                                    );
+                                  },
                                 ),
                               );
-                            },
-                          ),
-                        );
                       }
                       return const SizedBox.shrink();
                     },
@@ -233,18 +240,23 @@ class CreatorScreen extends StatelessWidget {
                       } else if (state is ReelFromFollowedInfluencerError) {
                         return Center(child: Text(state.message));
                       } else if (state is ReelFromFollowedInfluencerLoaded) {
-                        return SizedBox(
-                            height: 261.v,
-                            child: ListView.builder(
-                                itemCount: state.reel.length,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (BuildContext context, index) {
-                                  Reel reel = state.reel[index];
-                                  return Padding(
-                                    padding: EdgeInsets.only(right: 5.h),
-                                    child: InfluencerCardWidget(reel: reel),
-                                  );
-                                }));
+                        return state.reel.isEmpty
+                            ? CustomImageView(
+                                alignment: Alignment.center,
+                                height: 120.v,
+                                imagePath: ImageConstant.noPostFound)
+                            : SizedBox(
+                                height: 261.v,
+                                child: ListView.builder(
+                                    itemCount: state.reel.length,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (BuildContext context, index) {
+                                      Reel reel = state.reel[index];
+                                      return Padding(
+                                        padding: EdgeInsets.only(right: 5.h),
+                                        child: InfluencerCardWidget(reel: reel),
+                                      );
+                                    }));
                       }
                       return const SizedBox.shrink();
                     },

@@ -1,8 +1,8 @@
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/core/utils/api_constant.dart';
 import 'package:laiza/data/models/product_model/product.dart';
 import 'package:laiza/data/models/rating_model/rating_model.dart';
-import 'package:readmore/readmore.dart';
 
 import '../../../data/services/helper_services.dart';
 import '../../../data/services/share.dart';
@@ -235,17 +235,22 @@ class ProductDetailScreen extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 8.h),
-                    ReadMoreText(
+                    HtmlWidget(
                       product.description,
-                      style: textTheme.bodySmall,
-                      trimMode: TrimMode.Line,
-                      trimLines: 2,
-                      colorClickableText: Colors.black,
-                      trimCollapsedText: ' Read more',
-                      trimExpandedText: ' Read less',
-                      moreStyle:
-                          textTheme.bodySmall!.copyWith(color: Colors.black),
+                      // textStyle: const TextStyle(fontSize: 10),
+                      renderMode: RenderMode.column,
                     ),
+                    // ReadMoreText(
+                    //   product.description,
+                    //   style: textTheme.bodySmall,
+                    //   trimMode: TrimMode.Line,
+                    //   trimLines: 2,
+                    //   colorClickableText: Colors.black,
+                    //   trimCollapsedText: ' Read more',
+                    //   trimExpandedText: ' Read less',
+                    //   moreStyle:
+                    //       textTheme.bodySmall!.copyWith(color: Colors.black),
+                    // ),
                     SizedBox(height: 24.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -577,7 +582,8 @@ class ProductDetailScreen extends StatelessWidget {
                       imagePath: ImageConstant.checkOut,
                     ),
                     onPressed: () {
-                      Navigator.of(context).pushNamed(AppRoutes.checkOutScreen);
+                      Navigator.of(context)
+                          .pushNamed(AppRoutes.addAddressScreen);
                     },
                     text: 'Check Out')),
           ],

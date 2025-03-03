@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:laiza/data/models/common_model/common_model.dart';
+import 'package:laiza/data/models/my_orders_model/my_order_model.dart';
 
 import '../../../core/network/dio_client.dart';
 import '../../../core/utils/api_constant.dart';
@@ -35,6 +36,28 @@ class OrderRepository {
     } catch (e) {
       Logger.log('Error during create order', e.toString());
       throw Exception('Failed to create order');
+    }
+  }
+
+  Future<MyOrdersModel> getMyOrders() async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+
+      Response response = await _apiClient.get(ApiConstant.myOrder);
+      if (response.statusCode == 200) {
+        MyOrdersModel model = MyOrdersModel.fromJson(response.data);
+        return model;
+      } else {
+        MyOrdersModel model = MyOrdersModel.fromJson(response.data);
+        return model;
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during get my orders', e.toString());
+      throw Exception('Failed to during get my orders');
     }
   }
 }

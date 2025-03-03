@@ -42,7 +42,8 @@ class OrderPlacedScreen extends StatelessWidget {
             width: SizeUtils.width - 36.h,
             text: 'Continue Shopping',
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  AppRoutes.bottomBarScreen, (route) => false);
             },
           )
         ],

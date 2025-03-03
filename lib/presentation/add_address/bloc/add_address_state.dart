@@ -15,15 +15,25 @@ final class AddAddressErrorState extends AddAddressState {
   final String message;
 
   const AddAddressErrorState({required this.message});
+
   @override
   List<Object> get props => [message];
 }
 
-final class AddAddressSuccessState extends AddAddressState {}
+final class AddAddressSuccessState extends AddAddressState {
+  final String message;
+
+  const AddAddressSuccessState(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
 
 final class DefaultAddressToggleState extends AddAddressState {
   final bool isDefault;
+
   const DefaultAddressToggleState(this.isDefault);
+
   @override
   List<Object> get props => [isDefault];
 }

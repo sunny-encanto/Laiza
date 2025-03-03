@@ -33,7 +33,6 @@ export 'package:laiza/presentation/auth/sign_up/ui/sign_up.dart';
 export 'package:laiza/presentation/bottom_bar/cubit/bottom_bar_cubit.dart';
 export 'package:laiza/presentation/bottom_bar/ui/bottom_bar.dart';
 export 'package:laiza/presentation/cart/ui/cart_screeen.dart';
-export 'package:laiza/presentation/check_out/ui/check_out_screen.dart';
 export 'package:laiza/presentation/comments/bloc/comments_bloc.dart';
 export 'package:laiza/presentation/discover/bloc/discover_bloc.dart';
 export 'package:laiza/presentation/discover/ui/all_fav_influencer.dart';

@@ -9,10 +9,12 @@ import 'core/app_export.dart';
 import 'core/network/connectivity_cubit.dart';
 import 'core/utils/pref_utils.dart';
 import 'data/models/user/user_model.dart';
+import 'data/repositories/address_repository/address_repository.dart';
 import 'data/repositories/advertisement_repository/advertisement_repository.dart';
 import 'data/repositories/collection_repository/collection_repository.dart';
 import 'data/repositories/comments_repository/comments_repository.dart';
 import 'data/repositories/connections_repository/connections_repository.dart';
+import 'data/repositories/coupon_repository/coupon_repository.dart';
 import 'data/repositories/live_stream_repository/live_stream_repository.dart';
 import 'data/repositories/order_repository/order_repository.dart';
 import 'data/repositories/rating_repository/rating_repository.dart';
@@ -103,6 +105,10 @@ class _MyAppState extends State<MyApp> {
               create: (BuildContext context) => RatingRepository()),
           RepositoryProvider(
               create: (BuildContext context) => OrderRepository()),
+          RepositoryProvider(
+              create: (BuildContext context) => AddressRepository()),
+          RepositoryProvider(
+              create: (BuildContext context) => CouponRepository()),
         ],
         child: MultiBlocProvider(
           providers: [
@@ -149,5 +155,59 @@ Future<void> getFromCompleteStatus() async {
     bool isUserApprove = (userModel.isApprove ?? 0) == 1;
     PrefUtils.setIsFormComplete(isFormComplete);
     PrefUtils.setIsApproved(isUserApprove);
+  }
+}
+
+// Custom Error Widget
+class CustomErrorWidget extends StatelessWidget {
+  final String errorMessage;
+
+  const CustomErrorWidget({super.key, required this.errorMessage});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error_outline,
+                color: Colors.orange,
+                size: 60,
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                "Oops! Something went wrong 😅",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "Don't worry, we're on it! Here's what happened: $errorMessage",
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Add logic to recover or restart the app
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => const HomeScreen()),
+                  );
+                },
+                child: const Text("Try Again"),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

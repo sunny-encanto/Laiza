@@ -1,4 +1,6 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/data/models/my_orders_model/my_order_model.dart';
+import 'package:laiza/presentation/my_order/bloc/my_order_bloc.dart';
 
 class MyOrderScreen extends StatelessWidget {
   const MyOrderScreen({super.key});
@@ -17,43 +19,60 @@ class MyOrderScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(20.h),
-          child: Column(
-            children: [
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: 3,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return _buildItem(textTheme, context);
-                },
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Past Orders',
-                    style: textTheme.titleMedium,
-                  ),
-                  Text('View All', style: textTheme.bodySmall)
-                ],
-              ),
-              SizedBox(height: 20.h),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: 3,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return _buildItem(textTheme, context);
-                },
-              ),
-            ],
+          child: BlocBuilder<MyOrderBloc, MyOrderState>(
+            builder: (context, state) {
+              if (state is MyOrderInitial) {
+                context.read<MyOrderBloc>().add(FetchMyOrders());
+              } else if (state is MyOrderError) {
+                return Center(child: Text(state.message));
+              } else if (state is MyOrderLoaded) {
+                List<OrderItem> orderList = <OrderItem>[];
+                orderList.clear();
+                for (var item in state.myOrdersModel.orders) {
+                  orderList.addAll(item.items);
+                }
+                return Column(
+                  children: [
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: orderList.length,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return _buildItem(orderList[index], context);
+                      },
+                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: [
+                    //     Text(
+                    //       'Past Orders',
+                    //       style: textTheme.titleMedium,
+                    //     ),
+                    //     Text('View All', style: textTheme.bodySmall)
+                    //   ],
+                    // ),
+                    // SizedBox(height: 20.h),
+                    // ListView.builder(
+                    //   shrinkWrap: true,
+                    //   itemCount: 3,
+                    //   physics: const NeverScrollableScrollPhysics(),
+                    //   itemBuilder: (context, index) {
+                    //     return _buildItem(textTheme, context);
+                    //   },
+                    // ),
+                  ],
+                );
+              }
+              return const SizedBox.shrink();
+            },
           ),
         ),
       ),
     );
   }
 
-  SizedBox _buildItem(TextTheme textTheme, BuildContext context) {
+  SizedBox _buildItem(OrderItem item, BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     return SizedBox(
       width: SizeUtils.width,
       child: Padding(
@@ -61,14 +80,16 @@ class MyOrderScreen extends StatelessWidget {
         child: Row(
           children: [
             CustomImageView(
+              onTap: () {
+                Navigator.of(context).pushNamed(AppRoutes.orderTrackScreen);
+              },
               width: 135.h,
               height: 135.v,
               fit: BoxFit.fill,
               radius: BorderRadius.only(
                   topLeft: Radius.circular(12.h),
                   bottomLeft: Radius.circular(12.h)),
-              imagePath:
-                  'https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350',
+              imagePath: item.product.productImage,
             ),
             SizedBox(width: 5.h),
             Expanded(
@@ -76,7 +97,7 @@ class MyOrderScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Classic  Sneakers – Minimalist Design, Maximum Comfort',
+                    item.product.productName,
                     style: textTheme.bodySmall,
                   ),
                   SizedBox(height: 8.v),
@@ -96,20 +117,17 @@ class MyOrderScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 8.v),
                   Text(
-                    '₹ 2,799',
+                    '₹${item.price}',
                     style: textTheme.titleMedium,
                   ),
                   SizedBox(height: 12.v),
                   InkWell(
                     onTap: () {
-                      // Navigator.of(context)
-                      //     .pushNamed(AppRoutes.orderTrackScreen);
-                      //TODO: add id here
-                      Navigator.of(context)
-                          .pushNamed(AppRoutes.addRatingScreen, arguments: 58);
+                      Navigator.of(context).pushNamed(AppRoutes.addRatingScreen,
+                          arguments: item.product.id);
                     },
                     child: Text(
-                      'Track Order',
+                      'Rate Order',
                       style: textTheme.bodySmall!.copyWith(
                           fontSize: 14.fSize,
                           fontWeight: FontWeight.bold,

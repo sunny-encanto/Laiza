@@ -34,7 +34,7 @@ class PostView extends StatelessWidget {
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // SizedBox(height: 24.v),
+              SizedBox(height: 24.v),
               // Row(
               //   children: [
               //     Expanded(
@@ -57,55 +57,55 @@ class PostView extends StatelessWidget {
               //     ),
               //   ],
               // ),
-              SizedBox(height: 24.v),
-              Text(
-                'Trending Post',
-                style: textTheme.titleMedium,
-              ),
-              SizedBox(height: 12.v),
-              SizedBox(
-                height: 261.v,
-                child: ListView.builder(
-                    itemCount: reel.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      Post post = Post(
-                          id: reel[index].id,
-                          url: reel[index].reelCoverPath,
-                          isVideo: true);
-
-                      return Padding(
-                        padding: EdgeInsets.only(right: 24.h),
-                        child: SizedBox(
-                          width: 185.h,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              CustomImageView(
-                                height: 261.v,
-                                width: 185.h,
-                                fit: BoxFit.fill,
-                                radius: BorderRadius.circular(6.h),
-                                imagePath: post.url,
-                              ),
-                              PlayButton(
-                                isVisible: post.isVideo,
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => ReelPlayerWidget(
-                                      reels: reel,
-                                      initialIndex: index,
-                                    ),
-                                  ));
-                                },
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    }),
-              ),
-              SizedBox(height: 36.v),
+              // SizedBox(height: 24.v),
+              // Text(
+              //   'Trending Post',
+              //   style: textTheme.titleMedium,
+              // ),
+              // SizedBox(height: 12.v),
+              // SizedBox(
+              //   height: 261.v,
+              //   child: ListView.builder(
+              //       itemCount: reel.length,
+              //       scrollDirection: Axis.horizontal,
+              //       itemBuilder: (context, index) {
+              //         Post post = Post(
+              //             id: reel[index].id,
+              //             url: reel[index].reelCoverPath,
+              //             isVideo: true);
+              //
+              //         return Padding(
+              //           padding: EdgeInsets.only(right: 24.h),
+              //           child: SizedBox(
+              //             width: 185.h,
+              //             child: Stack(
+              //               alignment: Alignment.center,
+              //               children: [
+              //                 CustomImageView(
+              //                   height: 261.v,
+              //                   width: 185.h,
+              //                   fit: BoxFit.fill,
+              //                   radius: BorderRadius.circular(6.h),
+              //                   imagePath: post.url,
+              //                 ),
+              //                 PlayButton(
+              //                   isVisible: post.isVideo,
+              //                   onTap: () {
+              //                     Navigator.of(context).push(MaterialPageRoute(
+              //                       builder: (context) => ReelPlayerWidget(
+              //                         reels: reel,
+              //                         initialIndex: index,
+              //                       ),
+              //                     ));
+              //                   },
+              //                 )
+              //               ],
+              //             ),
+              //           ),
+              //         );
+              //       }),
+              // ),
+              // SizedBox(height: 36.v),
               // Text(
               //   'Collections',
               //   style: textTheme.titleMedium,
@@ -119,18 +119,18 @@ class PostView extends StatelessWidget {
               //     itemBuilder: (context, index) => _buildCollectionCard(context),
               //   ),
               // ),
-              SizedBox(height: 24.v),
-              Text(
-                'Recent Posts',
-                style: textTheme.titleMedium,
-              ),
+              // SizedBox(height: 24.v),
+              // Text(
+              //   'Recent Posts',
+              //   style: textTheme.titleMedium,
+              // ),
               // SizedBox(height: 4.v),
               // Text(
               //   '398 Posts',
               //   style: textTheme.bodySmall,
               // ),
               // SizedBox(height: 15.h),
-              GridView.custom(
+              GridView.builder(
                 shrinkWrap: true,
                 padding: const EdgeInsets.all(0),
                 physics: const NeverScrollableScrollPhysics(),
@@ -141,46 +141,44 @@ class PostView extends StatelessWidget {
                   pattern: [
                     const WovenGridTile(1),
                     const WovenGridTile(
-                      5 / 7,
+                      5 / 6,
                       crossAxisRatio: 0.9,
                       alignment: AlignmentDirectional.centerEnd,
                     ),
                   ],
                 ),
-                childrenDelegate: SliverChildBuilderDelegate(
-                  childCount: reel.length,
-                  (context, index) {
-                    Post post = Post(
-                        id: reel[index].id,
-                        url: reel[index].reelCoverPath,
-                        isVideo: true);
-                    return Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        CustomImageView(
-                          height: 261.v,
-                          width: 185.h,
-                          fit: BoxFit.fill,
-                          radius: BorderRadius.circular(6.h),
-                          imagePath: post.url,
-                        ),
-                        PlayButton(
-                          isVisible: post.isVideo,
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ReelPlayerWidget(
-                                reels: reel,
-                                initialIndex: index,
-                              ),
-                            ));
-                          },
-                        )
-                      ],
-                    );
-                  },
-                ),
+                itemCount: reel.length,
+                itemBuilder: (context, index) {
+                  Post post = Post(
+                      id: reel[index].id,
+                      url: reel[index].reelCoverPath,
+                      isVideo: true);
+                  return Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      CustomImageView(
+                        height: 261.v,
+                        width: 185.h,
+                        fit: BoxFit.fill,
+                        radius: BorderRadius.circular(6.h),
+                        imagePath: post.url,
+                      ),
+                      PlayButton(
+                        isVisible: post.isVideo,
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ReelPlayerWidget(
+                              reels: reel,
+                              initialIndex: index,
+                            ),
+                          ));
+                        },
+                      )
+                    ],
+                  );
+                },
               ),
-              SizedBox(height: 24.v),
+              // SizedBox(height: 24.v),
             ],
           );
   }

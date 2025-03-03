@@ -126,7 +126,7 @@ class InfluencerProfileScreen extends StatelessWidget {
                                   ),
                                   SizedBox(height: 24.h),
                                   Text(
-                                    'Top Products',
+                                    'Collections',
                                     style: textTheme.titleMedium!
                                         .copyWith(fontSize: 16.fSize),
                                   ),
@@ -145,7 +145,7 @@ class InfluencerProfileScreen extends StatelessWidget {
                                               ),
                                               SizedBox(height: 15.v),
                                               Text(
-                                                'No Post Yet',
+                                                'No Collections Yet',
                                                 style: textTheme.titleMedium,
                                               )
                                             ],
