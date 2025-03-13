@@ -214,11 +214,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
             _errorMessage = errorMessage;
           });
         }
-        return Center(
-          child: Text(
-            "Error: $errorMessage",
-            style: const TextStyle(color: Colors.red),
-          ),
+        return const Center(
+          child: SizedBox(
+              // "Error: $errorMessage",
+              // style: const TextStyle(color: Colors.red),
+              ),
         );
       },
       controlsConfiguration: const BetterPlayerControlsConfiguration(

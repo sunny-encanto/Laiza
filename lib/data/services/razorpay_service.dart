@@ -1,57 +1,53 @@
-import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class RazorpayService {
   late Razorpay _razorpay;
 
-  RazorpayService() {
+  // Callbacks for payment events
+  final Function(PaymentSuccessResponse) onSuccess;
+  final Function(PaymentFailureResponse) onError;
+  final Function(ExternalWalletResponse) onExternalWallet;
+
+  RazorpayService({
+    required this.onSuccess,
+    required this.onError,
+    required this.onExternalWallet,
+  }) {
     _razorpay = Razorpay();
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, onSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, onError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, onExternalWallet);
   }
 
   void openCheckout({
-    required double amount,
+    required int amount,
     required String name,
     required String description,
-    required String email,
-    required String contact,
-    required String orderId, // Optional: For server-side order creation
+    String? contact,
+    String? email,
   }) {
-    Map<String, dynamic> options = {
-      'key': '<YOUR_RAZORPAY_KEY>',
-      'amount': (amount * 100).toInt(), // Convert amount to paise
+    var options = {
+      'key': 'rzp_test_TrNh2WzyBi5Cbt',
+      'amount': (amount * 100).toInt(),
       'name': name,
       'description': description,
-      'prefill': {'contact': contact, 'email': email},
-      'order_id': orderId, // Optional
-      'theme': {'color': '#3399cc'},
+      'prefill': {
+        'contact': contact ?? '',
+        'email': email ?? '',
+      },
+      'external': {
+        'wallets': ['paytm']
+      }
     };
 
     try {
       _razorpay.open(options);
     } catch (e) {
-      debugPrint('Error opening Razorpay: $e');
+      print("Error opening Razorpay checkout: $e");
     }
   }
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    debugPrint("Payment Success: ${response.paymentId}");
-    // Handle payment success, e.g., update backend or show success screen
-  }
-
-  void _handlePaymentError(PaymentFailureResponse response) {
-    debugPrint("Payment Error: ${response.code} | ${response.message}");
-    // Handle payment failure, e.g., show error message to the user
-  }
-
-  void _handleExternalWallet(ExternalWalletResponse response) {
-    debugPrint("External Wallet Selected: ${response.walletName}");
-    // Handle external wallet selection if needed
-  }
-
-  void dispose() {
-    _razorpay.clear();
+  void clear() {
+    _razorpay.clear(); // Remove event listeners
   }
 }

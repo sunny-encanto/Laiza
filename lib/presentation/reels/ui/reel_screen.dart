@@ -552,8 +552,8 @@ class _ReelPlayerWidget extends State<ReelPlayerWidget> {
                 alignment: Alignment.bottomCenter,
                 children: [
                   Center(
-                      child:
-                          VideoPlayerScreen(url: widget.reels[index].reelPath)),
+                    child: VideoPlayerScreen(url: widget.reels[index].reelPath),
+                  ),
                   // _buildViewCountWidget(textTheme),
                   Align(
                     alignment: Alignment.bottomCenter,
@@ -850,10 +850,12 @@ class _ReelPlayerWidget extends State<ReelPlayerWidget> {
   }
 
   Container _buildFollowBanner(BuildContext context, UserModel user) {
+    _isFollowed = user.isFollowed ?? false;
     return Container(
       width: SizeUtils.width,
       height: 56.h,
-      decoration: const BoxDecoration(color: Colors.black),
+      color: Colors.black.withOpacity(0.6),
+      // decoration: const BoxDecoration(color: Colors.black),
       child: Row(
         children: [
           SizedBox(width: 20.h),
@@ -877,41 +879,42 @@ class _ReelPlayerWidget extends State<ReelPlayerWidget> {
             style: TextStyle(color: Colors.white, fontSize: 16.fSize),
           ),
           SizedBox(width: 20.h),
-          BlocProvider(
-            create: (context) => ReelBloc(context.read<ReelRepository>()),
-            child: BlocConsumer<ReelBloc, ReelState>(
-              listener: (context, state) {
-                if (state is ReelFollowRequestState) {
-                  _isFollowed = state.isFollowed;
-                }
-              },
-              builder: (context, state) {
-                return InkWell(
-                  onTap: () {
-                    context
-                        .read<ReelBloc>()
-                        .add(ReelFollowRequestEvent(!_isFollowed));
-                  },
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 8.v,
-                        width: 8.v,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.white),
-                      ),
-                      SizedBox(width: 5.h),
-                      Text(
-                        _isFollowed ? 'Following' : 'Follow',
-                        style:
-                            TextStyle(color: Colors.white, fontSize: 16.fSize),
-                      ),
-                    ],
-                  ),
-                );
-              },
+          if (user.userType != 'seller')
+            BlocProvider(
+              create: (context) => ReelBloc(context.read<ReelRepository>()),
+              child: BlocConsumer<ReelBloc, ReelState>(
+                listener: (context, state) {
+                  if (state is ReelFollowRequestState) {
+                    _isFollowed = state.isFollowed;
+                  }
+                },
+                builder: (context, state) {
+                  return InkWell(
+                    onTap: () {
+                      context.read<ReelBloc>().add(ReelFollowRequestEvent(
+                          isFollowed: !_isFollowed,
+                          id: int.parse(user.id ?? '0')));
+                    },
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 8.v,
+                          width: 8.v,
+                          decoration: const BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.white),
+                        ),
+                        SizedBox(width: 8.h),
+                        Text(
+                          _isFollowed ? 'Following' : 'Follow',
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 16.fSize),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
         ],
       ),
     );

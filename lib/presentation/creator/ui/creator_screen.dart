@@ -17,7 +17,7 @@ import '../../../widgets/influencer_profile_card_widget.dart';
 
 // ignore: must_be_immutable
 class CreatorScreen extends StatelessWidget {
-  CreatorScreen({super.key});
+  const CreatorScreen({super.key});
 
   // int _selectedChip = 1;
 

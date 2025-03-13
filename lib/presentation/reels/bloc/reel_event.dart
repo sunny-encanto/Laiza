@@ -20,11 +20,12 @@ class ChangeReelPage extends ReelEvent {
 
 class ReelFollowRequestEvent extends ReelEvent {
   final bool isFollowed;
+  final int id;
 
-  const ReelFollowRequestEvent(this.isFollowed);
+  const ReelFollowRequestEvent({required this.isFollowed, required this.id});
 
   @override
-  List<Object> get props => [isFollowed];
+  List<Object> get props => [isFollowed, id];
 }
 
 class ToggleReelLikeButtonEvent extends ReelEvent {

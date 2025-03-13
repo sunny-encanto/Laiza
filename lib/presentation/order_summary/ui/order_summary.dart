@@ -5,24 +5,74 @@ import 'package:laiza/data/blocs/coupon_bloc/coupon_bloc.dart';
 import 'package:laiza/data/models/coupon_detail_model/coupon_detail_model.dart';
 import 'package:laiza/data/repositories/address_repository/address_repository.dart';
 import 'package:laiza/data/repositories/coupon_repository/coupon_repository.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../../data/models/cart_model/cart_model.dart';
 import '../../../data/repositories/order_repository/order_repository.dart';
+import '../../../data/services/razorpay_service.dart';
 import '../../address_screen/bloc/address_bloc.dart';
 
-class OrderSummary extends StatelessWidget {
+class OrderSummary extends StatefulWidget {
   final List<CartModel> items;
 
-  OrderSummary({super.key, required this.items});
+  const OrderSummary({super.key, required this.items});
 
+  @override
+  State<OrderSummary> createState() => _OrderSummaryState();
+}
+
+class _OrderSummaryState extends State<OrderSummary> {
   final TextEditingController couponController = TextEditingController();
+
   int couponPrice = 30;
+  late RazorpayService _razorpayService;
+
+  @override
+  void initState() {
+    super.initState();
+    _razorpayService = RazorpayService(
+      onSuccess: _handlePaymentSuccess,
+      onError: _handlePaymentError,
+      onExternalWallet: _handleExternalWallet,
+    );
+  }
+
+  @override
+  void dispose() {
+    _razorpayService.clear();
+    super.dispose();
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    context.showSnackBar("Payment Successful: ${response.paymentId}");
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil(AppRoutes.orderPlacedScreen, (route) => false);
+    context.read<OrderRepository>().crateOrder(widget.items);
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    context.showSnackBar("Payment Failed: ${response.message}");
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    context.showSnackBar("External Wallet: ${response.walletName}");
+  }
+
+  void _startPayment() {
+    _razorpayService.openCheckout(
+      amount: 50000,
+      name: 'Laiza',
+      description: 'Payment for Product',
+      contact: '9876543210',
+      email: 'test@example.com',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    final totalPrice =
-        items.fold(0.0, (total, item) => total + (item.price * item.quantity));
+    final totalPrice = widget.items
+        .fold(0.0, (total, item) => total + (item.price * item.quantity));
 
     return Scaffold(
       appBar: AppBar(
@@ -97,7 +147,8 @@ class OrderSummary extends StatelessWidget {
                                       CustomImageView(
                                         onTap: () {
                                           Navigator.of(context).pushNamed(
-                                              AppRoutes.addAddressScreen);
+                                              AppRoutes.addAddressScreen,
+                                              arguments: state.address);
                                         },
                                         imagePath: ImageConstant.editIcon,
                                       )
@@ -132,17 +183,17 @@ class OrderSummary extends StatelessWidget {
               SizedBox(height: 8.v),
               Column(
                 children: List.generate(
-                  items.length,
+                  widget.items.length,
                   (index) => Padding(
                     padding: EdgeInsets.only(bottom: 12.v),
                     child: _buildCartItem(
                         CartModel(
-                          cartId: items[index].cartId,
-                          id: items[index].id,
-                          url: items[index].url,
-                          price: items[index].price,
+                          cartId: widget.items[index].cartId,
+                          id: widget.items[index].id,
+                          url: widget.items[index].url,
+                          price: widget.items[index].price,
                           quantity: 1,
-                          name: items[index].name,
+                          name: widget.items[index].name,
                           isSelected: true,
                         ),
                         context),
@@ -177,7 +228,7 @@ class OrderSummary extends StatelessWidget {
                 child: Column(
                   children: [
                     _buildDetailsTile(context,
-                        title: "Item", value: items.length.toString()),
+                        title: "Item", value: widget.items.length.toString()),
                     _buildDetailsTile(context,
                         title: "Delivery:", value: "free"),
                     _buildDetailsTile(context,
@@ -232,15 +283,16 @@ class OrderSummary extends StatelessWidget {
               ],
             ),
             CustomElevatedButton(
-              width: 160.h,
-              height: 48.v,
-              text: 'Pay Now',
-              buttonTextStyle: TextStyle(fontSize: 14.fSize),
-              onPressed: () {
-                Navigator.of(context).pushNamed(AppRoutes.orderPlacedScreen);
-                context.read<OrderRepository>().crateOrder(items);
-              },
-            ),
+                width: 160.h,
+                height: 48.v,
+                text: 'Pay Now',
+                buttonTextStyle: TextStyle(fontSize: 14.fSize),
+                onPressed: _startPayment
+                //     () {
+                //   // Navigator.of(context).pushNamed(AppRoutes.orderPlacedScreen);
+                //   // context.read<OrderRepository>().crateOrder(items);
+                // },
+                ),
           ],
         ),
       ),

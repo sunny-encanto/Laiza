@@ -4,6 +4,7 @@ import 'package:laiza/core/utils/api_constant.dart';
 import 'package:laiza/data/models/product_model/product.dart';
 import 'package:laiza/data/models/rating_model/rating_model.dart';
 
+import '../../../data/models/cart_model/cart_model.dart';
 import '../../../data/services/helper_services.dart';
 import '../../../data/services/share.dart';
 import '../../../widgets/slider_widget.dart';
@@ -18,6 +19,7 @@ class ProductDetailScreen extends StatelessWidget {
   bool _isLiked = false;
   int _selectedSize = 1;
   int _selectedColor = 0;
+  Product? _product;
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +60,7 @@ class ProductDetailScreen extends StatelessWidget {
               );
             } else if (state is ProductDetailLoaded) {
               final Product product = state.product;
+              _product = state.product;
               return Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.h),
                 child: Column(
@@ -66,90 +69,110 @@ class ProductDetailScreen extends StatelessWidget {
                     SizedBox(height: 20.v),
 
                     ///Slider
+                    // if (product.images.isNotEmpty)
                     BlocBuilder<ProductDetailBloc, ProductDetailState>(
                       buildWhen: (previous, current) =>
                           current is OnPageChangedState,
                       builder: (context, state) {
                         if (state is OnPageChangedState) {
-                          return Column(
-                            children: [
-                              customSlider(
-                                  autoPlay: false,
-                                  height: 300.v,
-                                  onPageChanged: (index, reason) {
-                                    context
-                                        .read<ProductDetailBloc>()
-                                        .add(OnPageChangedEvent(index));
-                                  },
-                                  childList: List.generate(
-                                    product.images.length,
-                                    (index) => CustomImageView(
-                                      width: SizeUtils.width,
-                                      height: 300.v,
-                                      imagePath:
-                                          product.images[state.index].imagePath,
-                                    ),
-                                  )),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: List.generate(
-                                  product.images.length,
-                                  (dotIndex) => Container(
-                                    margin: EdgeInsets.symmetric(
-                                        horizontal: 5.h, vertical: 10.v),
-                                    height: 7.v,
-                                    width:
-                                        state.index == dotIndex ? 30.h : 10.h,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5.h),
-                                      color: state.index == dotIndex
-                                          ? Colors.black
-                                          : Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        }
-                        return Column(
-                          children: [
-                            customSlider(
-                                autoPlay: false,
-                                height: 300.v,
-                                onPageChanged: (index, reason) {
-                                  context
-                                      .read<ProductDetailBloc>()
-                                      .add(OnPageChangedEvent(index));
-                                },
-                                childList: List.generate(
-                                  product.images.length,
-                                  (index) => CustomImageView(
-                                    width: SizeUtils.width,
+                          return product.images.isEmpty
+                              ? Center(
+                                  child: CustomImageView(
                                     height: 300.v,
-                                    imagePath: product.images[0].imagePath,
+                                    imagePath: product.productImage,
                                   ),
-                                )),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(
-                                product.images.length,
-                                (dotIndex) => Container(
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: 5.h, vertical: 10.v),
-                                  height: 7.v,
-                                  width: 0 == dotIndex ? 30.h : 10.h,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5.h),
-                                    color: 0 == dotIndex
-                                        ? Colors.black
-                                        : Colors.grey,
-                                  ),
+                                )
+                              : Column(
+                                  children: [
+                                    customSlider(
+                                        autoPlay: false,
+                                        height: 300.v,
+                                        onPageChanged: (index, reason) {
+                                          context
+                                              .read<ProductDetailBloc>()
+                                              .add(OnPageChangedEvent(index));
+                                        },
+                                        childList: List.generate(
+                                          product.images.length,
+                                          (index) => CustomImageView(
+                                            width: SizeUtils.width,
+                                            height: 300.v,
+                                            imagePath: product
+                                                .images[state.index].imagePath,
+                                          ),
+                                        )),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: List.generate(
+                                        product.images.length,
+                                        (dotIndex) => Container(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 5.h, vertical: 10.v),
+                                          height: 7.v,
+                                          width: state.index == dotIndex
+                                              ? 30.h
+                                              : 10.h,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5.h),
+                                            color: state.index == dotIndex
+                                                ? Colors.black
+                                                : Colors.grey,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                        }
+                        return product.images.isEmpty
+                            ? Center(
+                                child: CustomImageView(
+                                  height: 300.v,
+                                  imagePath: product.productImage,
                                 ),
-                              ),
-                            ),
-                          ],
-                        );
+                              )
+                            : Column(
+                                children: [
+                                  customSlider(
+                                      autoPlay: false,
+                                      height: 300.v,
+                                      onPageChanged: (index, reason) {
+                                        context
+                                            .read<ProductDetailBloc>()
+                                            .add(OnPageChangedEvent(index));
+                                      },
+                                      childList: List.generate(
+                                        product.images.length,
+                                        (index) => CustomImageView(
+                                          width: SizeUtils.width,
+                                          height: 300.v,
+                                          imagePath:
+                                              product.images[0].imagePath,
+                                        ),
+                                      )),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: List.generate(
+                                      product.images.length,
+                                      (dotIndex) => Container(
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 5.h, vertical: 10.v),
+                                        height: 7.v,
+                                        width: 0 == dotIndex ? 30.h : 10.h,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5.h),
+                                          color: 0 == dotIndex
+                                              ? Colors.black
+                                              : Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
                       },
                     ),
 
@@ -199,7 +222,7 @@ class ProductDetailScreen extends StatelessWidget {
                               Row(
                                 children: [
                                   Text(
-                                    '₹${product.price}',
+                                    '₹${product.finalPrice}',
                                     style: textTheme.titleMedium!
                                         .copyWith(fontSize: 20.fSize),
                                   ),
@@ -582,8 +605,24 @@ class ProductDetailScreen extends StatelessWidget {
                       imagePath: ImageConstant.checkOut,
                     ),
                     onPressed: () {
+                      List<CartModel> selectedItems = <CartModel>[];
+                      if (_product != null) {
+                        selectedItems.add(CartModel(
+                          cartId: 0,
+                          id: _product!.id,
+                          url: _product!.productImage,
+                          price: double.parse(_product!.price),
+                          quantity: 1,
+                          name: _product!.productName,
+                          isSelected: true,
+                        ));
+                      }
                       Navigator.of(context)
-                          .pushNamed(AppRoutes.addAddressScreen);
+                          .pushNamed(AppRoutes.orderSummary, arguments: {
+                        'items': selectedItems,
+                      });
+                      // Navigator.of(context)
+                      //     .pushNamed(AppRoutes.addAddressScreen);
                     },
                     text: 'Check Out')),
           ],

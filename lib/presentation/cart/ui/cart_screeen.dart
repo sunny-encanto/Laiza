@@ -122,6 +122,8 @@ class CartScreen extends StatelessWidget {
                           context
                               .showSnackBar('No items selected for checkout.');
                         } else {
+                          // Navigator.of(context)
+                          //     .pushNamed(AppRoutes.addressScreen);
                           Navigator.of(context)
                               .pushNamed(AppRoutes.orderSummary, arguments: {
                             'items': selectedItems,

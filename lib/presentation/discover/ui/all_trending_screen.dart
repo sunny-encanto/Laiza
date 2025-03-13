@@ -109,8 +109,12 @@ class TrendingItemGridWidget extends StatelessWidget {
                                   reelHashtag: '',
                                   likesCount: 0,
                                   commentsCount: 0,
-                                  product: <ReelProduct>[],
-                                  user: UserModel()))
+                                  product: e.product,
+                                  user: UserModel(
+                                      id: e.userId.toString(),
+                                      isFollowed: e.isFollow == 1,
+                                      name: e.userName,
+                                      profileImg: e.userImage)))
                               .toList();
                           int initialIndex = reels.indexWhere(
                               (item) => item.id == trendingItems.id);

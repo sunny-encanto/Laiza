@@ -18,24 +18,26 @@ class UserEditProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(backgroundColor: Colors.transparent),
       body: BlocProvider(
         create: (context) => ProfileBloc(context.read<UserRepository>()),
-        child: BlocBuilder<ProfileBloc, ProfileState>(
-          builder: (context, state) {
-            if (state is ProfileInitial) {
-              context.read<ProfileBloc>().add(FetchProfile());
-            } else if (state is ProfileInitial) {
-              return const SizedBox.shrink();
-            } else if (state is ProfileError) {
-              return Center(child: Text(state.message));
-            } else if (state is ProfileLoaded) {
-              _nameController.text = state.userModel.name ?? '';
-              _emailController.text = state.userModel.email ?? '';
-              _phoneNumberController.text = state.userModel.phoneNumber ?? '';
-              _selectedBgImage = state.userModel.profileImg ?? '';
-              _userModel = state.userModel;
-              return SingleChildScrollView(
-                child: Padding(
+        child: SingleChildScrollView(
+          child: BlocBuilder<ProfileBloc, ProfileState>(
+            builder: (context, state) {
+              if (state is ProfileInitial) {
+                context.read<ProfileBloc>().add(FetchProfile());
+              } else if (state is ProfileInitial) {
+                return const SizedBox.shrink();
+              } else if (state is ProfileError) {
+                return Center(child: Text(state.message));
+              } else if (state is ProfileLoaded) {
+                _nameController.text = state.userModel.name ?? '';
+                _emailController.text = state.userModel.email ?? '';
+                _phoneNumberController.text = state.userModel.phoneNumber ?? '';
+                _selectedBgImage = state.userModel.profileImg ?? '';
+                _userModel = state.userModel;
+                return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.h),
                   child: Form(
                     key: _formKey,
@@ -159,19 +161,23 @@ class UserEditProfileScreen extends StatelessWidget {
                         CustomTextFormField(
                           // readOnly: true,
                           controller: _phoneNumberController,
+                          textInputType: TextInputType.number,
+                          maxLength: 10,
+                          counter: const Text(''),
                           hintText: 'phone',
-                          validator: (String? value) {
-                            return validatePhoneNumber(value!);
-                          },
+                          // validator: (String? value) {
+                          //   return validatePhoneNumber(value!);
+                          // },
                         ),
+                        SizedBox(height: 80.v),
                       ],
                     ),
                   ),
-                ),
-              );
-            }
-            return const SizedBox.shrink();
-          },
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
         ),
       ),
       bottomSheet: Padding(

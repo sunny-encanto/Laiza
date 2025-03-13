@@ -26,6 +26,7 @@ class Product {
 
   List<Coupon> coupons;
   List<Image> images;
+  String productImage;
   List<Video> videos;
   ProductUser user;
   bool isAddedToWishlist;
@@ -62,42 +63,44 @@ class Product {
     required this.averageRating,
     required this.totalRatings,
     required this.discount,
+    required this.productImage,
   });
 
   Product copyWith({bool? isAddedToWishlist, bool? isAsked}) {
     return Product(
-      id: id,
-      userId: userId,
-      productName: productName,
-      description: description,
-      hashtags: hashtags,
-      price: price,
-      stockQuantity: stockQuantity,
-      availableSize: availableSize,
-      availableColor: availableColor,
-      couponDiscount: couponDiscount,
-      features: features,
-      promotionalStatus: promotionalStatus,
-      coupons: coupons,
-      images: images,
-      videos: videos,
-      user: user,
-      category: category,
-      isAddedToWishlist: isAddedToWishlist ?? this.isAddedToWishlist,
-      isAsked: isAsked ?? this.isAsked,
-      additionalInfo: additionalInfo,
-      ratings: ratings,
-      averageRating: averageRating,
-      totalRatings: totalRatings,
-      finalPrice: finalPrice,
-      discount: discount,
-    );
+        id: id,
+        userId: userId,
+        productName: productName,
+        description: description,
+        hashtags: hashtags,
+        price: price,
+        stockQuantity: stockQuantity,
+        availableSize: availableSize,
+        availableColor: availableColor,
+        couponDiscount: couponDiscount,
+        features: features,
+        promotionalStatus: promotionalStatus,
+        coupons: coupons,
+        images: images,
+        videos: videos,
+        user: user,
+        category: category,
+        isAddedToWishlist: isAddedToWishlist ?? this.isAddedToWishlist,
+        isAsked: isAsked ?? this.isAsked,
+        additionalInfo: additionalInfo,
+        ratings: ratings,
+        averageRating: averageRating,
+        totalRatings: totalRatings,
+        finalPrice: finalPrice,
+        discount: discount,
+        productImage: productImage);
   }
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
       id: json["id"],
       userId: json["user_id"] ?? 0,
       productName: json["product_name"] ?? "",
+      productImage: json["product_image"] ?? "",
       description: json["description"] ?? "",
       hashtags: json["hashtags"] ?? "",
       category: json["category"] == null
@@ -151,7 +154,7 @@ class Product {
         "description": description,
         "hashtags": hashtags,
         "category": category.toJson(),
-        // "subcategory": subcategory.toJson(),
+        "product_image": productImage,
         "price": price,
         "final_price": finalPrice,
         "stock_quantity": stockQuantity,
@@ -160,7 +163,6 @@ class Product {
         "coupon_discount": couponDiscount,
         "features": List<dynamic>.from(features.map((x) => x)),
         "promotional_status": promotionalStatus,
-
         "coupons": List<dynamic>.from(coupons.map((x) => x.toJson())),
         "images": List<dynamic>.from(images.map((x) => x.toJson())),
         "videos": List<dynamic>.from(videos.map((x) => x.toJson())),

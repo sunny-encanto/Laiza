@@ -33,23 +33,26 @@ class BottomBar extends StatelessWidget {
             type: BottomNavigationBarType.fixed,
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: _buildIcon(ImageConstant.reelIcon, 0),
+                icon: _buildIcon(ImageConstant.reelIcon, _selectedIndex == 0),
                 label: 'Pops',
               ),
               BottomNavigationBarItem(
-                icon: _buildIcon(ImageConstant.liveIcon, 1),
+                icon: _buildIcon(ImageConstant.liveIcon, _selectedIndex == 1),
                 label: 'Live',
               ),
               BottomNavigationBarItem(
-                icon: _buildIcon(ImageConstant.discoverIcon, 2),
+                icon:
+                    _buildIcon(ImageConstant.discoverIcon, _selectedIndex == 2),
                 label: 'Discover',
               ),
               BottomNavigationBarItem(
-                icon: _buildIcon(ImageConstant.creatorsIcon, 3),
+                icon:
+                    _buildIcon(ImageConstant.creatorsIcon, _selectedIndex == 3),
                 label: 'Creators',
               ),
               BottomNavigationBarItem(
-                icon: _buildIcon(ImageConstant.profileIcon, 4),
+                icon:
+                    _buildIcon(ImageConstant.profileIcon, _selectedIndex == 4),
                 label: 'Profile',
               ),
             ],
@@ -67,13 +70,13 @@ class BottomBar extends StatelessWidget {
   Widget _getBodyWidget(int index) {
     switch (index) {
       case 0:
-        return ReelScreen();
+        return const ReelScreen();
       case 1:
         return const LiveScreen();
       case 2:
         return const DiscoverScreen();
       case 3:
-        return CreatorScreen();
+        return const CreatorScreen();
       case 4:
         return const ProfileScreen();
       default:
@@ -82,8 +85,7 @@ class BottomBar extends StatelessWidget {
   }
 
   // Build custom icon with background color and radius on selection
-  Widget _buildIcon(String imagePath, int index) {
-    bool isSelected = _selectedIndex == index;
+  Widget _buildIcon(String imagePath, bool isSelected) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 500),
       width: 64.h,

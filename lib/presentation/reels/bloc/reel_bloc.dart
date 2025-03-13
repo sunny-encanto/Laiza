@@ -5,6 +5,8 @@ import 'package:equatable/equatable.dart';
 import 'package:laiza/data/models/reels_model/reel.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 
+import '../../../data/repositories/follow_repository/follow_repository.dart';
+
 part 'reel_event.dart';
 part 'reel_state.dart';
 
@@ -33,6 +35,11 @@ class ReelBloc extends Bloc<ReelEvent, ReelState> {
 
   FutureOr<void> _onFollowRequest(
       ReelFollowRequestEvent event, Emitter<ReelState> emit) async {
+    if (event.isFollowed) {
+      FollowersRepository().follow(event.id.toString());
+    } else {
+      FollowersRepository().unFollow(event.id.toString());
+    }
     emit(ReelFollowRequestState(event.isFollowed));
   }
 

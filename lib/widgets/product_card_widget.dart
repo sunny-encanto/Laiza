@@ -25,9 +25,7 @@ class ProductCardWidget extends StatelessWidget {
               width: 185.h,
               fit: BoxFit.fill,
               radius: BorderRadius.circular(6.h),
-              imagePath: product.images.isEmpty
-                  ? ImageConstant.discoverBannerImage
-                  : product.images[0].imagePath,
+              imagePath: product.productImage,
             ),
             SizedBox(height: 4.v),
             Text(
@@ -37,12 +35,12 @@ class ProductCardWidget extends StatelessWidget {
             SizedBox(height: 2.v),
             Row(
               children: [
-                Text(
-                  '₹${product.price}',
-                  style: textTheme.bodySmall!
-                      .copyWith(decoration: TextDecoration.lineThrough),
-                ),
-                SizedBox(width: 5.h),
+                // Text(
+                //   '₹${product.price}',
+                //   style: textTheme.bodySmall!
+                //       .copyWith(decoration: TextDecoration.lineThrough),
+                // ),
+                // SizedBox(width: 5.h),
                 Text(
                   '₹${product.finalPrice}',
                   style: textTheme.titleMedium,

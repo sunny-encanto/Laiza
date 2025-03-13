@@ -161,7 +161,7 @@ class UserModel {
         isProfileComplete: json['is_profile_complete'],
         instagramUserName: json['insta_username'],
         bio: json['bio'],
-        isFollowed: json['is_follow'],
+        isFollowed: json['is_follow'] == 1,
         followersCount: json['followers_count'],
         followingCount: json['following_count'],
       );

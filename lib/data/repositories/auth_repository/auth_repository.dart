@@ -3,6 +3,7 @@ import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/data/models/login_model/login_model.dart';
 import 'package:laiza/data/models/otp_verification_model/otp_verification_model.dart';
 import 'package:laiza/data/models/signup_model/signup_model.dart';
+import 'package:laiza/data/services/firebase_messaging_service.dart';
 
 import '../../../core/network/dio_client.dart';
 import '../../../core/utils/api_constant.dart';
@@ -14,7 +15,9 @@ class AuthRepository {
 
   Future<LoginModel> login(
       {required String email, required String password}) async {
+    String? fcmToken = await FirebaseMessagingService.generateToken();
     Map<String, dynamic> data = {
+      'fcm_token': fcmToken,
       'email': email,
       'password': password,
       'user_type': PrefUtils.getRole()
@@ -43,7 +46,9 @@ class AuthRepository {
 
   Future<LoginModel> socialLogin(
       {required String email, required String source}) async {
+    String? fcmToken = await FirebaseMessagingService.generateToken();
     Map<String, dynamic> data = {
+      'fcm_token': fcmToken,
       'email': email,
       'source': source,
       'user_type': PrefUtils.getRole()

@@ -54,8 +54,8 @@ class FollowingScreen extends StatelessWidget {
                           onTap: () {
                             Navigator.of(context).pushNamed(
                                 AppRoutes.influencerProfileScreen,
-                                arguments:
-                                    state.followings[index].id.toString());
+                                arguments: state.followings[index].followedId
+                                    .toString());
                           },
                           child: Container(
                             decoration: BoxDecoration(
