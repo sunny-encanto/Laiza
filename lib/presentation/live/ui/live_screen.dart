@@ -26,7 +26,7 @@ class LiveScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Followed Influencer',
+                'Followed Influencers',
                 style: textTheme.titleLarge,
               ),
               SizedBox(height: 20.v),
@@ -201,7 +201,10 @@ class LiveScreen extends StatelessWidget {
   Widget profileWidget(BuildContext context, Follower following) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).pushNamed(AppRoutes.influencerProfileScreen,
+            arguments: following.followedId.toString());
+      },
       child: Column(
         children: [
           Stack(

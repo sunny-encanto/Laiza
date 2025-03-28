@@ -26,7 +26,6 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
 
   FutureOr<void> _onPageChangeEvent(
       OnPageChangedEvent event, Emitter<ProductDetailState> emit) {
-    print('event ${event.index}');
     emit(OnPageChangedState(event.index));
   }
 
@@ -42,7 +41,10 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
 
   FutureOr<void> onProductSizeChange(
       ProductSizeChangeEvent event, Emitter<ProductDetailState> emit) {
-    emit(ProductSizeChangeState(event.size));
+    final List<Inventory> filteredInventory =
+        event.inventory.where((item) => item.size == event.size).toList();
+    emit(
+        ProductSizeChangeState(size: event.size, inventory: filteredInventory));
   }
 
   FutureOr<void> onProductColorChange(

@@ -159,6 +159,10 @@ class SellerInfoScreen extends StatelessWidget {
                   ),
                   const Spacer(),
                   CustomImageView(
+                    onTap: () {
+                      // Navigator.of(context)
+                      //     .pushNamed(AppRoutes.chatBoxScreen, arguments: '434');
+                    },
                     imagePath: ImageConstant.chatIcon,
                   )
                 ],

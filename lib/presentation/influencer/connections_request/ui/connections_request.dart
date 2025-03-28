@@ -78,9 +78,15 @@ class ConnectionsRequestScreen extends StatelessWidget {
                                 ),
                                 const Spacer(),
                                 Visibility(
-                                  visible: state.requestList[index].status ==
+                                  visible: request.status ==
                                       ConnectionRequestStatus.pending,
                                   replacement: CustomImageView(
+                                    onTap: () {
+                                      Navigator.of(context).pushNamed(
+                                          AppRoutes.chatBoxScreen,
+                                          arguments:
+                                              request.senderId.toString());
+                                    },
                                     imagePath: ImageConstant.chatIcon,
                                   ),
                                   child: Row(
@@ -89,8 +95,7 @@ class ConnectionsRequestScreen extends StatelessWidget {
                                         onTap: () {
                                           context.read<ConnectionRequestBloc>().add(
                                               ConnectionRequestChangeStatusEvent(
-                                                  id: state
-                                                      .requestList[index].id,
+                                                  id: request.id,
                                                   status:
                                                       ConnectionRequestStatus
                                                           .accepted));

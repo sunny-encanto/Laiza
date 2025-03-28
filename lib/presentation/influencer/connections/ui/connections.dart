@@ -82,16 +82,6 @@ class ConnectionsScreen extends StatelessWidget {
       onTap: () async {
         Navigator.of(context)
             .pushNamed(AppRoutes.chatBoxScreen, arguments: item.id.toString());
-        //Todo: this thing need to be done from admin side
-        // UserModel userModel = UserModel(
-        //   id: item.id.toString(),
-        //   name: item.name,
-        //   email: "email",
-        //   profileImg: item.profileImg,
-        //   token: 'ff',
-        //   role: UserRole.seller.name,
-        // );
-        // await FirebaseServices.addUser(userModel);
       },
       contentPadding: const EdgeInsets.all(0),
       leading: CustomImageView(

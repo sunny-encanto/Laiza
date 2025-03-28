@@ -1,5 +1,5 @@
 class ApiConstant {
-  // adb shell am start -W -a android.intent.action.VIEW -d "https://laizanew.web.app/profile" com.laiza.greatminds
+  // adb shell am start -W -a android.intent.action.VIEW -d "https://laizanew.web.app/profile" com.laizalive.greatminds
 
   // 177750485
   // f9f43319b681b8f9c13e3395781eb58fb6e8c065a957cfa12e03141b5dc3c16e
@@ -79,10 +79,12 @@ class ApiConstant {
   static String reelsFromMyInfluencer = 'api/user/my_influencer_reels';
   static String createOrder = 'api/user/create-order';
   static String myOrder = 'api/user/my-orders';
+  static String influencerOrder = 'api/user/influencerorder';
   static String addAddress = 'api/user/delivery_address/add/update';
   static String getAddress = 'api/user/delivery_address';
   static String getAddressType = 'api/admin/delivery_address_types';
   static String getDefaultAddress = 'api/user/default_delivery_address';
   static String deleteAddress = 'api/user/delivery_address/delete';
   static String couponDetails = 'api/user/coupon/details_by_code';
+  static String notification = 'api/user/my_notification';
 }

@@ -3,7 +3,6 @@ import 'package:laiza/data/repositories/follow_repository/follow_repository.dart
 import 'package:laiza/data/repositories/help_center_repository/help_center_repository.dart';
 import 'package:laiza/data/repositories/product_repository/product_repository.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
-import 'package:laiza/data/services/notification_service.dart';
 
 import 'core/app_export.dart';
 import 'core/network/connectivity_cubit.dart';
@@ -16,10 +15,12 @@ import 'data/repositories/comments_repository/comments_repository.dart';
 import 'data/repositories/connections_repository/connections_repository.dart';
 import 'data/repositories/coupon_repository/coupon_repository.dart';
 import 'data/repositories/live_stream_repository/live_stream_repository.dart';
+import 'data/repositories/notification_repository/notification_repository.dart';
 import 'data/repositories/order_repository/order_repository.dart';
 import 'data/repositories/rating_repository/rating_repository.dart';
 import 'data/services/deeplink_service.dart';
 import 'data/services/firebase_messaging_service.dart';
+import 'data/services/notification_service.dart';
 import 'localization/app_localization.dart';
 import 'theme/theme.dart';
 
@@ -27,7 +28,8 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp();
+  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await PrefUtils.init();
   await NotificationService.initialize();
   await FirebaseMessagingService.initialize();
@@ -109,6 +111,8 @@ class _MyAppState extends State<MyApp> {
               create: (BuildContext context) => AddressRepository()),
           RepositoryProvider(
               create: (BuildContext context) => CouponRepository()),
+          RepositoryProvider(
+              create: (BuildContext context) => NotificationRepository()),
         ],
         child: MultiBlocProvider(
           providers: [

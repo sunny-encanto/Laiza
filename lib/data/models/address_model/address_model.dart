@@ -37,9 +37,9 @@ class Address {
   String? areaStreet;
   String? landmark;
   String? pinCode;
-  int? city;
-  int? country;
-  int? state;
+  String? city;
+  String? country;
+  String? state;
   int? makeDefaultAddress;
   int? id;
 

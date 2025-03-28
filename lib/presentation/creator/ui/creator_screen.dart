@@ -37,7 +37,8 @@ class CreatorScreen extends StatelessWidget {
                 SizedBox(height: 20.v),
                 Text(
                   'Influencers You Follow',
-                  style: textTheme.titleLarge,
+                  style: textTheme.titleLarge!.copyWith(
+                      fontSize: 20.fSize, fontWeight: FontWeight.w400),
                 ),
                 SizedBox(height: 20.v),
                 BlocProvider(
@@ -192,11 +193,19 @@ class CreatorScreen extends StatelessWidget {
                                             SizedBox(height: 8.v),
                                             Center(
                                               child: CustomElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pushNamed(
+                                                      AppRoutes
+                                                          .productDetailScreen,
+                                                      arguments: product.id);
+                                                },
                                                 width: 150.h,
                                                 height: 26.v,
                                                 text: 'Buy Now',
-                                                buttonTextStyle:
-                                                    textTheme.titleSmall,
+                                                buttonTextStyle: textTheme
+                                                    .titleSmall!
+                                                    .copyWith(
+                                                        fontSize: 12.fSize),
                                               ),
                                             )
                                           ],

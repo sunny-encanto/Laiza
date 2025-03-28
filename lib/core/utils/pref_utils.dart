@@ -21,7 +21,7 @@ class PrefUtils {
 
   ///will clear all the data stored in preference
   static void clearPreferencesData() async {
-    _sharedPreferences!.clear();
+    _sharedPreferences?.clear();
     // await FirebaseServices.handleLogOut();
   }
 

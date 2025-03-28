@@ -123,6 +123,7 @@ class InfluencerProfileScreen extends StatelessWidget {
                                             .bio ??
                                         '',
                                     style: textTheme.bodySmall,
+                                    maxLines: 4,
                                   ),
                                   SizedBox(height: 24.h),
                                   Text(

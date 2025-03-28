@@ -5,8 +5,10 @@ import 'package:laiza/data/blocs/coupon_bloc/coupon_bloc.dart';
 import 'package:laiza/data/models/coupon_detail_model/coupon_detail_model.dart';
 import 'package:laiza/data/repositories/address_repository/address_repository.dart';
 import 'package:laiza/data/repositories/coupon_repository/coupon_repository.dart';
+import 'package:laiza/presentation/order_summary/cubit/order_summary_cubit.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
+import '../../../data/models/address_model/address_model.dart';
 import '../../../data/models/cart_model/cart_model.dart';
 import '../../../data/repositories/order_repository/order_repository.dart';
 import '../../../data/services/razorpay_service.dart';
@@ -24,7 +26,9 @@ class OrderSummary extends StatefulWidget {
 class _OrderSummaryState extends State<OrderSummary> {
   final TextEditingController couponController = TextEditingController();
 
-  int couponPrice = 30;
+  num couponPrice = 0;
+  num totalPrice = 0;
+  Address? address;
   late RazorpayService _razorpayService;
 
   @override
@@ -58,20 +62,10 @@ class _OrderSummaryState extends State<OrderSummary> {
     context.showSnackBar("External Wallet: ${response.walletName}");
   }
 
-  void _startPayment() {
-    _razorpayService.openCheckout(
-      amount: 50000,
-      name: 'Laiza',
-      description: 'Payment for Product',
-      contact: '9876543210',
-      email: 'test@example.com',
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    final totalPrice = widget.items
+    totalPrice = widget.items
         .fold(0.0, (total, item) => total + (item.price * item.quantity));
 
     return Scaffold(
@@ -105,70 +99,113 @@ class _OrderSummaryState extends State<OrderSummary> {
                     } else if (state is AddressError) {
                       return Center(child: Text(state.message));
                     } else if (state is DefaultAddressLoaded) {
-                      return Container(
-                        padding: EdgeInsets.all(20.h),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.h),
-                            border: Border.all(color: Colors.black)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(2.h),
-                              width: 80.h,
-                              alignment: Alignment.center,
+                      address = state.address;
+                      return state.address.addressType != null
+                          ? Container(
+                              padding: EdgeInsets.all(20.h),
                               decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
-                                  borderRadius: BorderRadius.circular(12.h)),
-                              child: Text(
-                                state.address.addressType ?? '',
-                                style: textTheme.titleSmall!
-                                    .copyWith(color: Colors.black),
-                              ),
-                            ),
-                            SizedBox(height: 15.v),
-                            Row(
-                              children: [
-                                CustomImageView(
-                                  imagePath: ImageConstant.shippingIcon,
-                                ),
-                                SizedBox(width: 8.h),
-                                Expanded(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  borderRadius: BorderRadius.circular(8.h),
+                                  border: Border.all(color: Colors.black)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(2.h),
+                                    width: 80.h,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey.shade300,
+                                        borderRadius:
+                                            BorderRadius.circular(12.h)),
+                                    child: Text(
+                                      state.address.addressType ?? '',
+                                      style: textTheme.titleSmall!
+                                          .copyWith(color: Colors.black),
+                                    ),
+                                  ),
+                                  SizedBox(height: 15.v),
+                                  Row(
                                     children: [
-                                      Text(
-                                        'Shipping Address',
-                                        style: textTheme.titleMedium,
-                                      ),
                                       CustomImageView(
-                                        onTap: () {
-                                          Navigator.of(context).pushNamed(
-                                              AppRoutes.addAddressScreen,
-                                              arguments: state.address);
-                                        },
-                                        imagePath: ImageConstant.editIcon,
+                                        imagePath: ImageConstant.shippingIcon,
+                                      ),
+                                      SizedBox(width: 8.h),
+                                      Expanded(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Shipping Address',
+                                              style: textTheme.titleMedium,
+                                            ),
+                                            CustomImageView(
+                                              onTap: () {
+                                                Navigator.of(context)
+                                                    .pushNamed(
+                                                        AppRoutes
+                                                            .addAddressScreen,
+                                                        arguments:
+                                                            state.address)
+                                                    .then((_) => context
+                                                        .read<AddressBloc>()
+                                                        .add(
+                                                            FetchDefaultAddressEvent()));
+                                              },
+                                              imagePath: ImageConstant.editIcon,
+                                            )
+                                            // SizedBox(height: 4.v),
+                                          ],
+                                        ),
                                       )
-                                      // SizedBox(height: 4.v),
                                     ],
                                   ),
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 15.v),
-                            SizedBox(
-                              width: SizeUtils.width - 100.h,
-                              child: Text(
-                                '${state.address.houseNo}, ${state.address.areaStreet},${state.address.landmark},${state.address.city},${state.address.state},${state.address.pinCode}',
-                                style: textTheme.titleMedium,
+                                  SizedBox(height: 15.v),
+                                  SizedBox(
+                                    width: SizeUtils.width - 100.h,
+                                    child: Text(
+                                      '${state.address.houseNo}, ${state.address.areaStreet},${state.address.landmark},${state.address.city},${state.address.state},${state.address.pinCode}',
+                                      style: textTheme.titleMedium,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      );
+                            )
+                          : InkWell(
+                              onTap: () {
+                                Navigator.of(context)
+                                    .pushNamed(AppRoutes.addressScreen)
+                                    .then(
+                                  (_) {
+                                    context
+                                        .read<AddressBloc>()
+                                        .add(FetchDefaultAddressEvent());
+                                  },
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 24.h,
+                                    height: 24.v,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(6.h),
+                                        border:
+                                            Border.all(color: Colors.black)),
+                                    child: const Text('+'),
+                                  ),
+                                  SizedBox(width: 12.h),
+                                  Text(
+                                    'Add new address',
+                                    style: textTheme.titleMedium,
+                                  )
+                                ],
+                              ),
+                            );
                     }
                     return const SizedBox.shrink();
                   },
@@ -188,6 +225,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                     padding: EdgeInsets.only(bottom: 12.v),
                     child: _buildCartItem(
                         CartModel(
+                          inventoryId: widget.items[index].inventoryId,
                           cartId: widget.items[index].cartId,
                           id: widget.items[index].id,
                           url: widget.items[index].url,
@@ -220,27 +258,38 @@ class _OrderSummaryState extends State<OrderSummary> {
               SizedBox(height: 24.v),
               Text('Payment Details', style: textTheme.titleMedium),
               SizedBox(height: 12.v),
-              Container(
-                decoration: BoxDecoration(
-                    color: AppColor.offWhite,
-                    borderRadius: BorderRadius.circular(5.h)),
-                padding: EdgeInsets.all(20.h),
-                child: Column(
-                  children: [
-                    _buildDetailsTile(context,
-                        title: "Item", value: widget.items.length.toString()),
-                    _buildDetailsTile(context,
-                        title: "Delivery:", value: "free"),
-                    _buildDetailsTile(context,
-                        title: "Total:", value: "₹$totalPrice"),
-                    _buildDetailsTile(context,
-                        title: "Coupon Code", value: "₹$couponPrice"),
-                    const Divider(),
-                    _buildDetailsTile(context,
-                        title: "Order Total:",
-                        value: "₹${totalPrice - couponPrice}"),
-                  ],
-                ),
+              BlocConsumer<OrderSummaryCubit, OrderSummaryState>(
+                listener: (context, state) {
+                  if (state is DiscountAdded) {
+                    totalPrice = state.totalPrice;
+                    couponPrice = state.discountPrice;
+                  }
+                },
+                builder: (context, state) {
+                  return Container(
+                    decoration: BoxDecoration(
+                        color: AppColor.offWhite,
+                        borderRadius: BorderRadius.circular(5.h)),
+                    padding: EdgeInsets.all(20.h),
+                    child: Column(
+                      children: [
+                        _buildDetailsTile(context,
+                            title: "Item",
+                            value: widget.items.length.toString()),
+                        _buildDetailsTile(context,
+                            title: "Delivery:", value: "free"),
+                        _buildDetailsTile(context,
+                            title: "Total:", value: "₹$totalPrice"),
+                        _buildDetailsTile(context,
+                            title: "Coupon price:", value: "₹$couponPrice"),
+                        const Divider(),
+                        _buildDetailsTile(context,
+                            title: "Order Total:",
+                            value: "₹${totalPrice - couponPrice}"),
+                      ],
+                    ),
+                  );
+                },
               ),
               SizedBox(height: 80.v),
 
@@ -297,6 +346,21 @@ class _OrderSummaryState extends State<OrderSummary> {
         ),
       ),
     );
+  }
+
+  void _startPayment() {
+    if (address?.city == null) {
+      context.showSnackBar('Please add address');
+      return;
+    } else {
+      _razorpayService.openCheckout(
+        amount: (totalPrice - couponPrice).toInt(),
+        name: 'Laiza',
+        description: 'Payment for Product',
+        contact: '9876543210',
+        email: 'test@example.com',
+      );
+    }
   }
 
   Padding _buildDetailsTile(BuildContext context,
@@ -369,13 +433,13 @@ class _OrderSummaryState extends State<OrderSummary> {
   }
 
   // Function to show the bottom sheet
-  void _showCouponBottomSheet(BuildContext context, totalPrice) {
+  void _showCouponBottomSheet(BuildContext previousContext, totalPrice) {
     showModalBottomSheet(
-      context: context,
+      context: previousContext,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (BuildContext context) {
+      builder: (BuildContext _) {
         return BlocProvider(
           create: (context) => CouponBloc(context.read<CouponRepository>()),
           child: BlocConsumer<CouponBloc, CouponState>(
@@ -450,14 +514,18 @@ class _OrderSummaryState extends State<OrderSummary> {
                         width: double.infinity,
                         child: CustomElevatedButton(
                           onPressed: () {
-                            totalPrice = totalPrice - couponDetail.amount;
-                            // Add your apply coupon logic here
-                            Navigator.pop(context); // Close the bottom sheet
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text("Coupon applied successfully!")),
-                            );
+                            previousContext
+                                .read<OrderSummaryCubit>()
+                                .applyCoupon(couponDetail, totalPrice);
+                            Navigator.pop(context);
+                            context
+                                .showSnackBar("Coupon applied successfully!");
+
+                            // totalPrice = _getPriceAfterDiscount(
+                            //   totalPrice,
+                            //   couponDetail.amount.toDouble(),
+                            //
+                            // );
                           },
                           text: "Apply Coupon",
                         ),
@@ -472,5 +540,13 @@ class _OrderSummaryState extends State<OrderSummary> {
         );
       },
     );
+  }
+
+  double _getPriceAfterDiscount(double actualValue, double discountPercentage) {
+    if (discountPercentage < 0 || discountPercentage > 100) {
+      throw ArgumentError('Discount percentage must be between 0 and 100');
+    }
+    double discountAmount = actualValue * (discountPercentage / 100);
+    return actualValue - discountAmount;
   }
 }

@@ -10,6 +10,7 @@ class EditProfileScreen extends StatelessWidget {
   EditProfileScreen({super.key});
 
   final TextEditingController _nameController = TextEditingController();
+
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _instagramController = TextEditingController();
   final TextEditingController _xController = TextEditingController();

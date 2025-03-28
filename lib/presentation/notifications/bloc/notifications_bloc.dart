@@ -2,12 +2,17 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:laiza/data/models/notifications_model/notifications_model.dart';
+import 'package:laiza/data/repositories/notification_repository/notification_repository.dart';
 
 part 'notifications_event.dart';
 part 'notifications_state.dart';
 
 class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
-  NotificationsBloc() : super(NotificationsInitial()) {
+  final NotificationRepository _notificationRepository;
+
+  NotificationsBloc(this._notificationRepository)
+      : super(NotificationsInitial()) {
     on<NotificationFetchEvent>(_onFetchNotifications);
   }
 
@@ -15,10 +20,11 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
       NotificationFetchEvent event, Emitter<NotificationsState> emit) async {
     try {
       emit(NotificationsLoadingState());
-      await Future.delayed(const Duration(seconds: 1));
-      emit(const NotificationsLoaded([]));
+      List<Notification> notification =
+          await _notificationRepository.getNotifications();
+      emit(NotificationsLoaded(notification));
     } catch (e) {
-      emit(const NotificationsErrorState('Failed to load Notifications'));
+      emit(NotificationsErrorState(e.toString()));
     }
   }
 }

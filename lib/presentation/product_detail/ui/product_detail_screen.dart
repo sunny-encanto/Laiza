@@ -1,6 +1,7 @@
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/core/utils/api_constant.dart';
+import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/data/models/product_model/product.dart';
 import 'package:laiza/data/models/rating_model/rating_model.dart';
 
@@ -17,9 +18,10 @@ class ProductDetailScreen extends StatelessWidget {
   ProductDetailScreen({super.key, required this.id});
 
   bool _isLiked = false;
-  int _selectedSize = 1;
+  String _selectedSize = '';
   int _selectedColor = 0;
   Product? _product;
+  List<Inventory> _colors = <Inventory>[];
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +63,9 @@ class ProductDetailScreen extends StatelessWidget {
             } else if (state is ProductDetailLoaded) {
               final Product product = state.product;
               _product = state.product;
+              _selectedSize = state.product.inventories.first.size;
+              context.read<ProductDetailBloc>().add(ProductSizeChangeEvent(
+                  size: _selectedSize, inventory: product.inventories));
               return Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.h),
                 child: Column(
@@ -234,16 +239,16 @@ class ProductDetailScreen extends StatelessWidget {
                                 ],
                               ),
                               SizedBox(height: 2.h),
-                              product.stockQuantity > 0
-                                  ? Text(
-                                      'In Stock – Limited quantities available!',
-                                      style: textTheme.bodySmall,
-                                    )
-                                  : Text(
-                                      'Out of Stock',
-                                      style: textTheme.bodySmall!
-                                          .copyWith(color: Colors.red),
-                                    ),
+                              // product.stockQuantity > 0
+                              //     ? Text(
+                              //         'In Stock – Limited quantities available!',
+                              //         style: textTheme.bodySmall,
+                              //       )
+                              //     : Text(
+                              //         'Out of Stock',
+                              //         style: textTheme.bodySmall!
+                              //             .copyWith(color: Colors.red),
+                              //       ),
                             ],
                           ),
                         ),
@@ -294,102 +299,168 @@ class ProductDetailScreen extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 16.h),
-                    SizedBox(
-                      height: 48.v,
-                      child: ListView.builder(
-                        itemCount: product.availableSize.length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) =>
-                            BlocConsumer<ProductDetailBloc, ProductDetailState>(
-                          listener: (context, state) {
-                            if (state is ProductSizeChangeState) {
-                              _selectedSize = state.size;
-                            }
-                          },
-                          builder: (context, state) {
-                            return InkWell(
-                              onTap: () {
-                                context
-                                    .read<ProductDetailBloc>()
-                                    .add(ProductSizeChangeEvent(index + 1));
-                              },
-                              child: Container(
-                                constraints: BoxConstraints(minWidth: 48.h),
-                                padding: EdgeInsets.symmetric(horizontal: 8.h),
-                                height: 48.v,
-                                margin: EdgeInsets.only(right: 8.h),
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: _selectedSize == index + 1
-                                          ? Colors.black
-                                          : Colors.grey,
-                                    ),
-                                    borderRadius: BorderRadius.circular(6.h)),
-                                child: Text(
-                                  product.availableSize[index],
-                                  style: textTheme.titleMedium,
+
+                    BlocConsumer<ProductDetailBloc, ProductDetailState>(
+                      listener: (context, state) {
+                        if (state is ProductSizeChangeState) {
+                          _selectedSize = state.size;
+                          _colors = state.inventory;
+                          _selectedColor = state.inventory.first.id;
+                        }
+                      },
+                      builder: (context, state) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 48.v,
+                              child: ListView.builder(
+                                itemCount: product.inventories
+                                    .map(
+                                        (inventory) => inventory.size as String)
+                                    .toSet()
+                                    .toList()
+                                    .length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) => BlocConsumer<
+                                    ProductDetailBloc, ProductDetailState>(
+                                  listener: (context, state) {
+                                    if (state is ProductSizeChangeState) {
+                                      _selectedSize = state.size;
+                                      _colors = state.inventory;
+                                    }
+                                  },
+                                  builder: (context, state) {
+                                    return InkWell(
+                                      onTap: () {
+                                        context.read<ProductDetailBloc>().add(
+                                            ProductSizeChangeEvent(
+                                                inventory: product.inventories,
+                                                size: product.inventories
+                                                    .map((inventory) =>
+                                                        inventory.size
+                                                            as String)
+                                                    .toSet()
+                                                    .toList()[index]));
+                                      },
+                                      child: Container(
+                                        constraints:
+                                            BoxConstraints(minWidth: 48.h),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8.h),
+                                        height: 48.v,
+                                        margin: EdgeInsets.only(right: 8.h),
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: _selectedSize ==
+                                                      product.inventories
+                                                          .map((inventory) =>
+                                                              inventory.size
+                                                                  as String)
+                                                          .toSet()
+                                                          .toList()[index]
+                                                  ? Colors.black
+                                                  : Colors.grey,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(6.h)),
+                                        child: Text(
+                                          product.inventories
+                                              .map((inventory) =>
+                                                  inventory.size as String)
+                                              .toSet()
+                                              .toList()[index],
+                                          style: textTheme.titleMedium,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                      ),
+                            ),
+                            SizedBox(height: 24.h),
+                            Text(
+                              'Colors',
+                              style: textTheme.titleMedium,
+                            ),
+                            SizedBox(height: 12.h),
+                            SizedBox(
+                              height: 48.v,
+                              child: ListView.builder(
+                                itemCount: _colors.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) => BlocConsumer<
+                                    ProductDetailBloc, ProductDetailState>(
+                                  listener: (context, state) {
+                                    if (state is ProductColorChangeState) {
+                                      _selectedColor = state.color;
+                                    }
+                                  },
+                                  builder: (context, state) {
+                                    return Container(
+                                      height: 48.v,
+                                      width: 48.h,
+                                      margin: EdgeInsets.only(right: 15.h),
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: _selectedColor ==
+                                                  _colors[index].id
+                                              ? Colors.black
+                                              : Colors.white,
+                                        ),
+                                      ),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          context.read<ProductDetailBloc>().add(
+                                              ProductColorChangeEvent(
+                                                  _colors[index].id));
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.all(3.h),
+                                          decoration: BoxDecoration(
+                                            color: hexToColor(
+                                                _colors[index].color),
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
 
                     /// Colors Selection
-                    SizedBox(height: 24.h),
-                    Text(
-                      'Colors',
-                      style: textTheme.titleMedium,
-                    ),
-                    SizedBox(height: 12.h),
-                    SizedBox(
-                      height: 48.v,
-                      child: ListView.builder(
-                        itemCount: product.availableColor.length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) =>
-                            BlocConsumer<ProductDetailBloc, ProductDetailState>(
-                          listener: (context, state) {
-                            if (state is ProductColorChangeState) {
-                              _selectedColor = state.color;
-                            }
-                          },
-                          builder: (context, state) {
-                            return Container(
-                              height: 48.v,
-                              width: 48.h,
-                              margin: EdgeInsets.only(right: 15.h),
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: _selectedColor == index
-                                      ? Colors.black
-                                      : Colors.white,
-                                ),
-                              ),
-                              child: GestureDetector(
-                                onTap: () {
-                                  context
-                                      .read<ProductDetailBloc>()
-                                      .add(ProductColorChangeEvent(index));
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.all(3.h),
-                                  decoration: BoxDecoration(
-                                    color: hexToColor(
-                                        product.availableColor[index]),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
+
+                    // BlocBuilder<ProductDetailBloc, ProductDetailState>(
+                    //   builder: (context, state) {
+                    //     if (state is SizeSelectedState) {
+                    //       return Row(
+                    //         children: state.colors.map((color) {
+                    //           return Container(
+                    //             margin: const EdgeInsets.only(right: 8),
+                    //             width: 40,
+                    //             height: 40,
+                    //             decoration: BoxDecoration(
+                    //               shape: BoxShape.circle,
+                    //               color: Color(
+                    //                   int.parse("0xFF${color.substring(1)}")),
+                    //             ),
+                    //           );
+                    //         }).toList(),
+                    //       );
+                    //     }
+                    //     return Text("No colors available");
+                    //   },
+                    // ),
+
                     SizedBox(height: 28.h),
 
                     /// Product Features
@@ -567,7 +638,7 @@ class ProductDetailScreen extends StatelessWidget {
                     //     )
                     //   ],
                     // ),
-                    // SizedBox(height: 120.v),
+                    SizedBox(height: 120.v),
                   ],
                 ),
               );
@@ -576,58 +647,64 @@ class ProductDetailScreen extends StatelessWidget {
           },
         ),
       ),
-      bottomSheet: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10.h, vertical: 10.v),
-        child: Row(
-          children: [
-            Expanded(
-                child: BlocListener<ProductDetailBloc, ProductDetailState>(
-              listener: (context, state) {
-                if (state is ProductAddedToCart) {
-                  context.showSnackBar(state.message);
-                } else if (state is ProductAddedToCartError) {
-                  context.showSnackBar(state.message);
-                }
-              },
-              child: CustomOutlineButton(
-                  leftIcon: CustomImageView(
-                    imagePath: ImageConstant.cartBlackIcon,
-                  ),
-                  onPressed: () {
-                    context.read<ProductDetailBloc>().add(ProductAddToCart(id));
-                  },
-                  text: 'Add to Cart'),
-            )),
-            SizedBox(width: 12.h),
-            Expanded(
-                child: CustomElevatedButton(
-                    leftIcon: CustomImageView(
-                      imagePath: ImageConstant.checkOut,
-                    ),
-                    onPressed: () {
-                      List<CartModel> selectedItems = <CartModel>[];
-                      if (_product != null) {
-                        selectedItems.add(CartModel(
-                          cartId: 0,
-                          id: _product!.id,
-                          url: _product!.productImage,
-                          price: double.parse(_product!.price),
-                          quantity: 1,
-                          name: _product!.productName,
-                          isSelected: true,
-                        ));
+      bottomSheet: PrefUtils.getRole() == UserRole.user.name
+          ? Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.h, vertical: 10.v),
+              child: Row(
+                children: [
+                  Expanded(
+                      child:
+                          BlocListener<ProductDetailBloc, ProductDetailState>(
+                    listener: (context, state) {
+                      if (state is ProductAddedToCart) {
+                        context.showSnackBar(state.message);
+                      } else if (state is ProductAddedToCartError) {
+                        context.showSnackBar(state.message);
                       }
-                      Navigator.of(context)
-                          .pushNamed(AppRoutes.orderSummary, arguments: {
-                        'items': selectedItems,
-                      });
-                      // Navigator.of(context)
-                      //     .pushNamed(AppRoutes.addAddressScreen);
                     },
-                    text: 'Check Out')),
-          ],
-        ),
-      ),
+                    child: CustomOutlineButton(
+                        leftIcon: CustomImageView(
+                          imagePath: ImageConstant.cartBlackIcon,
+                        ),
+                        onPressed: () {
+                          context
+                              .read<ProductDetailBloc>()
+                              .add(ProductAddToCart(id));
+                        },
+                        text: 'Add to Cart'),
+                  )),
+                  SizedBox(width: 12.h),
+                  Expanded(
+                      child: CustomElevatedButton(
+                          leftIcon: CustomImageView(
+                            imagePath: ImageConstant.checkOut,
+                          ),
+                          onPressed: () {
+                            List<CartModel> selectedItems = <CartModel>[];
+                            if (_product != null) {
+                              selectedItems.add(CartModel(
+                                inventoryId: _selectedColor,
+                                cartId: 0,
+                                id: _product!.id,
+                                url: _product!.productImage,
+                                price: double.parse(_product!.finalPrice),
+                                quantity: 1,
+                                name: _product!.productName,
+                                isSelected: true,
+                              ));
+                            }
+                            Navigator.of(context)
+                                .pushNamed(AppRoutes.orderSummary, arguments: {
+                              'items': selectedItems,
+                            });
+                            // Navigator.of(context)
+                            //     .pushNamed(AppRoutes.addAddressScreen);
+                          },
+                          text: 'Check Out')),
+                ],
+              ),
+            )
+          : const SizedBox.shrink(),
     );
   }
 

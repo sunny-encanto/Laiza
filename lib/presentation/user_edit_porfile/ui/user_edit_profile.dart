@@ -196,6 +196,7 @@ class UserEditProfileScreen extends StatelessWidget {
               text: 'Update',
               onPressed: () {
                 _userModel?.name = _nameController.text;
+                _userModel?.phoneNumber = _phoneNumberController.text;
                 if (_selectedBgImage.isNotEmpty) {
                   _userModel?.profileImg = _selectedBgImage;
                 }

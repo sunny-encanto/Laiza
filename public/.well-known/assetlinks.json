@@ -5,7 +5,7 @@
     ],
     "target": {
       "namespace": "android_app",
-      "package_name": "com.laiza.greatminds",
+      "package_name": "com.laizalive.greatminds",
       "sha256_cert_fingerprints": [
         "2A:97:21:3B:56:A5:5E:C9:2B:17:1D:17:98:94:DD:8C:C9:33:6A:15:3A:A2:D6:3C:46:3A:C7:EA:3F:02:19:E6",
         "2C:55:B3:F9:53:04:9A:E4:C6:D2:C4:69:CA:06:D4:17:24:CD:E2:AA:0B:D5:66:0C:34:1D:F6:34:26:8D:89:83"

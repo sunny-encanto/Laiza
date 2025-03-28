@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:laiza/data/models/common_model/common_model.dart';
+import 'package:laiza/data/models/influencer_order_model/influencer_order_model.dart';
 import 'package:laiza/data/models/my_orders_model/my_order_model.dart';
 
 import '../../../core/network/dio_client.dart';
@@ -18,6 +19,7 @@ class OrderRepository {
       FormData formData = FormData();
 
       for (var item in selectedItems) {
+        formData.fields.add(MapEntry('inventory_id[]', item.id.toString()));
         formData.fields.add(MapEntry('product_id[]', item.id.toString()));
         formData.fields.add(MapEntry('quantity[]', item.quantity.toString()));
       }
@@ -58,6 +60,24 @@ class OrderRepository {
     } catch (e) {
       Logger.log('Error during get my orders', e.toString());
       throw Exception('Failed to during get my orders');
+    }
+  }
+
+  Future<InfluencerOrderModel> getInfluencerOrders(String year) async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+
+      Response response = await _apiClient
+          .get(ApiConstant.influencerOrder, queryParameters: {'year': year});
+      InfluencerOrderModel model = InfluencerOrderModel.fromJson(response.data);
+      return model;
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during get influencer order', e.toString());
+      throw Exception('Failed to during get  influencer order');
     }
   }
 }

@@ -132,13 +132,20 @@ class FollowingScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Top Influencer Picks for You',
+                    'Top Influencers Picks for You',
                     style: textTheme.titleMedium,
                   ),
-                  // Text(
-                  //   'VIew All',
-                  //   style: textTheme.bodySmall,
-                  // ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const TopInfluencersScreen(),
+                      ));
+                    },
+                    child: Text(
+                      'VIew All',
+                      style: textTheme.bodySmall,
+                    ),
+                  ),
                 ],
               ),
               SizedBox(height: 20.v),
@@ -165,7 +172,9 @@ class FollowingScreen extends StatelessWidget {
                             const SliverSimpleGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2),
                         shrinkWrap: true,
-                        itemCount: state.influencers.length,
+                        itemCount: state.influencers.length > 6
+                            ? 6
+                            : state.influencers.length,
                         physics: const NeverScrollableScrollPhysics(),
                         mainAxisSpacing: 5.v,
                         crossAxisSpacing: 5.h,
@@ -181,6 +190,60 @@ class FollowingScreen extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class TopInfluencersScreen extends StatelessWidget {
+  const TopInfluencersScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black),
+        title: Text(
+          'Top Influencers',
+          style: textTheme.titleMedium,
+        ),
+      ),
+      body: BlocProvider(
+        create: (context) => AllInfluencerBloc(context.read<UserRepository>(),
+            context.read<FollowersRepository>()),
+        child: BlocBuilder<AllInfluencerBloc, AllInfluencerState>(
+          builder: (context, state) {
+            if (state is AllInfluencerInitial) {
+              context.read<AllInfluencerBloc>().add(FetchAllInfluencer());
+            }
+            if (state is AllInfluencerLoading) {
+              return const LoadingGridScreen();
+            } else if (state is AllInfluencerError) {
+              return Center(
+                child: Text(state.message),
+              );
+            } else if (state is AllInfluencerLoaded) {
+              return MasonryGridView.builder(
+                gridDelegate:
+                    const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2),
+                shrinkWrap: true,
+                itemCount: state.influencers.length,
+                mainAxisSpacing: 5.v,
+                crossAxisSpacing: 5.h,
+                itemBuilder: (context, index) {
+                  return InfluencerProfileCardWidget(
+                      userModel: state.influencers[index]);
+                },
+              );
+            }
+            return const SizedBox.shrink();
+          },
         ),
       ),
     );

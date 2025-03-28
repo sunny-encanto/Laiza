@@ -36,9 +36,10 @@ class ProductLikeToggleEvent extends ProductDetailEvent {
 }
 
 class ProductSizeChangeEvent extends ProductDetailEvent {
-  final int size;
+  final String size;
+  final List<Inventory> inventory;
 
-  const ProductSizeChangeEvent(this.size);
+  const ProductSizeChangeEvent({required this.size, required this.inventory});
 
   @override
   List<Object> get props => [size];
@@ -60,4 +61,13 @@ class ProductAddToCart extends ProductDetailEvent {
 
   @override
   List<Object> get props => [id];
+}
+
+class SelectSizeEvent extends ProductDetailEvent {
+  final String selectedSize;
+
+  const SelectSizeEvent(this.selectedSize);
+
+  @override
+  List<Object> get props => [selectedSize];
 }

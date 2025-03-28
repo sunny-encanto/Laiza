@@ -49,7 +49,10 @@ class AddressScreen extends StatelessWidget {
                   InkWell(
                     onTap: () {
                       Navigator.of(context)
-                          .pushNamed(AppRoutes.addAddressScreen);
+                          .pushNamed(AppRoutes.addAddressScreen)
+                          .then((_) => context
+                              .read<AddressBloc>()
+                              .add(FetchAddressEvent()));
                     },
                     child: Row(
                       children: [

@@ -12,6 +12,7 @@ import 'package:laiza/data/repositories/connections_repository/connections_repos
 import 'package:laiza/data/repositories/follow_repository/follow_repository.dart';
 import 'package:laiza/data/repositories/help_center_repository/help_center_repository.dart';
 import 'package:laiza/data/repositories/live_stream_repository/live_stream_repository.dart';
+import 'package:laiza/data/repositories/notification_repository/notification_repository.dart';
 import 'package:laiza/data/repositories/order_repository/order_repository.dart';
 import 'package:laiza/data/repositories/product_repository/product_repository.dart';
 import 'package:laiza/data/repositories/rating_repository/rating_repository.dart';
@@ -19,7 +20,9 @@ import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 import 'package:laiza/presentation/add_review/bloc/add_rating_bloc.dart';
 import 'package:laiza/presentation/address_screen/bloc/address_bloc.dart';
 import 'package:laiza/presentation/creator/ui/all_creator_screen.dart';
+import 'package:laiza/presentation/influencer/earnings/cubit/earning_cubit.dart';
 import 'package:laiza/presentation/my_order/bloc/my_order_bloc.dart';
+import 'package:laiza/presentation/order_summary/cubit/order_summary_cubit.dart';
 import 'package:laiza/presentation/privacy_policy/ui/bloc/privacy_policy_bloc.dart';
 
 import '../core/app_export.dart';
@@ -359,7 +362,8 @@ class AppRoutes {
       case notificationsScreen:
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => NotificationsBloc(),
+                  create: (context) =>
+                      NotificationsBloc(context.read<NotificationRepository>()),
                   child: const NotificationsScreen(),
                 ));
 
@@ -543,7 +547,12 @@ class AppRoutes {
             builder: (context) => const AllProductsScreen());
 
       case earningsScreen:
-        return CupertinoPageRoute(builder: (context) => EarningsScreen());
+        return CupertinoPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) =>
+                      EarningCubit(context.read<OrderRepository>()),
+                  child: EarningsScreen(),
+                ));
 
       case recentTransactionsScreen:
         return CupertinoPageRoute(
@@ -566,8 +575,11 @@ class AppRoutes {
       case orderSummary:
         final Map<String, dynamic> data =
             settings.arguments as Map<String, dynamic>;
+
         return CupertinoPageRoute(
-            builder: (context) => OrderSummary(items: data['items']));
+            builder: (context) => BlocProvider(
+                create: (context) => OrderSummaryCubit(),
+                child: OrderSummary(items: data['items'])));
 
       case reportUserScreen:
         final String id = settings.arguments as String;

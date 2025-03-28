@@ -13,10 +13,9 @@ class ApiClient {
   // Constructor
   ApiClient({String? baseUrl}) {
     BaseOptions options = BaseOptions(
-      baseUrl: baseUrl ??
-          ApiConstant.baseUrl, // Set a default base URL if none is provided
-      connectTimeout: const Duration(seconds: 10), // Set connection timeout
-      receiveTimeout: const Duration(seconds: 10), // Set receiving timeout
+      baseUrl: baseUrl ?? ApiConstant.baseUrl,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

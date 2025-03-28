@@ -45,8 +45,8 @@ class ProfileScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(state.userModel.name ?? '',
-                                  style: textTheme.titleLarge!
-                                      .copyWith(color: Colors.white)),
+                                  style: textTheme.titleLarge!.copyWith(
+                                      color: Colors.white, fontSize: 16.fSize)),
                               Container(
                                 padding: EdgeInsets.all(5.h),
                                 decoration: BoxDecoration(
@@ -92,22 +92,26 @@ class ProfileScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: List.generate(
                             menuItem.length,
-                            (index) => InkWell(
-                              onTap: () {
-                                _getPages(index, context);
-                              },
-                              child: Container(
-                                height: 44.v,
-                                width: SizeUtils.width,
-                                alignment: Alignment.centerLeft,
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            color: AppColor.offWhite))),
-                                child: Text(
-                                  menuItem[index],
-                                  style: textTheme.titleMedium!
-                                      .copyWith(fontSize: 18.fSize),
+                            (index) => Padding(
+                              padding: EdgeInsets.only(bottom: 16.v),
+                              child: InkWell(
+                                onTap: () {
+                                  _getPages(index, context);
+                                },
+                                child: Container(
+                                  height: 44.v,
+                                  width: SizeUtils.width,
+                                  alignment: Alignment.centerLeft,
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              color: AppColor.offWhite))),
+                                  child: Text(
+                                    menuItem[index],
+                                    style: textTheme.titleMedium!.copyWith(
+                                        fontSize: 18.fSize,
+                                        fontWeight: FontWeight.w400),
+                                  ),
                                 ),
                               ),
                             ),
@@ -161,15 +165,15 @@ class ProfileScreen extends StatelessWidget {
         Navigator.of(context).pushNamed(AppRoutes.helpCentreScreen);
         break;
 
-      // case 4:
-      //   Navigator.of(context).pushNamed(AppRoutes.privacyPolicyScreen);
-      //   break;
-
       case 4:
-        Navigator.of(context).pushNamed(AppRoutes.settingScreen);
+        Navigator.of(context).pushNamed(AppRoutes.privacyPolicyScreen);
         break;
 
       case 5:
+        Navigator.of(context).pushNamed(AppRoutes.settingScreen);
+        break;
+
+      case 6:
         logOutDialog(context);
         break;
       default:
@@ -182,6 +186,7 @@ List menuItem = [
   'Wishlist',
   'Orders',
   'Help Center',
+  'Privacy',
   'Settings',
   'Log Out',
 ];

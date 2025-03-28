@@ -17,6 +17,15 @@ class ReelScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 0,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarColor: Colors.black,
+            statusBarIconBrightness: Brightness.light),
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.transparent,
+      ),
+      extendBodyBehindAppBar: true,
       backgroundColor: Colors.black,
       body: BlocProvider(
           create: (context) => ReelBloc(context.read<ReelRepository>()),
@@ -456,9 +465,11 @@ class _ReelPlayerWidget extends State<ReelPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
         appBar: AppBar(
+          systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarColor: Colors.black,
+              statusBarIconBrightness: Brightness.light),
           iconTheme: const IconThemeData(color: Colors.white),
           backgroundColor: Colors.transparent,
         ),
@@ -620,7 +631,6 @@ class _ReelPlayerWidget extends State<ReelPlayerWidget> {
                       child: IconButton(
                           onPressed: () {
                             _isLiked = !_isLiked;
-
                             context.read<LikeButtonBloc>().add(
                                 LikeButtonPressEvent(
                                     reelId: reel[index].id, isLiked: _isLiked));
@@ -785,52 +795,52 @@ class _ReelPlayerWidget extends State<ReelPlayerWidget> {
   }
 
   Widget _buildSliderItem(BuildContext context, ReelProduct product) {
-    return Container(
-      width: SizeUtils.width - 60.h,
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(12.h)),
-      child: Row(
-        children: [
-          CustomImageView(
-            radius: BorderRadius.only(
-                topLeft: Radius.circular(12.h),
-                bottomLeft: Radius.circular(12.h)),
-            width: 100.h,
-            height: 100.v,
-            fit: BoxFit.fill,
-            imagePath: product.productImage,
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.all(5.0.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '₹ ${product.price}',
-                    style: TextStyle(fontSize: 15.fSize),
-                  ),
-                  SizedBox(height: 5.h),
-                  Text(
-                    product.productName,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 3.h),
-                  // const Text(
-                  //   'Stock:2',
-                  //   overflow: TextOverflow.ellipsis,
-                  // ),
-                ],
+    return InkWell(
+      onTap: () {
+        Navigator.of(context)
+            .pushNamed(AppRoutes.productDetailScreen, arguments: product.id);
+      },
+      child: Container(
+        width: SizeUtils.width - 60.h,
+        decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(12.h)),
+        child: Row(
+          children: [
+            CustomImageView(
+              radius: BorderRadius.only(
+                  topLeft: Radius.circular(12.h),
+                  bottomLeft: Radius.circular(12.h)),
+              width: 100.h,
+              height: 100.v,
+              fit: BoxFit.fill,
+              imagePath: product.productImage,
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(5.0.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '₹ ${product.price}',
+                      style: TextStyle(fontSize: 15.fSize),
+                    ),
+                    SizedBox(height: 5.h),
+                    Text(
+                      product.productName,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 3.h),
+                    // const Text(
+                    //   'Stock:2',
+                    //   overflow: TextOverflow.ellipsis,
+                    // ),
+                  ],
+                ),
               ),
             ),
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.of(context).pushNamed(AppRoutes.productDetailScreen,
-                  arguments: product.id);
-            },
-            child: Container(
+            Container(
               margin: EdgeInsets.all(5.h),
               width: 36.h,
               height: 91.h,
@@ -843,8 +853,8 @@ class _ReelPlayerWidget extends State<ReelPlayerWidget> {
                 size: 15.h,
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -874,9 +884,20 @@ class _ReelPlayerWidget extends State<ReelPlayerWidget> {
             fit: BoxFit.fill,
           ),
           SizedBox(width: 12.h),
-          Text(
-            user.name ?? '',
-            style: TextStyle(color: Colors.white, fontSize: 16.fSize),
+          InkWell(
+            onTap: () {
+              if (user.userType != 'seller') {
+                Navigator.of(context).pushNamed(
+                    AppRoutes.influencerProfileScreen,
+                    arguments: user.id ?? '');
+              }
+            },
+            child: Text(
+              user.userType != 'seller'
+                  ? user.name ?? ''
+                  : user.brandName ?? user.name,
+              style: TextStyle(color: Colors.white, fontSize: 16.fSize),
+            ),
           ),
           SizedBox(width: 20.h),
           if (user.userType != 'seller')

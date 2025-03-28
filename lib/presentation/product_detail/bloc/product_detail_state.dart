@@ -48,9 +48,10 @@ class ProductLikeToggleState extends ProductDetailState {
 }
 
 class ProductSizeChangeState extends ProductDetailState {
-  final int size;
+  final String size;
+  final List<Inventory> inventory;
 
-  const ProductSizeChangeState(this.size);
+  const ProductSizeChangeState({required this.size, required this.inventory});
 
   @override
   List<Object> get props => [size];
@@ -84,3 +85,22 @@ final class ProductAddedToCartError extends ProductDetailState {
 }
 
 final class ProductAddToCartLoading extends ProductDetailState {}
+
+class SizesLoadedState extends ProductDetailState {
+  final List<String> sizes;
+
+  const SizesLoadedState(this.sizes);
+
+  @override
+  List<Object> get props => [sizes];
+}
+
+class SizeSelectedState extends ProductDetailState {
+  final List<String> colors;
+  final String selectedSize;
+
+  const SizeSelectedState(this.selectedSize, this.colors);
+
+  @override
+  List<Object> get props => [colors, selectedSize];
+}

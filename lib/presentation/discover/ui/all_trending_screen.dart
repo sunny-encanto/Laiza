@@ -69,7 +69,9 @@ class TrendingItemGridWidget extends StatelessWidget {
                     children: [
                       Container(
                         width: 123.h,
-                        // height: extent,
+                        height: trendingItems.type == TrendingItemType.REEL
+                            ? 210.v
+                            : null,
                         margin: EdgeInsets.all(1.0.h),
                         color: Colors.grey,
                         child: CustomImageView(

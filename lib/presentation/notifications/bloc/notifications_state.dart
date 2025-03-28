@@ -13,14 +13,18 @@ final class NotificationsLoadingState extends NotificationsState {}
 
 final class NotificationsErrorState extends NotificationsState {
   final String message;
+
   const NotificationsErrorState(this.message);
+
   @override
   List<Object> get props => [message];
 }
 
 final class NotificationsLoaded extends NotificationsState {
-  final List notification;
+  final List<Notification> notification;
+
   const NotificationsLoaded(this.notification);
+
   @override
   List<Object> get props => [notification];
 }

@@ -234,13 +234,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         showControlsOnInitialize: false,
       ),
     );
-
     // Initialize the controller
     _betterPlayerController = BetterPlayerController(
       betterPlayerConfiguration,
       betterPlayerDataSource: dataSource,
     );
-
     // Listen for errors or state changes if needed
     _betterPlayerController.addEventsListener((event) {
       if (event.betterPlayerEventType == BetterPlayerEventType.exception) {

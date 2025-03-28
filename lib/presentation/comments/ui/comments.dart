@@ -1,5 +1,6 @@
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/core/utils/date_time_utils.dart';
 
 import '../../../data/models/comments_model/comment.dart';
 
@@ -154,10 +155,20 @@ class CommentsScreen extends StatelessWidget {
                   );
                 },
               ),
-              title: Text(
-                item.user.username ?? '',
-                style: textTheme.titleMedium!
-                    .copyWith(fontWeight: FontWeight.w400),
+              title: Row(
+                children: [
+                  Text(
+                    item.user.username ?? '',
+                    style: textTheme.titleMedium!
+                        .copyWith(fontWeight: FontWeight.w400),
+                  ),
+                  SizedBox(width: 5.h),
+                  Text(
+                    getTimeAgo(DateTime.parse(item.createdAt)),
+                    style: textTheme.bodyMedium!
+                        .copyWith(fontWeight: FontWeight.w400),
+                  ),
+                ],
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

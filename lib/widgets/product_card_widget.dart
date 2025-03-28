@@ -31,6 +31,7 @@ class ProductCardWidget extends StatelessWidget {
             Text(
               product.productName,
               style: textTheme.titleMedium,
+              maxLines: 1,
             ),
             SizedBox(height: 2.v),
             Row(

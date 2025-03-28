@@ -1,11 +1,10 @@
 import 'package:laiza/core/app_export.dart';
-import 'package:laiza/data/blocs/all_seller_bloc/all_seller_bloc.dart';
 import 'package:laiza/data/models/my_connections_model/my_connections_model.dart';
 import 'package:laiza/data/models/product_model/product.dart';
-import 'package:laiza/data/models/user/user_model.dart';
 import 'package:laiza/data/repositories/connections_repository/connections_repository.dart';
 
 import '../../../../data/blocs/product_bloc/product_bloc.dart';
+import '../../../../data/models/connections_model/connections_model.dart';
 import '../../../../data/repositories/product_repository/product_repository.dart';
 import '../../../shimmers/loading_list.dart';
 import '../../side_bar/ui/side_bar.dart';
@@ -197,7 +196,7 @@ class HomeScreen extends StatelessWidget {
                           children: List.generate(
                               connections.length,
                               (index) => _buildConnectionItem(
-                                  connections[index], textTheme)),
+                                  connections[index], context)),
                         );
                       }
                       return const SizedBox.shrink();
@@ -263,26 +262,28 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 12.v),
                 BlocProvider(
                   create: (context) =>
-                      AllSellerBloc(context.read<UserRepository>()),
-                  child: BlocBuilder<AllSellerBloc, AllSellerState>(
+                      DiscoverConnectionsBloc(context.read<UserRepository>()),
+                  child: BlocBuilder<DiscoverConnectionsBloc,
+                      DiscoverConnectionsState>(
                     builder: (context, state) {
-                      if (state is AllSellerInitial) {
+                      if (state is DiscoverConnectionsInitial) {
                         context
-                            .read<AllSellerBloc>()
-                            .add(FetchAllSellerEvent());
-                        return const HorizontalLoadingListPage();
-                      } else if (state is AllSellerLoading) {
-                        return const HorizontalLoadingListPage();
-                      } else if (state is AllSellerError) {
+                            .read<DiscoverConnectionsBloc>()
+                            .add(DiscoverConnectionsFetchEvent());
+                        return const SizedBox.shrink();
+                      } else if (state is DiscoverConnectionsLoading) {
+                        return const LoadingListPage();
+                      } else if (state is DiscoverConnectionsError) {
                         return Center(child: Text(state.message));
-                      } else if (state is AllSellerLoaded) {
+                      } else if (state is DiscoverConnectionsLoaded) {
                         return SizedBox(
                           height: 250.v,
                           child: ListView.builder(
-                              itemCount: state.sellers.length,
+                              itemCount: state.connections.length,
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (context, index) {
-                                UserModel seller = state.sellers[index];
+                                ConnectionsModel seller =
+                                    state.connections[index];
                                 return Padding(
                                   padding: EdgeInsets.only(right: 10.h),
                                   child: Container(
@@ -301,39 +302,29 @@ class HomeScreen extends StatelessWidget {
                                           height: 100.h,
                                           width: 100.h,
                                           radius: BorderRadius.circular(100.h),
-                                          imagePath: seller.profileImg,
+                                          imagePath: seller.profile,
                                         ),
                                         SizedBox(height: 8.v),
                                         Text(
-                                          seller.name ?? '',
+                                          seller.name,
                                           style: textTheme.titleMedium!
                                               .copyWith(fontSize: 16.fSize),
                                         ),
-                                        // SizedBox(height: 4.h),
-                                        // Row(
-                                        //   mainAxisAlignment:
-                                        //       MainAxisAlignment.center,
-                                        //   children: [
-                                        //     CustomImageView(
-                                        //         imagePath:
-                                        //             ImageConstant.categoryIcon),
-                                        //     SizedBox(width: 5.h),
-                                        //     Text(
-                                        //         seller.productCategory
-                                        //             .toString(),
-                                        //         //'Cosmetics',
-                                        //         style: textTheme.bodySmall),
-                                        //   ],
-                                        // ),
                                         SizedBox(height: 16.h),
                                         CustomElevatedButton(
                                           width: 122.h,
                                           height: 33.v,
-                                          text: 'View Profile',
+                                          text: seller.isConnected
+                                              ? 'Connected '
+                                              : 'Connect Now',
                                           buttonTextStyle: textTheme.titleSmall,
                                           onPressed: () {
-                                            Navigator.of(context).pushNamed(
-                                                AppRoutes.sellerInfoScreen);
+                                            context
+                                                .read<DiscoverConnectionsBloc>()
+                                                .add(SendConnectionEvent(
+                                                    seller.id));
+                                            // Navigator.of(context).pushNamed(
+                                            //     AppRoutes.sellerInfoScreen);
                                           },
                                         )
                                       ],
@@ -365,21 +356,25 @@ class HomeScreen extends StatelessWidget {
     }
   }
 
-  ListTile _buildConnectionItem(Connection items, TextTheme textTheme) {
+  ListTile _buildConnectionItem(Connection item, BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     return ListTile(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context)
+            .pushNamed(AppRoutes.chatBoxScreen, arguments: item.id.toString());
+      },
       contentPadding: const EdgeInsets.all(0),
       leading: CustomImageView(
         height: 50.h,
         width: 50.h,
         radius: BorderRadius.circular(50.h),
-        imagePath: items.profileImg,
+        imagePath: item.profileImg,
       ),
       trailing: CustomImageView(
         imagePath: ImageConstant.chatIcon,
       ),
       title: Text(
-        items.name,
+        item.name,
         style: textTheme.titleMedium,
       ),
       // subtitle: Row(

@@ -6,6 +6,7 @@ class Comment {
   int userId;
   int reelId;
   String comment;
+  String createdAt;
   bool isLiked;
   int likeCount;
   List<Comment> replies;
@@ -21,6 +22,7 @@ class Comment {
     required this.likeCount,
     required this.replies,
     required this.user,
+    required this.createdAt,
   });
 
   Comment copyWith({
@@ -29,16 +31,16 @@ class Comment {
     List<Comment>? replies,
   }) {
     return Comment(
-      id: id,
-      userId: userId,
-      parentId: parentId,
-      reelId: reelId,
-      comment: comment,
-      likeCount: likeCount ?? this.likeCount,
-      isLiked: isLiked ?? this.isLiked,
-      replies: replies ?? this.replies,
-      user: user,
-    );
+        id: id,
+        userId: userId,
+        parentId: parentId,
+        reelId: reelId,
+        comment: comment,
+        likeCount: likeCount ?? this.likeCount,
+        isLiked: isLiked ?? this.isLiked,
+        replies: replies ?? this.replies,
+        user: user,
+        createdAt: createdAt);
   }
 
   factory Comment.fromJson(Map<String, dynamic> json) => Comment(
@@ -47,6 +49,7 @@ class Comment {
         parentId: json["parent_id"] ?? 0,
         reelId: json["reel_id"] ?? 0,
         comment: json["comment"],
+        createdAt: json["created_at"],
         isLiked: json['is_like'] ?? false,
         likeCount: json['like_count'] ?? 0,
         replies: json["comments"] == null

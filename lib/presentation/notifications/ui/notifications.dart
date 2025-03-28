@@ -1,4 +1,9 @@
+import 'package:laiza/core/utils/date_time_utils.dart';
+import 'package:laiza/data/models/notifications_model/notifications_model.dart'
+    as n;
+
 import '../../../core/app_export.dart';
+import '../../empty_pages/empty_notifications/empty_notifications.dart';
 import '../../shimmers/loading_list.dart';
 
 class NotificationsScreen extends StatelessWidget {
@@ -20,13 +25,13 @@ class NotificationsScreen extends StatelessWidget {
           } else if (state is NotificationsLoadingState) {
             return const LoadingListPage();
           } else if (state is NotificationsLoaded) {
-            // return const EmptyNotificationsScreen();
-            //TODO: Add Condition here to show empty screen
-            return ListView.builder(
-                itemCount: 3,
-                padding: EdgeInsets.all(20.h),
-                itemBuilder: (BuildContext context, int index) =>
-                    _buildItem(textTheme, context));
+            return state.notification.isEmpty
+                ? const EmptyNotificationsScreen()
+                : ListView.builder(
+                    itemCount: state.notification.length,
+                    padding: EdgeInsets.all(20.h),
+                    itemBuilder: (BuildContext context, int index) =>
+                        _buildItem(state.notification[index], context));
           }
           return const SizedBox.shrink();
         },
@@ -34,7 +39,8 @@ class NotificationsScreen extends StatelessWidget {
     );
   }
 
-  SizedBox _buildItem(TextTheme textTheme, BuildContext context) {
+  SizedBox _buildItem(n.Notification notification, BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     return SizedBox(
       width: SizeUtils.width,
       child: Padding(
@@ -51,25 +57,25 @@ class NotificationsScreen extends StatelessWidget {
               imagePath:
                   'https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350',
             ),
-            SizedBox(width: 5.h),
+            SizedBox(width: 10.h),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Your order has been shipped!',
+                    notification.title,
                     style: textTheme.titleMedium,
                   ),
                   SizedBox(height: 8.v),
                   Text(
-                    'Track your package as it’s on its way to you. Estimated delivery',
+                    notification.message,
                     style: textTheme.bodySmall,
                   ),
                   SizedBox(height: 8.v),
                   Align(
                     alignment: Alignment.centerRight,
                     child: Text(
-                      '12:30 PM 03 Oct 2024',
+                      notification.createdAt.format(),
                       style: textTheme.bodySmall,
                     ),
                   ),

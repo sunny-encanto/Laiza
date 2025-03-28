@@ -20,6 +20,7 @@ class AddAddressScreen extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
   final TextEditingController flatHouseNumberController =
       TextEditingController();
   final TextEditingController areaController = TextEditingController();
@@ -205,7 +206,59 @@ class AddAddressScreen extends StatelessWidget {
                     return validateField(value: value!, title: 'pin code');
                   },
                 ),
-                SizedBox(height: 16.v),
+
+                SizedBox(height: 8.v),
+                // GooglePlacesAutoCompleteTextFormField(
+                //     decoration: InputDecoration(
+                //       fillColor: AppColor.offWhite,
+                //       errorBorder: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(10.h),
+                //         borderSide: BorderSide(
+                //           color: AppColor.offWhite,
+                //           width: 1,
+                //         ),
+                //       ),
+                //       enabledBorder: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(10.h),
+                //         borderSide: BorderSide(
+                //           color: AppColor.offWhite,
+                //           width: 1,
+                //         ),
+                //       ),
+                //       focusedBorder: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(10.h),
+                //         borderSide: BorderSide(
+                //           color: AppColor.offWhite,
+                //           width: 1,
+                //         ),
+                //       ),
+                //       border: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(10.h),
+                //         borderSide: BorderSide(
+                //           color: AppColor.offWhite,
+                //           width: 1,
+                //         ),
+                //       ),
+                //     ),
+                //     textEditingController: addressController,
+                //     googleAPIKey: "AIzaSyAK1XCshXNXCZcur8HpTbyCC6QCcktaGJs",
+                //     // googleAPIKey: "AIzaSyCpqoRKJ3CM7GGiFWTEY0qCKYYRh00ULF0",
+                //
+                //     debounceTime: 400,
+                //     countries: ["in"],
+                //     fetchCoordinates: true,
+                //     onPlaceDetailsWithCoordinatesReceived: (prediction) {
+                //       print(
+                //           "Coordinates: (${prediction.lat},${prediction.lng})");
+                //     },
+                //     onSuggestionClicked: (prediction) {
+                //       addressController.text = prediction.description ?? '';
+                //       addressController.selection = TextSelection.fromPosition(
+                //           TextPosition(
+                //               offset: prediction.description?.length ?? 0));
+                //     }),
+                // SizedBox(height: 16.v),
+
                 Text(
                   'Country',
                   style: textTheme.titleMedium,

@@ -1,4 +1,4 @@
-package com.laiza.greatminds
+package com.laizalive.greatminds
 
 import io.flutter.embedding.android.FlutterActivity
 

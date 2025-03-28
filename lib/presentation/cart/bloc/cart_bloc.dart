@@ -37,7 +37,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     _cartItemsList.clear();
     for (var item in data) {
       _cartItemsList.add(
+        // TODO: Need to Change inventoryId;
         CartModel(
+          inventoryId: 1,
           cartId: item.id,
           id: item.productId,
           url: item.product.images[0].imagePath,

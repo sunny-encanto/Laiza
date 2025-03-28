@@ -35,6 +35,7 @@ class Product {
   List<Rating> ratings;
   num averageRating;
   num totalRatings;
+  List<Inventory> inventories;
 
   Product({
     required this.id,
@@ -64,6 +65,7 @@ class Product {
     required this.totalRatings,
     required this.discount,
     required this.productImage,
+    required this.inventories,
   });
 
   Product copyWith({bool? isAddedToWishlist, bool? isAsked}) {
@@ -93,59 +95,67 @@ class Product {
         totalRatings: totalRatings,
         finalPrice: finalPrice,
         discount: discount,
-        productImage: productImage);
+        productImage: productImage,
+        inventories: inventories);
   }
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
-      id: json["id"],
-      userId: json["user_id"] ?? 0,
-      productName: json["product_name"] ?? "",
-      productImage: json["product_image"] ?? "",
-      description: json["description"] ?? "",
-      hashtags: json["hashtags"] ?? "",
-      category: json["category"] == null
-          ? ProductCategory(name: '', id: 0)
-          : ProductCategory.fromJson(json["category"]),
-      // subcategory: Category.fromJson(json["subcategory"]),
-      price: json["price"],
-      finalPrice: json["final_price"] ?? "",
-      stockQuantity: json["stock_quantity"] ?? 0,
-      availableSize: json["available_size"] == null
-          ? <String>[]
-          : List<String>.from(json["available_size"].map((x) => x)),
-      availableColor: json["available_color"] == null
-          ? <String>[]
-          : List<String>.from(json["available_color"].map((x) => x)),
-      couponDiscount: json["coupon_discount"] == null
-          ? <String>[]
-          : List<String>.from(json["coupon_discount"].map((x) => x)),
-      features: json["features"] == null
-          ? <String>[]
-          : List<String>.from(json["features"].map((x) => x)),
-      promotionalStatus: json["promotional_status"] ?? 0,
-      coupons: json["coupons"] == null
-          ? <Coupon>[]
-          : List<Coupon>.from(json["coupons"].map((x) => Coupon.fromJson(x))),
-      images: json["images"] == null
-          ? <Image>[]
-          : List<Image>.from(json["images"].map((x) => Image.fromJson(x))),
-      videos: json["videos"] == null
-          ? <Video>[]
-          : List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
-      user: json["users"] == null
-          ? ProductUser(id: 0, name: '')
-          : ProductUser.fromJson(json["users"]),
-      isAddedToWishlist: json['is_wishlist'] ?? false,
-      isAsked: json['is_asked'] ?? false,
-      ratings: json["ratings"] == null
-          ? <Rating>[]
-          : List<Rating>.from(json["ratings"].map((x) => Rating.fromJson(x))),
-      averageRating: json["average_rating"] ?? 0,
-      totalRatings: json["total_ratings"] ?? 0,
-      discount: json["product_discount"] ?? 0,
-      additionalInfo: json['additional_info'] == null
-          ? null
-          : ProductAdditionalInfo.fromJson(json['additional_info']));
+        id: json["id"],
+        userId: json["user_id"] ?? 0,
+        productName: json["product_name"] ?? "",
+        productImage: json["product_image"] ?? "",
+        description: json["description"] ?? "",
+        hashtags: json["hashtags"] ?? "",
+        category: json["category"] == null
+            ? ProductCategory(name: '', id: 0)
+            : ProductCategory.fromJson(json["category"]),
+        // subcategory: Category.fromJson(json["subcategory"]),
+        price: json["price"],
+        finalPrice: json["final_price"] ?? "",
+        stockQuantity: json["stock_quantity"] ?? 0,
+        availableSize: json["available_size"] == null
+            ? <String>[]
+            : List<String>.from(json["available_size"].map((x) => x)),
+        availableColor: json["available_color"] == null
+            ? <String>[]
+            : List<String>.from(json["available_color"].map((x) => x)),
+        couponDiscount: json["coupon_discount"] == null
+            ? <String>[]
+            : List<String>.from(json["coupon_discount"].map((x) => x)),
+        features: json["features"] == null
+            ? <String>[]
+            : List<String>.from(json["features"].map((x) => x)),
+        promotionalStatus: json["promotional_status"] ?? 0,
+        coupons: json["coupons"] == null
+            ? <Coupon>[]
+            : List<Coupon>.from(json["coupons"].map((x) => Coupon.fromJson(x))),
+        images: json["images"] == null
+            ? <Image>[]
+            : List<Image>.from(json["images"].map((x) => Image.fromJson(x))),
+        videos: json["videos"] == null
+            ? <Video>[]
+            : List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
+        user: json["users"] == null
+            ? ProductUser(id: 0, name: '')
+            : ProductUser.fromJson(json["users"]),
+        isAddedToWishlist: json['is_wishlist'] ?? false,
+        isAsked: json['is_asked'] ?? false,
+        ratings: json["ratings"] == null
+            ? <Rating>[]
+            : List<Rating>.from(json["ratings"].map((x) => Rating.fromJson(x))),
+        averageRating: json["average_rating"] ?? 0,
+        totalRatings: json["total_ratings"] ?? 0,
+        discount: json["product_discount"] ?? 0,
+        additionalInfo: json['additional_info'] == null
+            ? null
+            : ProductAdditionalInfo.fromJson(
+                json['additional_info'],
+              ),
+        inventories: json["inventories"] == null
+            ? <Inventory>[]
+            : List<Inventory>.from(
+                json["inventories"].map((x) => Inventory.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -172,6 +182,47 @@ class Product {
         "average_rating": averageRating,
         "total_ratings": totalRatings,
         "product_discount": discount,
+        "inventories": List<dynamic>.from(inventories.map((x) => x.toJson())),
+      };
+}
+
+class Inventory {
+  int id;
+  int productId;
+  int quantity;
+  dynamic size;
+  dynamic color;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  Inventory({
+    required this.id,
+    required this.productId,
+    required this.quantity,
+    required this.size,
+    required this.color,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory Inventory.fromJson(Map<String, dynamic> json) => Inventory(
+        id: json["id"],
+        productId: json["product_id"],
+        quantity: json["quantity"],
+        size: json["size"],
+        color: json["color"],
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "product_id": productId,
+        "quantity": quantity,
+        "size": size,
+        "color": color,
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
       };
 }
 

@@ -143,7 +143,9 @@ class ChatBoxScreen extends StatelessWidget {
                       width: 50.h,
                       radius: BorderRadius.circular(50.h),
                       fit: BoxFit.fill,
-                      imagePath: user.profileImg,
+                      imagePath: user.profileImg.toString().isEmpty
+                          ? ImageConstant.defaultProfile
+                          : user.profileImg,
                     ),
                     SizedBox(width: 5.h),
                     Text(

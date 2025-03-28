@@ -8,6 +8,7 @@ class CartModel extends Equatable {
   final int quantity;
   final String name;
   final bool isSelected;
+  final int inventoryId;
 
   const CartModel({
     required this.cartId,
@@ -17,6 +18,7 @@ class CartModel extends Equatable {
     required this.quantity,
     required this.name,
     required this.isSelected,
+    required this.inventoryId,
   });
 
   CartModel copyWith({
@@ -31,9 +33,10 @@ class CartModel extends Equatable {
         quantity: quantity ?? this.quantity,
         name: name,
         isSelected: isSelected ?? this.isSelected,
+        inventoryId: inventoryId,
       );
 
   @override
   List<Object?> get props =>
-      [id, url, price, quantity, name, isSelected, cartId];
+      [id, url, price, quantity, name, isSelected, cartId, inventoryId];
 }

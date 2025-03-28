@@ -165,6 +165,20 @@ class _SearchScreenState extends State<SearchScreen>
                                             overflow: TextOverflow.ellipsis),
                                       ),
                                       SizedBox(height: 6.v),
+                                      // SizedBox(
+                                      //   height: 10.v,
+                                      //   child: HtmlWidget(
+                                      //     state.searchResult[index].description,
+                                      //     // style: textTheme.titleMedium!.copyWith(
+                                      //     //     overflow: TextOverflow.ellipsis),
+                                      //     renderMode: RenderMode.column,
+                                      //
+                                      //     // textStyle: textTheme.bodyMedium!
+                                      //     //     .copyWith(
+                                      //     //         overflow:
+                                      //     //             TextOverflow.ellipsis),
+                                      //   ),
+                                      // ),
                                       Text(
                                         state.searchResult[index].description,
                                         style: textTheme.titleMedium!.copyWith(

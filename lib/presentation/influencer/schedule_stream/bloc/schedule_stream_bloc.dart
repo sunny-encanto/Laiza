@@ -42,7 +42,7 @@ class ScheduleStreamBloc
         description: event.description,
         date: event.date,
         time: event.time,
-        productIds: [],
+        productIds: event.productIds,
       );
       emit(ScheduleStreamSuccess(model.message ?? ''));
     } catch (e) {
