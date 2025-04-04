@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/models/common_model/common_model.dart';
 import 'package:laiza/data/repositories/order_repository/order_repository.dart';
 
@@ -20,7 +20,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     try {
       emit(CreateOrderLoading());
       //Need to Change Here
-      CommonModel model = await _orderRepository.crateOrder([]);
+      CommonModel model =
+          await _orderRepository.crateOrder([], event.paymentMode.name);
       emit(OrderCreated(model.message ?? ''));
     } catch (e) {
       emit(CreateOrderErrorState(e.toString()));

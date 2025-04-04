@@ -25,12 +25,19 @@ String? validatePassword(String password) {
   return null;
 }
 
-String? validatePhoneNumber(String number) {
-  if (number.isEmpty) {
-    return 'Please enter phone number';
-  } else if (number.length != 10) {
-    return 'Please enter valid phone number';
+String? validatePhoneNumber(String? number) {
+  if (number == null || number.isEmpty) {
+    return 'Please enter a number';
   }
+
+  if (!RegExp(r'^[0-9]+$').hasMatch(number)) {
+    return 'Please enter only numbers';
+  }
+
+  if (number.length != 10) {
+    return 'Number must be exactly 10 digits';
+  }
+
   return null;
 }
 

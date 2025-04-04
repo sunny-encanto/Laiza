@@ -117,6 +117,10 @@ class _MyAppState extends State<MyApp> {
         child: MultiBlocProvider(
           providers: [
             BlocProvider(create: (BuildContext context) => LanguageCubit()),
+            // BlocProvider(
+            //     create: (BuildContext context) =>
+            //         ProfileBloc(context.read<UserRepository>())
+            //           ..add(FetchProfile())),
             BlocProvider(
                 create: (BuildContext context) =>
                     ConnectivityCubit(Connectivity())),
@@ -159,59 +163,5 @@ Future<void> getFromCompleteStatus() async {
     bool isUserApprove = (userModel.isApprove ?? 0) == 1;
     PrefUtils.setIsFormComplete(isFormComplete);
     PrefUtils.setIsApproved(isUserApprove);
-  }
-}
-
-// Custom Error Widget
-class CustomErrorWidget extends StatelessWidget {
-  final String errorMessage;
-
-  const CustomErrorWidget({super.key, required this.errorMessage});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.error_outline,
-                color: Colors.orange,
-                size: 60,
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                "Oops! Something went wrong 😅",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 10),
-              Text(
-                "Don't worry, we're on it! Here's what happened: $errorMessage",
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  // Add logic to recover or restart the app
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
-                  );
-                },
-                child: const Text("Try Again"),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

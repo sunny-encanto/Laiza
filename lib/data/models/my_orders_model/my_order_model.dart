@@ -98,6 +98,7 @@ class OrderItem {
   int gst;
   DateTime createdAt;
   DateTime updatedAt;
+
   Product product;
 
   OrderItem({
@@ -113,12 +114,12 @@ class OrderItem {
   });
 
   factory OrderItem.fromJson(Map<String, dynamic> json) => OrderItem(
-        id: json["id"],
-        orderId: json["order_id"],
-        productId: json["product_id"],
-        quantity: json["quantity"],
+        id: json["id"] ?? 0,
+        orderId: json["order_id"] ?? 0,
+        productId: json["product_id"] ?? 0,
+        quantity: json["quantity"] ?? 0,
         price: json["price"],
-        gst: json["gst"],
+        gst: json["gst"] ?? 0,
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         product: Product.fromJson(json["product"]),
@@ -133,11 +134,11 @@ class OrderItem {
         "gst": gst,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
-        "product": product.toJson(),
+        // "product": product.toJson(),
       };
 }
 
-//
+// //
 class Product {
   int id;
   int userId;
@@ -147,7 +148,7 @@ class Product {
   String description;
   String hashtags;
   int category;
-  int stockQuantity;
+
   String hsnCode;
 
   int gst;
@@ -162,7 +163,6 @@ class Product {
     required this.description,
     required this.hashtags,
     required this.category,
-    required this.stockQuantity,
     required this.hsnCode,
     required this.gst,
     required this.finalPrice,
@@ -177,7 +177,6 @@ class Product {
         description: json["description"],
         hashtags: json["hashtags"],
         category: json["category"],
-        stockQuantity: json["stock_quantity"],
         hsnCode: json["hsn_code"],
         gst: json["gst"],
         finalPrice: json["final_price"],
@@ -192,7 +191,6 @@ class Product {
         "description": description,
         "hashtags": hashtags,
         "category": category,
-        "stock_quantity": stockQuantity,
         "gst": gst,
         "final_price": finalPrice,
       };

@@ -9,7 +9,13 @@ class OrderSummaryCubit extends Cubit<OrderSummaryState> {
   OrderSummaryCubit() : super(OrderSummaryInitial());
 
   void applyCoupon(CouponDetail coupon, num totalPrice) {
-    num newTotal = totalPrice = coupon.amount;
-    emit(DiscountAdded(discountPrice: coupon.amount, totalPrice: newTotal));
+    if (coupon.type == 'percent') {
+      double result = (totalPrice * coupon.amount) / 100;
+      num newTotal = totalPrice - result;
+      emit(DiscountAdded(discountPrice: result, totalPrice: newTotal));
+    } else {
+      num newTotal = totalPrice - coupon.amount;
+      emit(DiscountAdded(discountPrice: coupon.amount, totalPrice: newTotal));
+    }
   }
 }

@@ -41,6 +41,7 @@ class TrendingItems {
   String userName;
   String userImage;
   int userId;
+  int viewCount;
 
   TrendingItems({
     required this.id,
@@ -53,6 +54,7 @@ class TrendingItems {
     required this.userName,
     required this.userImage,
     required this.userId,
+    required this.viewCount,
   });
 
   TrendingItems copyWith({int? isLike, int? isFollow}) => TrendingItems(
@@ -66,6 +68,7 @@ class TrendingItems {
         userName: userName,
         userImage: userImage,
         userId: userId,
+        viewCount: viewCount,
       );
 
   factory TrendingItems.fromJson(Map<String, dynamic> json) => TrendingItems(
@@ -82,6 +85,7 @@ class TrendingItems {
             : <ReelProduct>[],
         userName: json['user_name'] ?? '',
         userImage: json['profile_img'] ?? '',
+        viewCount: json['view_count'] ?? 0,
       );
 
   Map<String, dynamic> toJson() => {

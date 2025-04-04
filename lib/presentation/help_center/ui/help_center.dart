@@ -1,12 +1,15 @@
 import 'package:laiza/data/blocs/faq_bloc/faq_bloc.dart';
 import 'package:laiza/data/models/faq_model/faq_model.dart';
-import 'package:laiza/data/repositories/help_center_repository/help_center_repository.dart';
+import 'package:laiza/presentation/help_center/cubit/faq_cubit.dart';
 
 import '../../../core/app_export.dart';
+import '../../../data/repositories/help_center_repository/help_center_repository.dart';
 import '../../../data/services/url_lancher.dart';
 
 class HelpCentreScreen extends StatelessWidget {
-  const HelpCentreScreen({super.key});
+  HelpCentreScreen({super.key});
+
+  int? _expandedIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +37,15 @@ class HelpCentreScreen extends StatelessWidget {
               style: textTheme.titleLarge!.copyWith(fontSize: 20.fSize),
             ),
             const SizedBox(height: 8),
-            BlocProvider(
-              create: (context) =>
-                  FaqBloc(context.read<HelpCenterRepository>()),
+            MultiBlocProvider(
+              // create: (context) =>
+              //     FaqBloc(context.read<HelpCenterRepository>()),
+              providers: [
+                BlocProvider(create: (context) => FaqCubit()),
+                BlocProvider(
+                    create: (context) =>
+                        FaqBloc(context.read<HelpCenterRepository>())),
+              ],
               child: BlocBuilder<FaqBloc, FaqState>(
                 builder: (context, state) {
                   if (state is FaqInitial) {
@@ -46,14 +55,21 @@ class HelpCentreScreen extends StatelessWidget {
                   } else if (state is FaqError) {
                     return Center(child: Text(state.message));
                   } else if (state is FaqLoaded) {
-                    return Column(
-                      children: List.generate(
-                        state.faqs.length,
-                        (index) {
-                          FAQ faq = state.faqs[index];
-                          return _buildFAQ(faq.question, faq.answer, textTheme);
-                        },
-                      ),
+                    List list = state.faqs;
+                    return BlocConsumer<FaqCubit, int?>(
+                      listener: (context, state) => _expandedIndex = state,
+                      builder: (context, state) {
+                        return Column(
+                          children: List.generate(
+                            list.length,
+                            (index) {
+                              FAQ faq = list[index];
+                              return _buildFAQ(faq.question, faq.answer,
+                                  textTheme, index, context);
+                            },
+                          ),
+                        );
+                      },
                     );
                   }
                   return const SizedBox.shrink();
@@ -99,9 +115,15 @@ class HelpCentreScreen extends StatelessWidget {
     );
   }
 
-  // Helper function to build FAQ items
-  Widget _buildFAQ(String question, String answer, TextTheme textTheme) {
+  Widget _buildFAQ(String question, String answer, TextTheme textTheme,
+      int index, BuildContext context) {
     return ExpansionTile(
+      iconColor: AppColor.primary,
+      key: Key(index.toString()),
+      initiallyExpanded: _expandedIndex == index,
+      onExpansionChanged: (isExpanded) {
+        context.read<FaqCubit>().expandFAQ(index);
+      },
       title: Text(question, style: textTheme.titleMedium),
       children: [
         Padding(
@@ -133,7 +155,7 @@ class HelpCentreScreen extends StatelessWidget {
   void _launchPhone() async {
     final Uri phoneUri = Uri(
       scheme: 'tel',
-      path: '+911234567890',
+      path: '+917021356804',
     );
 
     await launchURL(phoneUri);
@@ -141,7 +163,7 @@ class HelpCentreScreen extends StatelessWidget {
 
   // Function to open website
   void _launchWebsite() async {
-    final Uri websiteUri = Uri.parse('https://flutter.dev');
+    final Uri websiteUri = Uri.parse('https://laiza.live');
     await launchURL(websiteUri);
   }
 }

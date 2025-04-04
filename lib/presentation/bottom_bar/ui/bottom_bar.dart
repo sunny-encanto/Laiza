@@ -18,49 +18,71 @@ class BottomBar extends StatelessWidget {
         _selectedIndex = state.selectedIndex;
       },
       builder: (BuildContext context, BottomBarState state) {
-        return Scaffold(
-          body: _getBodyWidget(state.selectedIndex),
-          bottomNavigationBar: BottomNavigationBar(
-            selectedLabelStyle: TextStyle(
-                fontSize: 12.0.fSize,
-                color: AppColor.primary,
-                fontWeight: FontWeight.w500),
-            unselectedLabelStyle: TextStyle(
-                fontSize: 12.0.fSize,
-                color: AppColor.primary,
-                fontWeight: FontWeight.w500),
-            showUnselectedLabels: true,
-            type: BottomNavigationBarType.fixed,
-            items: <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: _buildIcon(ImageConstant.reelIcon, _selectedIndex == 0),
-                label: 'Pops',
+        return WillPopScope(
+          onWillPop: () async {
+            return await showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Exit App'),
+                content:
+                    const Text('Are you sure want to exit the application ?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text('No'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text('Yes'),
+                  ),
+                ],
               ),
-              BottomNavigationBarItem(
-                icon: _buildIcon(ImageConstant.liveIcon, _selectedIndex == 1),
-                label: 'Live',
-              ),
-              BottomNavigationBarItem(
-                icon:
-                    _buildIcon(ImageConstant.discoverIcon, _selectedIndex == 2),
-                label: 'Discover',
-              ),
-              BottomNavigationBarItem(
-                icon:
-                    _buildIcon(ImageConstant.creatorsIcon, _selectedIndex == 3),
-                label: 'Creators',
-              ),
-              BottomNavigationBarItem(
-                icon:
-                    _buildIcon(ImageConstant.profileIcon, _selectedIndex == 4),
-                label: 'Profile',
-              ),
-            ],
-            currentIndex: state.selectedIndex,
-            selectedItemColor: AppColor.primary,
-            onTap: (int index) {
-              context.read<BottomBarCubit>().selectTab(index);
-            },
+            );
+          },
+          child: Scaffold(
+            body: _getBodyWidget(state.selectedIndex),
+            bottomNavigationBar: BottomNavigationBar(
+              selectedLabelStyle: TextStyle(
+                  fontSize: 12.0.fSize,
+                  color: AppColor.primary,
+                  fontWeight: FontWeight.w500),
+              unselectedLabelStyle: TextStyle(
+                  fontSize: 12.0.fSize,
+                  color: AppColor.primary,
+                  fontWeight: FontWeight.w500),
+              showUnselectedLabels: true,
+              type: BottomNavigationBarType.fixed,
+              items: <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: _buildIcon(ImageConstant.reelIcon, _selectedIndex == 0),
+                  label: 'Pops',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon(ImageConstant.liveIcon, _selectedIndex == 1),
+                  label: 'Live',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon(
+                      ImageConstant.discoverIcon, _selectedIndex == 2),
+                  label: 'Discover',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon(
+                      ImageConstant.creatorsIcon, _selectedIndex == 3),
+                  label: 'Creators',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon(
+                      ImageConstant.profileIcon, _selectedIndex == 4),
+                  label: 'Profile',
+                ),
+              ],
+              currentIndex: state.selectedIndex,
+              selectedItemColor: AppColor.primary,
+              onTap: (int index) {
+                context.read<BottomBarCubit>().selectTab(index);
+              },
+            ),
           ),
         );
       },

@@ -42,6 +42,8 @@ class InfluencerProfileScreen extends StatelessWidget {
               _isFollowed =
                   state.influencerProfileModel.data.influencer.isFollowed ??
                       false;
+              print(
+                  'IsFollowed=> ${state.influencerProfileModel.data.influencer.isFollowed}');
               return NestedScrollView(
                 headerSliverBuilder:
                     (BuildContext context, bool innerBoxIsScrolled) {
@@ -123,7 +125,7 @@ class InfluencerProfileScreen extends StatelessWidget {
                                             .bio ??
                                         '',
                                     style: textTheme.bodySmall,
-                                    maxLines: 4,
+                                    maxLines: 2,
                                   ),
                                   SizedBox(height: 24.h),
                                   Text(

@@ -73,11 +73,11 @@ class TrendingItemGridWidget extends StatelessWidget {
                             ? 210.v
                             : null,
                         margin: EdgeInsets.all(1.0.h),
-                        color: Colors.grey,
+                        color: Colors.white,
                         child: CustomImageView(
                           width: 123.h,
                           height: 123.v,
-                          fit: BoxFit.fill,
+                          // fit: BoxFit.fill,
                           onTap: () {
                             if (trendingItems.type ==
                                 TrendingItemType.PRODUCT) {
@@ -111,6 +111,9 @@ class TrendingItemGridWidget extends StatelessWidget {
                                   reelHashtag: '',
                                   likesCount: 0,
                                   commentsCount: 0,
+
+                                  ///TODO: Need to change view count
+                                  viewsCount: e.viewCount,
                                   product: e.product,
                                   user: UserModel(
                                       id: e.userId.toString(),

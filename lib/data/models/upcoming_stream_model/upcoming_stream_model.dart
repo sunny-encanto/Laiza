@@ -39,6 +39,7 @@ class UpComingStream {
   String time;
   List<String> productId;
   UserModel users;
+  bool isNotify;
 
   UpComingStream({
     required this.id,
@@ -49,7 +50,25 @@ class UpComingStream {
     required this.time,
     required this.productId,
     required this.users,
+    required this.isNotify,
   });
+
+  // copyWith method
+  UpComingStream copyWith({
+    bool? isNotify,
+  }) {
+    return UpComingStream(
+      id: id,
+      userId: userId,
+      title: title,
+      description: description,
+      date: date,
+      time: time,
+      productId: productId,
+      users: users,
+      isNotify: isNotify ?? this.isNotify,
+    );
+  }
 
   factory UpComingStream.fromJson(Map<String, dynamic> json) => UpComingStream(
         id: json["id"],
@@ -58,6 +77,7 @@ class UpComingStream {
         description: json["description"],
         date: json["date"],
         time: json["time"],
+        isNotify: json["is_notify"],
         productId: json["product_id"] == null
             ? <String>[]
             : List<String>.from(json["product_id"].map((x) => x)),
@@ -72,6 +92,7 @@ class UpComingStream {
         "description": description,
         "date": date,
         "time": time,
+        "is_notify": isNotify,
         "product_id": List<dynamic>.from(productId.map((x) => x)),
         "users": users.toJson(),
       };

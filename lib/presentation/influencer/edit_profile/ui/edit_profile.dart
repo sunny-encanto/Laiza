@@ -209,6 +209,7 @@ class EditProfileScreen extends StatelessWidget {
                             controller: _bioController,
                             maxLines: 10,
                             hintText: 'bio',
+                            maxLength: 150,
                             // validator: (value) {
                             //   return validateField(value: value!, title: 'bio');
                             // },

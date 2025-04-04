@@ -5,6 +5,7 @@ class LiveStreamModel {
   final String? title;
   final String? userProfile;
   final int? viewCount;
+  final bool? isNotify;
 
   LiveStreamModel({
     this.liveId,
@@ -13,6 +14,7 @@ class LiveStreamModel {
     this.title,
     this.userProfile,
     this.viewCount,
+    this.isNotify,
   });
 
   // fromMap method to parse Map into an instance of LiveStreamModel
@@ -23,6 +25,7 @@ class LiveStreamModel {
       userName: map['userName'] as String?,
       userProfile: map['userProfile'] as String?,
       viewCount: map['viewCount'] as int?,
+      isNotify: map['is_notify'] as bool?,
     );
   }
 
@@ -35,6 +38,7 @@ class LiveStreamModel {
     if (userName != null) data['userName'] = userName;
     if (userProfile != null) data['userProfile'] = userProfile;
     if (viewCount != null) data['viewCount'] = viewCount;
+    if (isNotify != null) data['is_notify'] = isNotify;
     return data;
   }
 }

@@ -1,6 +1,8 @@
 import 'package:laiza/core/app_export.dart';
 import 'package:laiza/core/utils/api_constant.dart';
+import 'package:laiza/core/utils/pref_utils.dart';
 import 'package:laiza/data/blocs/collection_bloc/collection_bloc.dart';
+import 'package:laiza/data/models/product_model/product.dart';
 import 'package:laiza/data/models/user/user_model.dart';
 import 'package:laiza/data/repositories/collection_repository/collection_repository.dart';
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
@@ -8,6 +10,7 @@ import 'package:laiza/presentation/shimmers/loading_grid.dart';
 import 'package:laiza/presentation/shimmers/loading_list.dart';
 import 'package:laiza/widgets/play_button.dart';
 
+import '../../../../data/blocs/influencer_profile_bloc/influencer_profile_bloc.dart';
 import '../../../../data/blocs/my_reel_bloc/my_reel_bloc.dart';
 import '../../../../data/services/share.dart';
 import '../../../../widgets/custom_popup_menu_button.dart';
@@ -337,15 +340,64 @@ class InfluencerMyProfileScreen extends StatelessWidget {
   }
 
   Widget _productView(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          mainAxisSpacing: 5.v,
-          crossAxisSpacing: 5.h,
-          childAspectRatio: 155.h / 269.v,
-          crossAxisCount: 2),
-      itemBuilder: (context, index) => _buildProductCart(context),
+    TextTheme textTheme = Theme.of(context).textTheme;
+    return BlocProvider(
+      create: (context) =>
+          InfluencerProfileBloc(context.read<UserRepository>()),
+      child: BlocBuilder<InfluencerProfileBloc, InfluencerProfileState>(
+        buildWhen: (previous, current) =>
+            (current is InfluencerProfileInitial ||
+                current is InfluencerProfileLoading ||
+                current is InfluencerProfileError ||
+                current is InfluencerProfileLoaded),
+        builder: (context, state) {
+          if (state is InfluencerProfileInitial) {
+            context
+                .read<InfluencerProfileBloc>()
+                .add(FetchInfluencerProfileEvent(PrefUtils.getId()));
+            return const SizedBox.shrink();
+          } else if (state is InfluencerProfileLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is InfluencerProfileError) {
+            return Center(child: Text(state.message));
+          } else if (state is InfluencerProfileLoaded) {
+            return state.influencerProfileModel.data.products.isEmpty
+                ? SingleChildScrollView(
+                    child: Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(height: 115.v),
+                          CustomImageView(
+                            imagePath: ImageConstant.noPostFound,
+                            height: 100.v,
+                          ),
+                          SizedBox(height: 15.v),
+                          Text(
+                            'No Product Yet',
+                            style: textTheme.titleMedium,
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                : GridView.builder(
+                    itemCount:
+                        state.influencerProfileModel.data.products.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        mainAxisSpacing: 5.v,
+                        crossAxisSpacing: 5.h,
+                        childAspectRatio: 155.h / 269.v,
+                        crossAxisCount: 2),
+                    itemBuilder: (context, index) => _buildProductCart(context,
+                        state.influencerProfileModel.data.products[index]),
+                  );
+          }
+          return const SizedBox.shrink();
+        },
+      ),
     );
   }
 
@@ -362,164 +414,187 @@ class InfluencerMyProfileScreen extends StatelessWidget {
             child: Text(state.message),
           );
         } else if (state is MyReelLoaded) {
-          return GridView.builder(
-            itemCount: state.reels.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisSpacing: 5.v,
-                crossAxisSpacing: 5.h,
-                childAspectRatio: 140.h / 269.v,
-                crossAxisCount: 2),
-            itemBuilder: (context, index) => Column(
-              children: [
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    CustomImageView(
-                      height: 261.v,
-                      fit: BoxFit.fill,
-                      radius: BorderRadius.only(
-                          topRight: Radius.circular(12.h),
-                          topLeft: Radius.circular(12.h)),
-                      imagePath: state.reels[index].reelCoverPath,
+          return state.reels.isEmpty
+              ? SingleChildScrollView(
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 115.v),
+                        CustomImageView(
+                          imagePath: ImageConstant.noPostFound,
+                          height: 100.v,
+                        ),
+                        SizedBox(height: 15.v),
+                        Text(
+                          'No Post Yet',
+                          style: textTheme.titleMedium,
+                        )
+                      ],
                     ),
-                    PlayButton(
-                      isVisible: true,
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(
-                          builder: (context) =>
-                              VideoReelPage(initialIndex: index),
-                        ))
-                            .then((_) {
-                          context.read<MyReelBloc>().add(LoadMyReelEvent());
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(height: 7.v),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5.h),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  ),
+                )
+              : GridView.builder(
+                  itemCount: state.reels.length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      mainAxisSpacing: 5.v,
+                      crossAxisSpacing: 5.h,
+                      childAspectRatio: 140.h / 269.v,
+                      crossAxisCount: 2),
+                  itemBuilder: (context, index) => Column(
                     children: [
-                      Column(
-                        children: [
-                          Visibility(
-                            visible: state.reels[index].likeStatus == 0,
-                            replacement: InkWell(
-                              onTap: () {
-                                context.read<MyReelBloc>().add(
-                                    ToggleMyReelLikeButtonEvent(
-                                        state.reels[index].id));
-                              },
-                              child: const Icon(
-                                Icons.favorite,
-                                color: Colors.red,
-                              ),
-                            ),
-                            child: CustomImageView(
-                              margin: EdgeInsets.only(top: 6.v, left: 2.h),
-                              onTap: () {
-                                context.read<MyReelBloc>().add(
-                                    ToggleMyReelLikeButtonEvent(
-                                        state.reels[index].id));
-                              },
-                              imagePath: ImageConstant.favIcon,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          SizedBox(height: 8.v),
-                          Text(
-                            state.reels[index].likesCount.toString(),
-                            style: textTheme.bodySmall!.copyWith(
-                                fontSize: 12.fSize,
-                                color: const Color(0xFF232323),
-                                fontWeight: FontWeight.w300),
-                          )
-                        ],
-                      ),
-                      Column(
+                      Stack(
+                        alignment: Alignment.center,
                         children: [
                           CustomImageView(
+                            height: 261.v,
+                            fit: BoxFit.fill,
+                            radius: BorderRadius.only(
+                                topRight: Radius.circular(12.h),
+                                topLeft: Radius.circular(12.h)),
+                            imagePath: state.reels[index].reelCoverPath,
+                          ),
+                          PlayButton(
+                            isVisible: true,
                             onTap: () {
                               Navigator.of(context)
-                                  .pushNamed(AppRoutes.commentsScreen,
-                                      arguments: state.reels[index].id)
+                                  .push(MaterialPageRoute(
+                                builder: (context) =>
+                                    VideoReelPage(initialIndex: index),
+                              ))
                                   .then((_) {
                                 context
                                     .read<MyReelBloc>()
                                     .add(LoadMyReelEvent());
                               });
-                              // showModalBottomSheet(
-                              //   context: context,
-                              //   isScrollControlled: true,
-                              //   builder: (context) => BlocProvider(
-                              //     create: (context) => CommentsBloc(
-                              //         context.read<CommentsRepository>()),
-                              //     child: SizedBox(
-                              //       height: SizeUtils.height * 0.8,
-                              //       child: CommentsScreen(
-                              //           reelId: state.reels[index].id),
-                              //     ),
-                              //   ),
-                              // ).then(
-                              //   (value) {
-                              //     context
-                              //         .read<MyReelBloc>()
-                              //         .add(LoadMyReelEvent());
-                              //   },
-                              // );
                             },
-                            imagePath: ImageConstant.commentIcon,
-                            color: Colors.grey,
                           ),
-                          SizedBox(height: 8.v),
-                          Text(
-                            state.reels[index].commentsCount.toString(),
-                            style: textTheme.bodySmall!.copyWith(
-                                fontSize: 12.fSize,
-                                color: const Color(0xFF232323),
-                                fontWeight: FontWeight.w300),
-                          )
                         ],
                       ),
-                      InkWell(
-                        onTap: () async {
-                          await shareContent(state.reels[index].reelPath);
-                        },
-                        child: Column(
+                      SizedBox(height: 7.v),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 5.h),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            CustomImageView(
-                              imagePath: ImageConstant.shareIcon,
-                              color: Colors.grey,
+                            Column(
+                              children: [
+                                Visibility(
+                                  visible: state.reels[index].likeStatus == 0,
+                                  replacement: InkWell(
+                                    onTap: () {
+                                      context.read<MyReelBloc>().add(
+                                          ToggleMyReelLikeButtonEvent(
+                                              state.reels[index].id));
+                                    },
+                                    child: const Icon(
+                                      Icons.favorite,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                  child: CustomImageView(
+                                    margin:
+                                        EdgeInsets.only(top: 6.v, left: 2.h),
+                                    onTap: () {
+                                      context.read<MyReelBloc>().add(
+                                          ToggleMyReelLikeButtonEvent(
+                                              state.reels[index].id));
+                                    },
+                                    imagePath: ImageConstant.favIcon,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                SizedBox(height: 8.v),
+                                Text(
+                                  state.reels[index].likesCount.toString(),
+                                  style: textTheme.bodySmall!.copyWith(
+                                      fontSize: 12.fSize,
+                                      color: const Color(0xFF232323),
+                                      fontWeight: FontWeight.w300),
+                                )
+                              ],
                             ),
-                            SizedBox(height: 8.v),
-                            Text(
-                              'Share',
-                              style: textTheme.bodySmall!.copyWith(
-                                  fontSize: 12.fSize,
-                                  color: const Color(0xFF232323),
-                                  fontWeight: FontWeight.w300),
-                            )
+                            Column(
+                              children: [
+                                CustomImageView(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .pushNamed(AppRoutes.commentsScreen,
+                                            arguments: state.reels[index].id)
+                                        .then((_) {
+                                      context
+                                          .read<MyReelBloc>()
+                                          .add(LoadMyReelEvent());
+                                    });
+                                    // showModalBottomSheet(
+                                    //   context: context,
+                                    //   isScrollControlled: true,
+                                    //   builder: (context) => BlocProvider(
+                                    //     create: (context) => CommentsBloc(
+                                    //         context.read<CommentsRepository>()),
+                                    //     child: SizedBox(
+                                    //       height: SizeUtils.height * 0.8,
+                                    //       child: CommentsScreen(
+                                    //           reelId: state.reels[index].id),
+                                    //     ),
+                                    //   ),
+                                    // ).then(
+                                    //   (value) {
+                                    //     context
+                                    //         .read<MyReelBloc>()
+                                    //         .add(LoadMyReelEvent());
+                                    //   },
+                                    // );
+                                  },
+                                  imagePath: ImageConstant.commentIcon,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(height: 8.v),
+                                Text(
+                                  state.reels[index].commentsCount.toString(),
+                                  style: textTheme.bodySmall!.copyWith(
+                                      fontSize: 12.fSize,
+                                      color: const Color(0xFF232323),
+                                      fontWeight: FontWeight.w300),
+                                )
+                              ],
+                            ),
+                            InkWell(
+                              onTap: () async {
+                                await shareContent(state.reels[index].reelPath);
+                              },
+                              child: Column(
+                                children: [
+                                  CustomImageView(
+                                    imagePath: ImageConstant.shareIcon,
+                                    color: Colors.grey,
+                                  ),
+                                  SizedBox(height: 8.v),
+                                  Text(
+                                    'Share',
+                                    style: textTheme.bodySmall!.copyWith(
+                                        fontSize: 12.fSize,
+                                        color: const Color(0xFF232323),
+                                        fontWeight: FontWeight.w300),
+                                  )
+                                ],
+                              ),
+                            ),
                           ],
                         ),
-                      ),
+                      )
                     ],
                   ),
-                )
-              ],
-            ),
-          );
+                );
         }
         return const SizedBox.shrink();
       },
     );
   }
 
-  Container _buildProductCart(BuildContext context) {
+  Container _buildProductCart(BuildContext context, Product product) {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
       decoration: BoxDecoration(
@@ -530,16 +605,16 @@ class InfluencerMyProfileScreen extends StatelessWidget {
           CustomImageView(
             height: 185.v,
             radius: BorderRadius.circular(12.h),
-            imagePath: ImageConstant.productImage,
+            imagePath: product.productImage,
           ),
           SizedBox(height: 4.v),
           Text(
-            'Classic White Sneakers',
+            product.productName,
             style: textTheme.titleMedium,
           ),
           SizedBox(height: 8.v),
           Text(
-            'by Shubham Deep',
+            'by ${product.user.name}',
             style: textTheme.bodySmall,
           ),
           SizedBox(height: 12.v),

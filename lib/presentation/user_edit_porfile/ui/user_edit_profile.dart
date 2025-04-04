@@ -159,16 +159,14 @@ class UserEditProfileScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 8.v),
                         CustomTextFormField(
-                          // readOnly: true,
-                          controller: _phoneNumberController,
-                          textInputType: TextInputType.number,
-                          maxLength: 10,
-                          counter: const Text(''),
-                          hintText: 'phone',
-                          // validator: (String? value) {
-                          //   return validatePhoneNumber(value!);
-                          // },
-                        ),
+                            // readOnly: true,
+                            controller: _phoneNumberController,
+                            textInputType: TextInputType.number,
+                            maxLength: 10,
+                            counter: const Text(''),
+                            hintText: 'phone',
+                            validator: (String? value) =>
+                                validatePhoneNumber(value)),
                         SizedBox(height: 80.v),
                       ],
                     ),

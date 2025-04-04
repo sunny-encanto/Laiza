@@ -1,5 +1,4 @@
 import 'package:laiza/data/blocs/advertisement_bloc/advertisement_bloc.dart';
-import 'package:laiza/data/models/advertisement_model/advertisement_model.dart';
 import 'package:laiza/data/models/product_model/product.dart';
 import 'package:laiza/data/repositories/advertisement_repository/advertisement_repository.dart';
 import 'package:laiza/data/repositories/product_repository/product_repository.dart';
@@ -11,6 +10,7 @@ import '../../../data/blocs/reel_from_followed_influencer/reel_from_followed_inf
 import '../../../data/models/reels_model/reel.dart';
 import '../../../data/repositories/reel_repository/reel_repository.dart';
 import '../../../widgets/influencer_card_widget.dart';
+import '../../../widgets/slider_widget.dart';
 
 class DiscoverScreen extends StatelessWidget {
   const DiscoverScreen({super.key});
@@ -18,7 +18,7 @@ class DiscoverScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    int selectedIndex = 0;
+
     return Scaffold(
       appBar: customAppBar(context),
       body: BlocProvider(
@@ -240,6 +240,8 @@ class DiscoverScreen extends StatelessWidget {
                 //           return const SizedBox.shrink();
                 //         })),
                 SizedBox(height: 24.v),
+                _buildDiscoverCard(),
+                SizedBox(height: 24.v),
                 Text(
                   'Explore More Products',
                   style: textTheme.titleMedium,
@@ -307,20 +309,33 @@ class DiscoverScreen extends StatelessWidget {
             return Center(child: Text(state.message));
           } else if (state is AdvertisementLoaded) {
             if (state.advertisement.isNotEmpty) {
-              Advertisement advertisement = state.advertisement[0];
-              return Stack(
-                clipBehavior: Clip.hardEdge,
-                alignment: Alignment.bottomLeft,
-                children: [
-                  CustomImageView(
-                    height: 186.v,
+              return customSlider(
+                height: 170.v,
+                autoPlay: state.advertisement.length > 1,
+                childList: List.generate(
+                  state.advertisement.length,
+                  (sliderIndex) => CustomImageView(
+                    margin: EdgeInsets.only(right: 2.h),
+                    height: 170.v,
                     width: SizeUtils.width,
                     radius: BorderRadius.circular(12.h),
-                    imagePath: advertisement.image,
-                    fit: BoxFit.fill,
+                    imagePath: state.advertisement[sliderIndex].image,
                   ),
-                ],
+                ),
               );
+              //   Stack(
+              //   clipBehavior: Clip.hardEdge,
+              //   alignment: Alignment.bottomLeft,
+              //   children: [
+              //     CustomImageView(
+              //       height: 186.v,
+              //       width: SizeUtils.width,
+              //       radius: BorderRadius.circular(12.h),
+              //       imagePath: advertisement.image,
+              //       fit: BoxFit.fill,
+              //     ),
+              //   ],
+              // );
             } else {
               return SizedBox(height: 186.v);
             }

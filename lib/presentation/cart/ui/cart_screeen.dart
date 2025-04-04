@@ -124,10 +124,9 @@ class CartScreen extends StatelessWidget {
                         } else {
                           // Navigator.of(context)
                           //     .pushNamed(AppRoutes.addressScreen);
-                          Navigator.of(context)
-                              .pushNamed(AppRoutes.orderSummary, arguments: {
-                            'items': selectedItems,
-                          });
+                          Navigator.of(context).pushNamed(
+                              AppRoutes.orderSummary,
+                              arguments: {'items': selectedItems});
                         }
                       },
                       text: 'Check Out'),

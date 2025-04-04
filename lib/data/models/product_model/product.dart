@@ -36,6 +36,7 @@ class Product {
   num averageRating;
   num totalRatings;
   List<Inventory> inventories;
+  String sizeChart;
 
   Product({
     required this.id,
@@ -66,6 +67,7 @@ class Product {
     required this.discount,
     required this.productImage,
     required this.inventories,
+    required this.sizeChart,
   });
 
   Product copyWith({bool? isAddedToWishlist, bool? isAsked}) {
@@ -96,6 +98,7 @@ class Product {
         finalPrice: finalPrice,
         discount: discount,
         productImage: productImage,
+        sizeChart: sizeChart,
         inventories: inventories);
   }
 
@@ -146,6 +149,7 @@ class Product {
         averageRating: json["average_rating"] ?? 0,
         totalRatings: json["total_ratings"] ?? 0,
         discount: json["product_discount"] ?? 0,
+        sizeChart: json["size_cart"] ?? '',
         additionalInfo: json['additional_info'] == null
             ? null
             : ProductAdditionalInfo.fromJson(
@@ -182,6 +186,7 @@ class Product {
         "average_rating": averageRating,
         "total_ratings": totalRatings,
         "product_discount": discount,
+        "size_cart": sizeChart,
         "inventories": List<dynamic>.from(inventories.map((x) => x.toJson())),
       };
 }
@@ -281,7 +286,7 @@ class ProductAdditionalInfo {
         manufacture: json["manufacture"] ?? '',
         packer: json["packer"] ?? '',
         importer: json["importer"] ?? '',
-        itemWeight: json["item_weight"] ?? '',
+        itemWeight: json["weight"].toString(),
         itemDimensions: json["item_dimensions"] ?? '',
         netQuantity: json["net_quantity"] ?? '',
         includedComponents: json["included_components"] ?? '',
@@ -294,7 +299,7 @@ class ProductAdditionalInfo {
         "manufacture": manufacture,
         "packer": packer,
         "importer": importer,
-        "item_weight": itemWeight,
+        "weight": itemWeight,
         "item_dimensions": itemDimensions,
         "net_quantity": netQuantity,
         "included_components": includedComponents,

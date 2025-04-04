@@ -32,12 +32,17 @@ class CartRepository {
   }
 
   Future<CommonModel> addToCart(
-      {required int id, required int quantity}) async {
+      {required int id,
+      required int quantity,
+      required int inventoryId}) async {
     try {
       _apiClient
           .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
-      FormData data =
-          FormData.fromMap({'product_id': id, 'quantity': quantity});
+      FormData data = FormData.fromMap({
+        'product_id': id,
+        'quantity': quantity,
+        'inventory_id': inventoryId
+      });
       Response response =
           await _apiClient.post(ApiConstant.addToCart, data: data);
       if (response.statusCode == 200) {

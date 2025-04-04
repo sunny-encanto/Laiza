@@ -1,6 +1,7 @@
 import 'package:laiza/data/services/firebase_services.dart';
 
 import '../core/app_export.dart';
+import '../data/blocs/upcoming_stream_bloc/up_coming_stream_bloc.dart';
 import '../data/models/live_stream_model.dart/live_stream_model.dart';
 
 class StreamsCard extends StatelessWidget {
@@ -97,22 +98,39 @@ class StreamsCard extends StatelessWidget {
           SizedBox(height: 8.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 5.h),
-            child: CustomElevatedButton(
-              height: 33.v,
-              width: 122.h,
-              text: isLive ? 'Watch Now' : 'Notify Me',
-              onPressed: () {
-                if (isLive) {
-                  Navigator.of(context)
-                      .pushNamed(AppRoutes.livePage, arguments: {
-                    'live_id': model.liveId,
-                    'is_host': false,
-                  });
-                  FirebaseServices.updateOnGoingLiveStream(
-                      id: model.liveId ?? "", isAdd: true);
-                }
+            child: BlocBuilder<UpComingStreamBloc, UpComingStreamState>(
+              builder: (context, state) {
+                return CustomElevatedButton(
+                  height: 33.v,
+                  width: 122.h,
+                  text: isLive
+                      ? 'Watch Now'
+                      : (model.isNotify ?? false)
+                          ? "Notified"
+                          : 'Notify Me',
+                  onPressed: () {
+                    if (isLive) {
+                      Navigator.of(context)
+                          .pushNamed(AppRoutes.livePage, arguments: {
+                        'live_id': model.liveId,
+                        'is_host': false,
+                      });
+                      FirebaseServices.updateOnGoingLiveStream(
+                          id: model.liveId ?? "", isAdd: true);
+                    } else {
+                      if (model.isNotify ?? false) {
+                        context.showSnackBar(
+                            'you are already subscribed for this stream notification.');
+                      } else {
+                        context
+                            .read<UpComingStreamBloc>()
+                            .add(NotifyStream(model.liveId ?? ""));
+                      }
+                    }
+                  },
+                  buttonTextStyle: textTheme.titleSmall,
+                );
               },
-              buttonTextStyle: textTheme.titleSmall,
             ),
           ),
         ],

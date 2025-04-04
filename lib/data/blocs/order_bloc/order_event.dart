@@ -7,4 +7,11 @@ sealed class OrderEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class CreateOrderEvent extends OrderEvent {}
+class CreateOrderEvent extends OrderEvent {
+  final PaymentMode paymentMode;
+
+  const CreateOrderEvent(this.paymentMode);
+
+  @override
+  List<Object?> get props => [paymentMode];
+}

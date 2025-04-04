@@ -67,8 +67,8 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
       ProductAddToCart event, Emitter<ProductDetailState> emit) async {
     try {
       emit(ProductAddToCartLoading());
-      CommonModel model =
-          await _cartRepository.addToCart(id: event.id, quantity: 1);
+      CommonModel model = await _cartRepository.addToCart(
+          id: event.id, quantity: 1, inventoryId: event.inventoryId);
       emit(ProductAddedToCart(model.message ?? ''));
     } catch (e) {
       emit(ProductAddedToCartError(e.toString()));

@@ -112,7 +112,6 @@ class FollowingScreen extends StatelessWidget {
                                     imagePath:
                                         state.followings[index].profileImg,
                                     radius: BorderRadius.circular(90.h),
-                                    fit: BoxFit.fill,
                                   ),
                                 ),
                               ],

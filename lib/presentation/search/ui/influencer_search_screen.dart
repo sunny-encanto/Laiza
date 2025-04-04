@@ -3,18 +3,17 @@ import 'package:laiza/presentation/empty_pages/no_search_found/no_search_found.d
 
 import '../../../core/app_export.dart';
 
-class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+class InfluencerSearchScreen extends StatefulWidget {
+  const InfluencerSearchScreen({super.key});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  State<InfluencerSearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen>
+class _SearchScreenState extends State<InfluencerSearchScreen>
     with SingleTickerProviderStateMixin {
   final _searchController = TextEditingController();
 
-  final List<String> _suggestions = ['Kristen Stewart', 'Kristen', 'Stewart'];
   late TabController _tabController;
   int _currentIndex = 0;
 
@@ -90,7 +89,7 @@ class _SearchScreenState extends State<SearchScreen>
                   current is SearchResultLoadedState),
           builder: (context, state) {
             if (state is SearchInitial) {
-              context.read<SearchBloc>().add(FetchSearchItems(false));
+              context.read<SearchBloc>().add(const FetchSearchItems(true));
             } else if (state is SearchResultLoadingState) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is SearchErrorState) {
@@ -106,7 +105,7 @@ class _SearchScreenState extends State<SearchScreen>
                       unselectedLabelColor: Colors.grey,
                       tabs: const [
                         Tab(
-                          text: 'Account',
+                          text: 'Seller',
                         ),
                         Tab(text: 'Product'),
                       ]),
@@ -252,35 +251,6 @@ class _SearchScreenState extends State<SearchScreen>
             style: textTheme.bodySmall,
           ),
         ],
-      ),
-    );
-  }
-
-  InkWell _buildSuggestion(int index, BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
-    return InkWell(
-      onTap: () {
-        context
-            .read<SearchBloc>()
-            .add(SearchUserInteractionEvent(_suggestions[index]));
-        _searchController.text = _suggestions[index];
-      },
-      child: Container(
-        decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: AppColor.offWhite))),
-        height: 58.v,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              _suggestions[index],
-              style: textTheme.titleMedium,
-            ),
-            CustomImageView(
-              imagePath: ImageConstant.recentIcon,
-            )
-          ],
-        ),
       ),
     );
   }

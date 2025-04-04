@@ -13,6 +13,7 @@ class Reel {
   String reelHashtag;
   int likesCount;
   int commentsCount;
+  int viewsCount;
   List<ReelProduct> product;
   UserModel user;
 
@@ -31,6 +32,7 @@ class Reel {
     required this.commentsCount,
     required this.product,
     required this.user,
+    required this.viewsCount,
   });
 
   Reel copyWith({int? likeStatus, int? likesCount}) {
@@ -49,6 +51,7 @@ class Reel {
       commentsCount: commentsCount,
       product: product,
       user: user,
+      viewsCount: viewsCount,
     );
   }
 
@@ -67,6 +70,7 @@ class Reel {
         reelHashtag: json["reel_hashtag"],
         likesCount: json["likes_count"] ?? 0,
         commentsCount: json["comments_count"] ?? 0,
+        viewsCount: json["views_count"] ?? 0,
         product: json["product"] != null
             ? List<ReelProduct>.from(
                 json["product"].map((x) => ReelProduct.fromJson(x)))
@@ -90,6 +94,7 @@ class Reel {
         "likes_count": likesCount,
         "comments_count": commentsCount,
         "category_id": catId,
+        "views_count": viewsCount,
         "product": List<dynamic>.from(product.map((x) => x.toJson())),
         'users': user.toJson()
       };
@@ -100,12 +105,14 @@ class ReelProduct {
   String productName;
   String price;
   String productImage;
+  int stock;
 
   ReelProduct({
     required this.id,
     required this.productName,
     required this.price,
     required this.productImage,
+    required this.stock,
   });
 
   factory ReelProduct.fromJson(Map<String, dynamic> json) => ReelProduct(
@@ -113,6 +120,7 @@ class ReelProduct {
         productName: json["product_name"],
         price: json["price"],
         productImage: json["product_image"],
+        stock: json["total_quantity"] ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -120,5 +128,6 @@ class ReelProduct {
         "product_name": productName,
         "price": price,
         "product_image": productImage,
+        'total_quantity': stock,
       };
 }

@@ -95,21 +95,13 @@ class ConnectionsScreen extends StatelessWidget {
         imagePath: ImageConstant.chatIcon,
       ),
       title: Text(
-        item.name,
+        item.brandName.isEmpty ? item.name : item.brandName,
         style: textTheme.titleMedium,
       ),
-      // subtitle: Row(
-      //   children: [
-      //     Text(
-      //       'Product Category- ',
-      //       style: textTheme.bodySmall,
-      //     ),
-      //     Text(
-      //       item.category,
-      //       style: textTheme.bodySmall!.copyWith(color: AppColor.blackColor),
-      //     ),
-      //   ],
-      // ),
+      subtitle: Text(
+        item.brandName,
+        style: textTheme.bodySmall,
+      ),
     );
   }
 }

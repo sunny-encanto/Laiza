@@ -204,10 +204,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     // Configure the player
     BetterPlayerConfiguration betterPlayerConfiguration =
         BetterPlayerConfiguration(
+      allowedScreenSleep: false,
       looping: true,
       autoPlay: true,
       fit: BoxFit.contain,
-      aspectRatio: 9 / 16,
+      // aspectRatio: 9 / 16,
+      aspectRatio: 9 / 20,
       errorBuilder: (context, errorMessage) {
         if (mounted) {
           setState(() {
@@ -234,12 +236,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         showControlsOnInitialize: false,
       ),
     );
-    // Initialize the controller
     _betterPlayerController = BetterPlayerController(
       betterPlayerConfiguration,
       betterPlayerDataSource: dataSource,
     );
-    // Listen for errors or state changes if needed
     _betterPlayerController.addEventsListener((event) {
       if (event.betterPlayerEventType == BetterPlayerEventType.exception) {
         print("Player Exception: ${event.parameters}");
@@ -258,9 +258,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   Widget build(BuildContext context) {
     return _errorMessage != null
         ? Center(child: Text(_errorMessage!))
-        : BetterPlayer(
-            controller: _betterPlayerController,
-          );
+        : BetterPlayer(controller: _betterPlayerController);
     // return
     //     //VideoPlayerScreen(url: widget.videoUrl);
     //     Stack(

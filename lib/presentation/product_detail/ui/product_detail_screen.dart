@@ -9,6 +9,7 @@ import '../../../data/models/cart_model/cart_model.dart';
 import '../../../data/services/helper_services.dart';
 import '../../../data/services/share.dart';
 import '../../../widgets/slider_widget.dart';
+import '../../profile/bloc/profile_bloc.dart';
 import '../../shimmers/product_details_loading_screen.dart';
 
 // ignore: must_be_immutable
@@ -36,14 +37,14 @@ class ProductDetailScreen extends StatelessWidget {
           'Product Detail',
           style: textTheme.titleMedium!.copyWith(fontSize: 20.fSize),
         ),
-        actions: [
-          CustomIconButton(
-              icon: ImageConstant.cartIcon,
-              onTap: () {
-                Navigator.of(context).pushNamed(AppRoutes.cartScreen);
-              }),
-          SizedBox(width: 5.h)
-        ],
+        //actions: [
+        // CustomIconButton(
+        //     icon: ImageConstant.cartIcon,
+        //     onTap: () {
+        //       Navigator.of(context).pushNamed(AppRoutes.cartScreen);
+        //     }),
+        // SizedBox(width: 5.h)
+        // ],
       ),
       body: SingleChildScrollView(
         child: BlocBuilder<ProductDetailBloc, ProductDetailState>(
@@ -193,28 +194,31 @@ class ProductDetailScreen extends StatelessWidget {
                           ),
                         ),
                         // Like Button
-                        BlocConsumer<ProductDetailBloc, ProductDetailState>(
-                          listener: (context, state) {
-                            if (state is ProductLikeToggleState) {
-                              _isLiked = state.isLiked;
-                            }
-                          },
-                          builder: (context, state) {
-                            return IconButton(
-                                onPressed: () {
-                                  context.read<ProductDetailBloc>().add(
-                                      ProductLikeToggleEvent(
-                                          id: product.id, isLiked: !_isLiked));
-                                },
-                                icon: Icon(
-                                  _isLiked
-                                      ? Icons.favorite
-                                      : Icons.favorite_border_outlined,
-                                  color:
-                                      _isLiked ? Colors.red : AppColor.primary,
-                                ));
-                          },
-                        )
+                        if (PrefUtils.getRole() == UserRole.user.name)
+                          BlocConsumer<ProductDetailBloc, ProductDetailState>(
+                            listener: (context, state) {
+                              if (state is ProductLikeToggleState) {
+                                _isLiked = state.isLiked;
+                              }
+                            },
+                            builder: (context, state) {
+                              return IconButton(
+                                  onPressed: () {
+                                    context.read<ProductDetailBloc>().add(
+                                        ProductLikeToggleEvent(
+                                            id: product.id,
+                                            isLiked: !_isLiked));
+                                  },
+                                  icon: Icon(
+                                    _isLiked
+                                        ? Icons.favorite
+                                        : Icons.favorite_border_outlined,
+                                    color: _isLiked
+                                        ? Colors.red
+                                        : AppColor.primary,
+                                  ));
+                            },
+                          )
                       ],
                     ),
                     SizedBox(height: 11.v),
@@ -658,18 +662,21 @@ class ProductDetailScreen extends StatelessWidget {
                     listener: (context, state) {
                       if (state is ProductAddedToCart) {
                         context.showSnackBar(state.message);
+                        Navigator.of(context).pushNamed(AppRoutes.cartScreen);
                       } else if (state is ProductAddedToCartError) {
                         context.showSnackBar(state.message);
                       }
                     },
                     child: CustomOutlineButton(
                         leftIcon: CustomImageView(
+                          margin: EdgeInsets.only(right: 10.h),
                           imagePath: ImageConstant.cartBlackIcon,
                         ),
-                        onPressed: () {
-                          context
-                              .read<ProductDetailBloc>()
-                              .add(ProductAddToCart(id));
+                        onPressed: () async {
+                          context.read<ProductDetailBloc>().add(
+                              ProductAddToCart(
+                                  id: id, inventoryId: _selectedColor));
+                          context.read<ProfileBloc>().add(FetchProfile());
                         },
                         text: 'Add to Cart'),
                   )),
@@ -823,8 +830,8 @@ class ProductDetailScreen extends StatelessWidget {
               buildInfoRow('Item Weight', additionalInfo.itemWeight, textTheme),
               buildInfoRow('Item Dimensions LxWxH',
                   additionalInfo.itemDimensions, textTheme),
-              buildInfoRow(
-                  'Net Quantity', additionalInfo.netQuantity, textTheme),
+              // buildInfoRow(
+              //     'Net Quantity', additionalInfo.netQuantity, textTheme),
               buildInfoRow(
                   'Generic Name', additionalInfo.genericName, textTheme),
               const SizedBox(height: 24),
@@ -849,7 +856,7 @@ class ProductDetailScreen extends StatelessWidget {
                 SizedBox(width: 4.h),
                 Text('${product.averageRating}', style: textTheme.bodySmall),
                 Text(
-                  '(${product.totalRatings} Ratings)',
+                  ' (${product.totalRatings} Ratings)',
                   style: textTheme.bodySmall,
                 ),
               ],

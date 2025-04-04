@@ -34,7 +34,13 @@ class OrderPlacedScreen extends StatelessWidget {
             text: 'Order Details',
             onPressed: () {
               Navigator.of(context)
-                  .pushReplacementNamed(AppRoutes.orderTrackScreen);
+                  .pushNamed(AppRoutes.orderTrackScreen)
+                  .then((_) {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  AppRoutes.bottomBarScreen,
+                  (route) => false,
+                );
+              });
             },
           ),
           SizedBox(height: 20.v),

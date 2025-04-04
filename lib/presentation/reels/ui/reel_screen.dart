@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 import 'package:laiza/presentation/reels/bloc/reel_bloc.dart';
 
@@ -444,22 +446,79 @@ class ReelPlayerWidget extends StatefulWidget {
   State<ReelPlayerWidget> createState() => _ReelPlayerWidget();
 }
 
-class _ReelPlayerWidget extends State<ReelPlayerWidget> {
+class _ReelPlayerWidget extends State<ReelPlayerWidget>
+    with WidgetsBindingObserver {
   late PageController _pageController;
   late int _currentIndex;
   bool _isLiked = false;
   bool _isFollowed = false;
+  Map<int, Timer> _pageTimers = {}; // Store timers for each page
+  Map<int, bool> _viewCounted = {}; // Store timers for each page
+  bool _isActive = true;
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
     _pageController = PageController(initialPage: _currentIndex);
+    WidgetsBinding.instance.addObserver(this);
+
+    // Listen to page changes
+    _pageController.addListener(() {
+      int newPage = _pageController.page?.round() ?? 0;
+      if (newPage != _currentIndex) {
+        _pageTimers[_currentIndex]?.cancel(); // Cancel timer for previous page
+        _currentIndex = newPage;
+        _startTimerForPage(_currentIndex); // Start timer for new page
+      }
+    });
+
+    // Start timer for the initial page
+    _startTimerForPage(_currentIndex);
+  }
+
+  void _startTimerForPage(int pageIndex) {
+    print('_startTimerForPage');
+    // Initialize view counted status if not already set
+    _viewCounted[pageIndex] ??= false;
+
+    // Cancel any existing timer for this page
+    _pageTimers[pageIndex]?.cancel();
+
+    // Start a new timer
+    _pageTimers[pageIndex] = Timer(const Duration(seconds: 10), () {
+      print('_startTimerForPage');
+      if (mounted &&
+          _currentIndex == pageIndex &&
+          _isActive &&
+          !_viewCounted[pageIndex]!) {
+        _onTenSecondsElapsed(pageIndex);
+        _viewCounted[pageIndex] = true; // Mark view as counted
+      }
+    });
+  }
+
+  void _onTenSecondsElapsed(int pageIndex) {
+    print('User has been on reel $pageIndex for 10 seconds!');
+    // Call the repository to increment view count
+    context.read<ReelRepository>().addReelView(widget.reels[pageIndex].id);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    setState(() {
+      _isActive = state ==
+          AppLifecycleState.resumed; // Pause timer when app is in background
+    });
   }
 
   @override
   void dispose() {
+    _pageTimers.forEach((_, timer) => timer.cancel()); // Cancel all timers
+    _pageTimers.clear();
+    _viewCounted.clear();
     _pageController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -565,7 +624,7 @@ class _ReelPlayerWidget extends State<ReelPlayerWidget> {
                   Center(
                     child: VideoPlayerScreen(url: widget.reels[index].reelPath),
                   ),
-                  // _buildViewCountWidget(textTheme),
+                  _buildViewCountWidget(widget.reels[index].viewsCount),
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Column(
@@ -766,7 +825,8 @@ class _ReelPlayerWidget extends State<ReelPlayerWidget> {
     );
   }
 
-  Align _buildViewCountWidget(TextTheme textTheme) {
+  Align _buildViewCountWidget(int count) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     return Align(
       alignment: Alignment.topLeft,
       child: Container(
@@ -785,7 +845,7 @@ class _ReelPlayerWidget extends State<ReelPlayerWidget> {
             ),
             SizedBox(width: 3.h),
             Text(
-              '7.5k Views',
+              '$count Views',
               style: textTheme.bodySmall!.copyWith(color: Colors.white),
             )
           ],
@@ -795,6 +855,7 @@ class _ReelPlayerWidget extends State<ReelPlayerWidget> {
   }
 
   Widget _buildSliderItem(BuildContext context, ReelProduct product) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     return InkWell(
       onTap: () {
         Navigator.of(context)
@@ -831,11 +892,12 @@ class _ReelPlayerWidget extends State<ReelPlayerWidget> {
                       product.productName,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 3.h),
-                    // const Text(
-                    //   'Stock:2',
-                    //   overflow: TextOverflow.ellipsis,
-                    // ),
+                    SizedBox(height: 5.h),
+                    Text(
+                      'Stock: ${product.stock}',
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.bodySmall,
+                    ),
                   ],
                 ),
               ),

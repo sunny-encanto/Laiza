@@ -44,7 +44,10 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
       BgPhotoChangeEvent event, Emitter<EditProfileState> emit) async {
     String? imagePath = await MediaServices.pickImageFromGallery();
     if (imagePath != null) {
-      emit(BgPhotoChangedState(imagePath));
+      String? cropImagePath = await MediaServices.cropImage(imagePath);
+      if (cropImagePath != null) {
+        emit(BgPhotoChangedState(cropImagePath));
+      }
     }
   }
 

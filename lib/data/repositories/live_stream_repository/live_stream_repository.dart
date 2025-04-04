@@ -5,6 +5,7 @@ import 'package:laiza/data/models/common_model/common_model.dart';
 import '../../../core/app_export.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/utils/api_constant.dart';
+import '../../models/my_scheduled_stream_model/my_scheduled_stream_model.dart';
 import '../../models/upcoming_stream_model/upcoming_stream_model.dart';
 
 class LiveStreamRepository {
@@ -64,6 +65,39 @@ class LiveStreamRepository {
     } catch (e) {
       Logger.log('Error during get upcoming stream', e.toString());
       throw Exception('Failed to get upcoming stream');
+    }
+  }
+
+  Future<List<MyScheduledStream>> getMyStreams() async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+      Response response = await _apiClient.get(ApiConstant.getMyAllStream);
+      MyScheduledStreamModel model =
+          MyScheduledStreamModel.fromJson(response.data);
+      return model.data;
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during get my  stream', e.toString());
+      throw Exception('Failed to get my stream');
+    }
+  }
+
+  Future<CommonModel> notifyMe(String id) async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+      Response response = await _apiClient.post("${ApiConstant.notifyMe}/$id");
+      CommonModel model = CommonModel.fromJson(response.data);
+      return model;
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during notify me', e.toString());
+      throw Exception('Failed to notify me');
     }
   }
 }

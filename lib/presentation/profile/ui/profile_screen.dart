@@ -47,25 +47,44 @@ class ProfileScreen extends StatelessWidget {
                               Text(state.userModel.name ?? '',
                                   style: textTheme.titleLarge!.copyWith(
                                       color: Colors.white, fontSize: 16.fSize)),
-                              Container(
-                                padding: EdgeInsets.all(5.h),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(2.h)),
-                                child: CustomImageView(
-                                    height: 15.h,
-                                    onTap: () {
-                                      Navigator.of(context)
-                                          .pushNamed(
-                                              AppRoutes.editUserProfileScreen)
-                                          .then((_) {
-                                        context
-                                            .read<ProfileBloc>()
-                                            .add(FetchProfile());
-                                      });
-                                    },
-                                    imagePath: ImageConstant.editIcon),
-                              )
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(5.h),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(2.h)),
+                                    child: CustomImageView(
+                                        height: 15.h,
+                                        onTap: () {
+                                          Navigator.of(context)
+                                              .pushNamed(AppRoutes
+                                                  .editUserProfileScreen)
+                                              .then((_) {
+                                            context
+                                                .read<ProfileBloc>()
+                                                .add(FetchProfile());
+                                          });
+                                        },
+                                        imagePath: ImageConstant.editIcon),
+                                  ),
+                                  SizedBox(width: 10.h),
+                                  CustomImageView(
+                                      height: 25.h,
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .pushNamed(
+                                                AppRoutes.notificationsScreen)
+                                            .then((_) {
+                                          context
+                                              .read<ProfileBloc>()
+                                              .add(FetchProfile());
+                                        });
+                                      },
+                                      imagePath: ImageConstant.notificationIcon)
+                                ],
+                              ),
                             ],
                           ),
                           background: ClipRRect(

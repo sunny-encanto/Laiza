@@ -1,5 +1,8 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/data/blocs/my_streams/my_streams_bloc.dart';
 import 'package:laiza/data/models/user/user_model.dart';
+import 'package:laiza/data/repositories/live_stream_repository/live_stream_repository.dart';
+import 'package:laiza/presentation/shimmers/loading_list.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -100,43 +103,66 @@ class DashboardScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 12.v),
-                  Column(
-                    children: List.generate(
-                      3,
-                      (index) => Padding(
-                        padding: EdgeInsets.only(bottom: 12.v),
-                        child: Row(
-                          children: [
-                            CustomImageView(
-                              height: 80.v,
-                              width: 80.h,
-                              radius: BorderRadius.circular(6.h),
-                              imagePath: ImageConstant.productImage,
-                            ),
-                            SizedBox(width: 8.h),
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "Chic & Timeless: Lavora's Signature Handbag Collection",
-                                    style: textTheme.titleMedium,
-                                  )
-                                ],
+                  BlocProvider(
+                    create: (context) =>
+                        MyStreamsBloc(context.read<LiveStreamRepository>()),
+                    child: BlocBuilder<MyStreamsBloc, MyStreamsState>(
+                      builder: (context, state) {
+                        if (state is MyStreamsInitial) {
+                          context.read<MyStreamsBloc>().add(FetchMyStreams());
+                        } else if (state is MyStreamsLoading) {
+                          return const LoadingListPage();
+                        } else if (state is MyStreamsError) {
+                          return Center(child: Text(state.message));
+                        } else if (state is MyStreamsLoaded) {
+                          return Column(
+                            children: List.generate(
+                              state.streams.length > 3
+                                  ? 3
+                                  : state.streams.length,
+                              (index) => Padding(
+                                padding: EdgeInsets.only(bottom: 12.v),
+                                child: Row(
+                                  children: [
+                                    CustomImageView(
+                                      height: 80.v,
+                                      width: 80.h,
+                                      radius: BorderRadius.circular(6.h),
+                                      imagePath: ImageConstant.productImage,
+                                    ),
+                                    SizedBox(width: 8.h),
+                                    SizedBox(
+                                      width: SizeUtils.width - 140.h,
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              state.streams[index].title,
+                                              style: textTheme.titleMedium,
+                                            ),
+                                          ),
+                                          Column(
+                                            children: [
+                                              Text(
+                                                "live in",
+                                                style: textTheme.bodySmall,
+                                              ),
+                                              Text(state.streams[index].time,
+                                                  //"04H: 35M: 28S",
+                                                  style: textTheme.titleMedium)
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
-                            Column(
-                              children: [
-                                Text(
-                                  "live in",
-                                  style: textTheme.bodySmall,
-                                ),
-                                Text("04H: 35M: 28S",
-                                    style: textTheme.titleMedium)
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
                     ),
                   ),
                   SizedBox(height: 24.v),

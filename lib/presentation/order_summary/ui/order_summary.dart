@@ -28,6 +28,7 @@ class _OrderSummaryState extends State<OrderSummary> {
 
   num couponPrice = 0;
   num totalPrice = 0;
+  num afterDiscountTotal = 0;
   Address? address;
   late RazorpayService _razorpayService;
 
@@ -51,7 +52,9 @@ class _OrderSummaryState extends State<OrderSummary> {
     context.showSnackBar("Payment Successful: ${response.paymentId}");
     Navigator.of(context)
         .pushNamedAndRemoveUntil(AppRoutes.orderPlacedScreen, (route) => false);
-    context.read<OrderRepository>().crateOrder(widget.items);
+    context
+        .read<OrderRepository>()
+        .crateOrder(widget.items, PaymentMode.ONLINE.name);
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -230,7 +233,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                           id: widget.items[index].id,
                           url: widget.items[index].url,
                           price: widget.items[index].price,
-                          quantity: 1,
+                          quantity: widget.items[index].quantity,
                           name: widget.items[index].name,
                           isSelected: true,
                         ),
@@ -261,7 +264,7 @@ class _OrderSummaryState extends State<OrderSummary> {
               BlocConsumer<OrderSummaryCubit, OrderSummaryState>(
                 listener: (context, state) {
                   if (state is DiscountAdded) {
-                    totalPrice = state.totalPrice;
+                    afterDiscountTotal = state.totalPrice;
                     couponPrice = state.discountPrice;
                   }
                 },
@@ -279,17 +282,44 @@ class _OrderSummaryState extends State<OrderSummary> {
                         _buildDetailsTile(context,
                             title: "Delivery:", value: "free"),
                         _buildDetailsTile(context,
-                            title: "Total:", value: "₹$totalPrice"),
+                            title: "Total:",
+                            value: "₹${totalPrice.toStringAsFixed(2)}"),
                         _buildDetailsTile(context,
                             title: "Coupon price:", value: "₹$couponPrice"),
                         const Divider(),
                         _buildDetailsTile(context,
                             title: "Order Total:",
-                            value: "₹${totalPrice - couponPrice}"),
+                            value:
+                                "₹${(totalPrice - couponPrice).toStringAsFixed(2)}"),
                       ],
                     ),
                   );
                 },
+              ),
+              SizedBox(height: 10.v),
+              CustomOutlineButton(
+                onPressed: () async {
+                  if (address?.city == null) {
+                    context.showSnackBar('Please add address');
+                    return;
+                  } else {
+                    try {
+                      await context
+                          .read<OrderRepository>()
+                          .crateOrder(widget.items, PaymentMode.COD.name);
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          AppRoutes.orderPlacedScreen, (route) => false);
+                    } catch (e) {
+                      context.showSnackBar(e.toString());
+                    }
+                  }
+                },
+                buttonStyle: OutlinedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: Colors.white,
+                    shape: StadiumBorder(
+                        side: BorderSide(color: AppColor.primary))),
+                text: 'COD',
               ),
               SizedBox(height: 80.v),
 
@@ -299,19 +329,6 @@ class _OrderSummaryState extends State<OrderSummary> {
               //   style: textTheme.titleMedium,
               // ),
               // SizedBox(height: 12.v),
-              // Row(
-              //   children: [
-              //     Expanded(
-              //         child: CustomOutlineButton(
-              //             buttonStyle: OutlinedButton.styleFrom(
-              //                 elevation: 0,
-              //                 backgroundColor: Colors.white,
-              //                 shape: const StadiumBorder()),
-              //             text: 'COD')),
-              //     const Expanded(
-              //         child: CustomOutlineButton(text: 'Online payment')),
-              //   ],
-              // )
             ],
           ),
         ),
@@ -321,15 +338,26 @@ class _OrderSummaryState extends State<OrderSummary> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Total', style: textTheme.bodySmall),
-                SizedBox(height: 5.v),
-                Text('₹${totalPrice - couponPrice}',
-                    style: textTheme.titleLarge!.copyWith(fontSize: 20.fSize)),
-              ],
+            BlocConsumer<OrderSummaryCubit, OrderSummaryState>(
+              listener: (context, state) {
+                // if (state is DiscountAdded) {
+                //   totalPrice = state.totalPrice;
+                //   couponPrice = state.discountPrice;
+                // }
+              },
+              builder: (context, state) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Total', style: textTheme.bodySmall),
+                    SizedBox(height: 5.v),
+                    Text('₹${(totalPrice - couponPrice).toStringAsFixed(2)}',
+                        style:
+                            textTheme.titleLarge!.copyWith(fontSize: 20.fSize)),
+                  ],
+                );
+              },
             ),
             CustomElevatedButton(
                 width: 160.h,
@@ -499,15 +527,15 @@ class _OrderSummaryState extends State<OrderSummary> {
                       const SizedBox(height: 10),
                       // Discount details
                       Text(
-                        "Get ${couponDetail.amount} off on orders above \$50",
+                        "Get ${couponDetail.amount} ${(couponDetail.type == 'percent') ? '%' : 2} off",
                         style: const TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 10),
                       // Expiry date
-                      const Text(
-                        "Valid until March 15, 2025",
-                        style: TextStyle(fontSize: 14, color: Colors.grey),
-                      ),
+                      // const Text(
+                      //   "Valid until March 15, 2025",
+                      //   style: TextStyle(fontSize: 14, color: Colors.grey),
+                      // ),
                       const Spacer(),
                       // Apply button
                       SizedBox(
@@ -540,13 +568,5 @@ class _OrderSummaryState extends State<OrderSummary> {
         );
       },
     );
-  }
-
-  double _getPriceAfterDiscount(double actualValue, double discountPercentage) {
-    if (discountPercentage < 0 || discountPercentage > 100) {
-      throw ArgumentError('Discount percentage must be between 0 and 100');
-    }
-    double discountAmount = actualValue * (discountPercentage / 100);
-    return actualValue - discountAmount;
   }
 }

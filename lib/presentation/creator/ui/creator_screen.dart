@@ -384,21 +384,21 @@ class CreatorScreen extends StatelessWidget {
             following.name,
             style: textTheme.titleMedium,
           ),
-          Row(
-            children: [
-              Container(
-                height: 8.v,
-                width: 8.h,
-                decoration: const BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.red),
-              ),
-              SizedBox(width: 5.h),
-              Text(
-                '4 New Post ',
-                style: textTheme.bodySmall,
-              ),
-            ],
-          ),
+          // Row(
+          //   children: [
+          //     Container(
+          //       height: 8.v,
+          //       width: 8.h,
+          //       decoration: const BoxDecoration(
+          //           shape: BoxShape.circle, color: Colors.red),
+          //     ),
+          //     SizedBox(width: 5.h),
+          //     Text(
+          //       '4 New Post ',
+          //       style: textTheme.bodySmall,
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );

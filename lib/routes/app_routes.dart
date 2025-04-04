@@ -33,6 +33,7 @@ import '../presentation/auth/settings_page/ui/settings_page.dart';
 import '../presentation/influencer/order_management/bloc/influencer_orders_bloc.dart';
 import '../presentation/order_summary/ui/order_summary.dart';
 import '../presentation/report_user/ui/report_user_screen.dart';
+import '../presentation/search/ui/influencer_search_screen.dart';
 import '../presentation/user_edit_porfile/ui/user_edit_profile.dart';
 
 class AppRoutes {
@@ -163,6 +164,8 @@ class AppRoutes {
   static const String orderSummary = '/order_summary_screen';
 
   static const String allCreatorsScreen = '/all_creators_screen';
+
+  static const String influencerSearchScreen = '/influencer_search_screen';
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -375,6 +378,14 @@ class AppRoutes {
                       SearchBloc(context.read<UserRepository>()),
                   child: const SearchScreen(),
                 ));
+      case influencerSearchScreen:
+        return CupertinoPageRoute(
+            fullscreenDialog: true,
+            builder: (context) => BlocProvider(
+                  create: (context) =>
+                      SearchBloc(context.read<UserRepository>()),
+                  child: const InfluencerSearchScreen(),
+                ));
 
       case filterScreen:
         return CupertinoPageRoute(builder: (context) => const FilterScreen());
@@ -395,8 +406,7 @@ class AppRoutes {
                 child: const PrivacyPolicyScreen()));
 
       case helpCentreScreen:
-        return CupertinoPageRoute(
-            builder: (context) => const HelpCentreScreen());
+        return CupertinoPageRoute(builder: (context) => HelpCentreScreen());
 
       case wishlistScreen:
         return CupertinoPageRoute(

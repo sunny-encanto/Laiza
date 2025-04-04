@@ -29,22 +29,26 @@ class Connection {
 
   String profileImg;
   String name;
+  String brandName;
 
   Connection({
     required this.id,
     required this.profileImg,
     required this.name,
+    required this.brandName,
   });
 
   factory Connection.fromJson(Map<String, dynamic> json) => Connection(
         id: json["id"],
         profileImg: json["profile_img"],
         name: json["name"],
+        brandName: json["brand_name"] ?? '',
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "profile_img": profileImg,
         "name": name,
+        "brand_name": brandName,
       };
 }

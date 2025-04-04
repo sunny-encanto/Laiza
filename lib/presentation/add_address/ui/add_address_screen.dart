@@ -1,6 +1,8 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:google_places_autocomplete_text_field/google_places_autocomplete_text_field.dart';
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/core/utils/api_constant.dart';
 import 'package:laiza/data/models/address_model/address_model.dart';
 
 import '../../../data/blocs/city_bloc/city_bloc.dart';
@@ -27,7 +29,10 @@ class AddAddressScreen extends StatelessWidget {
   final TextEditingController landMarkController = TextEditingController();
   final TextEditingController pinCodeController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
+  final TextEditingController countryController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
+  String? latitude;
+  String? longitude;
 
   bool _isDefault = false;
   SelectionPopupModel? selectedCountry;
@@ -51,6 +56,9 @@ class AddAddressScreen extends StatelessWidget {
       landMarkController.text = address?.landmark ?? '';
       pinCodeController.text = address?.pinCode ?? '';
       _isDefault = address?.makeDefaultAddress == 1 ? true : false;
+      addressController.text = address?.address ?? '';
+      latitude = address?.lat ?? "";
+      longitude = address?.long ?? "";
       selectedAddressType = SelectionPopupModel(
           title: address?.addressType ?? '', value: address?.addressType ?? "");
     }
@@ -208,62 +216,121 @@ class AddAddressScreen extends StatelessWidget {
                 ),
 
                 SizedBox(height: 8.v),
-                // GooglePlacesAutoCompleteTextFormField(
-                //     decoration: InputDecoration(
-                //       fillColor: AppColor.offWhite,
-                //       errorBorder: OutlineInputBorder(
-                //         borderRadius: BorderRadius.circular(10.h),
-                //         borderSide: BorderSide(
-                //           color: AppColor.offWhite,
-                //           width: 1,
-                //         ),
-                //       ),
-                //       enabledBorder: OutlineInputBorder(
-                //         borderRadius: BorderRadius.circular(10.h),
-                //         borderSide: BorderSide(
-                //           color: AppColor.offWhite,
-                //           width: 1,
-                //         ),
-                //       ),
-                //       focusedBorder: OutlineInputBorder(
-                //         borderRadius: BorderRadius.circular(10.h),
-                //         borderSide: BorderSide(
-                //           color: AppColor.offWhite,
-                //           width: 1,
-                //         ),
-                //       ),
-                //       border: OutlineInputBorder(
-                //         borderRadius: BorderRadius.circular(10.h),
-                //         borderSide: BorderSide(
-                //           color: AppColor.offWhite,
-                //           width: 1,
-                //         ),
-                //       ),
-                //     ),
-                //     textEditingController: addressController,
-                //     googleAPIKey: "AIzaSyAK1XCshXNXCZcur8HpTbyCC6QCcktaGJs",
-                //     // googleAPIKey: "AIzaSyCpqoRKJ3CM7GGiFWTEY0qCKYYRh00ULF0",
-                //
-                //     debounceTime: 400,
-                //     countries: ["in"],
-                //     fetchCoordinates: true,
-                //     onPlaceDetailsWithCoordinatesReceived: (prediction) {
-                //       print(
-                //           "Coordinates: (${prediction.lat},${prediction.lng})");
-                //     },
-                //     onSuggestionClicked: (prediction) {
-                //       addressController.text = prediction.description ?? '';
-                //       addressController.selection = TextSelection.fromPosition(
-                //           TextPosition(
-                //               offset: prediction.description?.length ?? 0));
-                //     }),
-                // SizedBox(height: 16.v),
+                Text(
+                  'Address',
+                  style: textTheme.titleMedium,
+                ),
+                SizedBox(height: 8.v),
+                Container(
+                  decoration: BoxDecoration(
+                      color: AppColor.offWhite,
+                      borderRadius: BorderRadius.circular(10.h)),
+                  child: GooglePlacesAutoCompleteTextFormField(
+                      validator: (value) {
+                        return validateField(
+                            value: value ?? "", title: 'address');
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Address',
+                        fillColor: AppColor.offWhite,
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.h),
+                          borderSide: BorderSide(
+                            color: AppColor.offWhite,
+                            width: 1,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.h),
+                          borderSide: BorderSide(
+                            color: AppColor.offWhite,
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.h),
+                          borderSide: BorderSide(
+                            color: AppColor.offWhite,
+                            width: 1,
+                          ),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.h),
+                          borderSide: BorderSide(
+                            color: AppColor.offWhite,
+                            width: 1,
+                          ),
+                        ),
+                      ),
+                      textEditingController: addressController,
+                      googleAPIKey: ApiConstant.googleApiKey,
+                      debounceTime: 400,
+                      countries: const ["in"],
+                      fetchCoordinates: true,
+                      onPlaceDetailsWithCoordinatesReceived: (prediction) {
+                        latitude = prediction.lat;
+                        longitude = prediction.lng;
+                        print(
+                            "Coordinates: (${prediction.lat},${prediction.lng} ${prediction.placeId})");
+                      },
+                      onSuggestionClicked: (prediction) {
+                        addressController.text = prediction.description ?? '';
+                        print('Address- ${addressController.text}');
+                        addressController.selection =
+                            TextSelection.fromPosition(TextPosition(
+                                offset: prediction.description?.length ?? 0));
+                      }),
+                ),
+                SizedBox(height: 16.v),
 
                 Text(
                   'Country',
                   style: textTheme.titleMedium,
                 ),
                 SizedBox(height: 8.v),
+                // BlocBuilder<CountryBloc, CountryState>(
+                //   builder: (BuildContext context, CountryState state) {
+                //     if (state is CountryInitial) {
+                //       context.read<CountryBloc>().add(CountryLoadEvent());
+                //       return const SizedBox.shrink();
+                //     } else if (state is CountryLoadingState) {
+                //       return const SizedBox.shrink();
+                //     } else if (state is CountryLoadedSate) {
+                //       if (address != null) {
+                //         var pCountry = state.countries.firstWhere((item) =>
+                //             item.id.toString() ==
+                //             (address?.country.toString() ?? '0'));
+                //         countryController.text = pCountry.name;
+                //         selectedCountry = SelectionPopupModel(
+                //             title: pCountry.name, value: pCountry.id);
+                //         context
+                //             .read<StateBloc>()
+                //             .add(StateLoadEvent(selectedCountry?.value ?? 0));
+                //       }
+                //       return SearchableDropdown(
+                //         controller: countryController,
+                //         // value: selectedCountry,
+                //         // hintText: 'Select Country',
+                //         items: state.countries
+                //             .map((Country country) => SelectionPopupModel(
+                //                 title: country.name, value: country.id))
+                //             .toList(),
+                //         // validator: (SelectionPopupModel? value) {
+                //         //   return validateField(
+                //         //       value: value?.title ?? '', title: 'country');
+                //         // },
+                //         onChanged: (SelectionPopupModel? val) {
+                //           selectedCountry = val;
+                //           selectedState = null;
+                //           context
+                //               .read<StateBloc>()
+                //               .add(StateLoadEvent(val?.value ?? 0));
+                //         },
+                //       );
+                //     }
+                //     return const SizedBox.shrink();
+                //   },
+                // ),
                 BlocBuilder<CountryBloc, CountryState>(
                   builder: (BuildContext context, CountryState state) {
                     if (state is CountryInitial) {
@@ -273,8 +340,9 @@ class AddAddressScreen extends StatelessWidget {
                       return const SizedBox.shrink();
                     } else if (state is CountryLoadedSate) {
                       if (address != null) {
-                        var pCountry = state.countries.firstWhere(
-                            (item) => item.id == (address?.country ?? 0));
+                        var pCountry = state.countries.firstWhere((item) =>
+                            item.id.toString() ==
+                            (address?.country.toString() ?? '0'));
                         selectedCountry = SelectionPopupModel(
                             title: pCountry.name, value: pCountry.id);
                         context
@@ -336,12 +404,32 @@ class AddAddressScreen extends StatelessWidget {
                       if (address != null) {
                         var pState = state.states.firstWhere(
                             (item) => item.id == (address?.state ?? 0));
+                        stateController.text = pState.name;
                         selectedState = SelectionPopupModel(
                             title: pState.name, value: pState.id);
                         context
                             .read<CityBloc>()
                             .add(CityLoadEvent(selectedState?.value ?? 0));
                       }
+                      // return SearchableDropdown(
+                      //   controller: stateController,
+                      //   // hintText: 'Select State',
+                      //   items: state.states
+                      //       .map((state) => SelectionPopupModel(
+                      //           title: state.name, value: state.id))
+                      //       .toList(),
+                      //   // validator: (SelectionPopupModel? value) {
+                      //   //   return validateField(
+                      //   //       value: value?.title ?? '', title: 'state');
+                      //   // },
+                      //   onChanged: (SelectionPopupModel val) {
+                      //     selectedState = val;
+                      //     selectedCity = null;
+                      //     context
+                      //         .read<CityBloc>()
+                      //         .add(CityLoadEvent(val.value ?? 0));
+                      //   },
+                      // );
                       return CustomDropDown(
                         value: selectedState,
                         hintText: 'Select State',
@@ -392,9 +480,25 @@ class AddAddressScreen extends StatelessWidget {
                       if (address != null) {
                         var pCity = state.cities.firstWhere(
                             (item) => item.id == (address?.city ?? 0));
+                        cityController.text = pCity.name;
                         selectedCity = SelectionPopupModel(
                             title: pCity.name, value: pCity.id);
                       }
+                      // return SearchableDropdown(
+                      //   controller: cityController,
+                      //   // hintText: "Select City",
+                      //   items: state.cities
+                      //       .map((City city) => SelectionPopupModel(
+                      //           title: city.name, value: city.id))
+                      //       .toList(),
+                      //   // validator: (SelectionPopupModel? value) {
+                      //   //   return validateField(
+                      //   //       value: value?.title ?? '', title: 'city');
+                      //   // },
+                      //   onChanged: (SelectionPopupModel val) {
+                      //     selectedCity = val;
+                      //   },
+                      // );
                       return CustomDropDown(
                         value: selectedCity,
                         hintText: "Select City",
@@ -468,6 +572,8 @@ class AddAddressScreen extends StatelessWidget {
                 } else {
                   context.read<AddAddressBloc>().add(AddAddressSubmitEvent(
                           address: Address(
+                        lat: latitude,
+                        long: longitude,
                         addressType: selectedAddressType?.title ?? '',
                         houseNo: flatHouseNumberController.text,
                         pinCode: pinCodeController.text,
@@ -477,6 +583,7 @@ class AddAddressScreen extends StatelessWidget {
                         city: selectedCity?.value ?? 0,
                         makeDefaultAddress: _isDefault ? 1 : 0,
                         country: selectedCountry?.value ?? 0,
+                        address: addressController.text,
                       )));
                 }
               },

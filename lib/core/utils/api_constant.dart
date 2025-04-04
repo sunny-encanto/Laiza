@@ -3,6 +3,8 @@ class ApiConstant {
 
   // 177750485
   // f9f43319b681b8f9c13e3395781eb58fb6e8c065a957cfa12e03141b5dc3c16e
+  static String googleApiKey = 'AIzaSyAMNj8dc0891RZXbwInMjSGia8XcpZv72E';
+
   static int appID = 397392320;
   static String appSign =
       '3403e4e2e81fbdc3325351999e71e815593f91cac4632cc1a4021c320147785c';
@@ -70,6 +72,8 @@ class ApiConstant {
   static String askPromotion = 'api/user/ask/promotion';
   static String addStream = 'api/user/stream/add';
   static String getAllStream = 'api/user/stream/list';
+  static String getMyAllStream = 'api/user/upcoming_stream/list';
+  static String notifyMe = 'api/user/stream/notify_me';
   static String addCollection = 'api/user/collection/create-with-reels';
   static String getCollection = 'api/user/collection';
   static String getCollectionDetails = 'api/user/collection/details';
@@ -87,4 +91,5 @@ class ApiConstant {
   static String deleteAddress = 'api/user/delivery_address/delete';
   static String couponDetails = 'api/user/coupon/details_by_code';
   static String notification = 'api/user/my_notification';
+  static String reelView = 'api/user/record-reel-view';
 }

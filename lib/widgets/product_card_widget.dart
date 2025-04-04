@@ -53,6 +53,11 @@ class ProductCardWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: CustomElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(
+                          AppRoutes.productDetailScreen,
+                          arguments: product.id);
+                    },
                     height: 26.v,
                     text: 'Buy Now',
                     buttonTextStyle: TextStyle(fontSize: 12.fSize),

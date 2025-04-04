@@ -1,7 +1,10 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
+
+import '../../core/app_export.dart';
 
 class MediaServices {
   static Future<String?> pickImageFromGallery() async {
@@ -71,6 +74,33 @@ class MediaServices {
       return pickVideo.path;
     }
     return '';
+  }
+
+  static Future<String?> cropImage(String imageFile) async {
+    final CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: imageFile,
+      aspectRatioPresets: [
+        // CropAspectRatioPreset.square,
+        // CropAspectRatioPreset.ratio3x2,
+        // CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        // CropAspectRatioPreset.ratio16x9
+      ],
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Crop Image',
+          toolbarColor: AppColor.primary,
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: true,
+        ),
+        IOSUiSettings(
+          title: 'Crop Image',
+          minimumAspectRatio: 1.0,
+        ),
+      ],
+    );
+    return croppedFile?.path;
   }
 }
 

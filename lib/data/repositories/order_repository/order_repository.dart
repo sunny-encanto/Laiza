@@ -12,14 +12,16 @@ import '../../models/cart_model/cart_model.dart';
 class OrderRepository {
   final ApiClient _apiClient = ApiClient();
 
-  Future<CommonModel> crateOrder(List<CartModel> selectedItems) async {
+  Future<CommonModel> crateOrder(
+      List<CartModel> selectedItems, String paymentMode) async {
     try {
       _apiClient
           .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
       FormData formData = FormData();
-
+      formData.fields.add(MapEntry('payment_status', paymentMode));
       for (var item in selectedItems) {
-        formData.fields.add(MapEntry('inventory_id[]', item.id.toString()));
+        formData.fields
+            .add(MapEntry('inventory_id[]', item.inventoryId.toString()));
         formData.fields.add(MapEntry('product_id[]', item.id.toString()));
         formData.fields.add(MapEntry('quantity[]', item.quantity.toString()));
       }

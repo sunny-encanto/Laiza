@@ -56,11 +56,12 @@ class ProductColorChangeEvent extends ProductDetailEvent {
 
 class ProductAddToCart extends ProductDetailEvent {
   final int id;
+  final int inventoryId;
 
-  const ProductAddToCart(this.id);
+  const ProductAddToCart({required this.id, required this.inventoryId});
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id, inventoryId];
 }
 
 class SelectSizeEvent extends ProductDetailEvent {

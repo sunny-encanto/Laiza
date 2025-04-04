@@ -27,7 +27,8 @@ class LiveScreen extends StatelessWidget {
             children: [
               Text(
                 'Followed Influencers',
-                style: textTheme.titleLarge,
+                style: textTheme.titleLarge!
+                    .copyWith(fontSize: 20.fSize, fontWeight: FontWeight.w500),
               ),
               SizedBox(height: 20.v),
               BlocProvider(
@@ -73,7 +74,8 @@ class LiveScreen extends StatelessWidget {
                 children: [
                   Text(
                     'Ongoing Streams',
-                    style: textTheme.titleLarge,
+                    style: textTheme.titleLarge!.copyWith(
+                        fontSize: 20.fSize, fontWeight: FontWeight.w500),
                   ),
                   InkWell(
                     onTap: () {
@@ -124,7 +126,8 @@ class LiveScreen extends StatelessWidget {
               SizedBox(height: 36.v),
               Text(
                 'Upcoming Streams',
-                style: textTheme.titleLarge,
+                style: textTheme.titleLarge!
+                    .copyWith(fontSize: 20.fSize, fontWeight: FontWeight.w500),
               ),
               SizedBox(height: 20.v),
               BlocProvider(
@@ -145,6 +148,7 @@ class LiveScreen extends StatelessWidget {
                       List<LiveStreamModel> liveStreamModel =
                           state.upcomingStreams
                               .map((e) => LiveStreamModel(
+                                    isNotify: e.isNotify,
                                     liveId: e.id.toString(),
                                     userName: e.users.name ?? '',
                                     title: e.title,

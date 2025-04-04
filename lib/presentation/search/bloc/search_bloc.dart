@@ -44,7 +44,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       FetchSearchItems event, Emitter<SearchState> emit) async {
     emit(SearchResultLoadingState());
 
-    List<UserModel> users = await _userRepository.getAllInfluencer();
+    List<UserModel> users = event.isSearchSeller
+        ? await _userRepository.getAllSeller()
+        : await _userRepository.getAllInfluencer();
     searchResult = users
         .map((e) => SearchModel(
             id: int.parse(e.id ?? ""),

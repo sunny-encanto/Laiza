@@ -29,6 +29,11 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomTextFormField(
+                        onTap: () {
+                          Navigator.of(context)
+                              .pushNamed(AppRoutes.influencerSearchScreen);
+                        },
+                        readOnly: true,
                         contentPadding: EdgeInsets.all(15.h),
                         prefixConstraints: BoxConstraints(maxWidth: 25.h),
                         prefix: Padding(
@@ -377,18 +382,10 @@ class HomeScreen extends StatelessWidget {
         item.name,
         style: textTheme.titleMedium,
       ),
-      // subtitle: Row(
-      //   children: [
-      //     Text(
-      //       'Product Category- ',
-      //       style: textTheme.bodySmall,
-      //     ),
-      //     Text(
-      //       items.category,
-      //       style: textTheme.bodySmall!.copyWith(color: AppColor.blackColor),
-      //     ),
-      //   ],
-      // ),
+      subtitle: Text(
+        item.brandName,
+        style: textTheme.bodySmall,
+      ),
     );
   }
 

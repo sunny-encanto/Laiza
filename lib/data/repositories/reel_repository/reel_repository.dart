@@ -236,4 +236,21 @@ class ReelRepository {
       throw Exception('Failed to get Reel From Influencer');
     }
   }
+
+  Future<CommonModel> addReelView(int id) async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+
+      Response response = await _apiClient.post('${ApiConstant.reelView}/$id');
+      CommonModel model = CommonModel.fromJson(response.data);
+      return model;
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during view reel', e.toString());
+      throw Exception('Failed to view reel');
+    }
+  }
 }

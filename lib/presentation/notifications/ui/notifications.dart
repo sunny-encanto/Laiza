@@ -47,16 +47,16 @@ class NotificationsScreen extends StatelessWidget {
         padding: EdgeInsets.only(bottom: 20.v),
         child: Row(
           children: [
-            CustomImageView(
-              width: 135.h,
-              height: 135.v,
-              fit: BoxFit.fill,
-              radius: BorderRadius.only(
-                  topLeft: Radius.circular(12.h),
-                  bottomLeft: Radius.circular(12.h)),
-              imagePath:
-                  'https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350',
-            ),
+            // CustomImageView(
+            //   width: 135.h,
+            //   height: 135.v,
+            //   fit: BoxFit.fill,
+            //   radius: BorderRadius.only(
+            //       topLeft: Radius.circular(12.h),
+            //       bottomLeft: Radius.circular(12.h)),
+            //   imagePath:
+            //       'https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350',
+            // ),
             SizedBox(width: 10.h),
             Expanded(
               child: Column(
