@@ -186,14 +186,15 @@ class CartScreen extends StatelessWidget {
                     Row(
                       children: [
                         Text(
+                          '₹${item.mrp}',
+                          style: textTheme.bodySmall!
+                              .copyWith(decoration: TextDecoration.lineThrough),
+                        ),
+                        SizedBox(width: 5.h),
+                        Text(
                           '₹${item.price}',
                           style: textTheme.titleMedium,
                         ),
-                        SizedBox(width: 15.h),
-                        // Text(
-                        //   '₹${item.}',
-                        //   style: textTheme.titleMedium,
-                        // ),
                       ],
                     ),
                     SizedBox(height: 12.v),

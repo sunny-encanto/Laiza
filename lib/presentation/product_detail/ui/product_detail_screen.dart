@@ -58,12 +58,11 @@ class ProductDetailScreen extends StatelessWidget {
             } else if (state is ProductDetailLoading) {
               return const ProductDetailsLoadingScreen();
             } else if (state is ProductDetailError) {
-              return Center(
-                child: Text(state.message),
-              );
+              return Center(child: Text(state.message));
             } else if (state is ProductDetailLoaded) {
               final Product product = state.product;
               _product = state.product;
+              _isLiked = state.product.isAddedToWishlist;
               _selectedSize = state.product.inventories.first.size;
               context.read<ProductDetailBloc>().add(ProductSizeChangeEvent(
                   size: _selectedSize, inventory: product.inventories));
@@ -231,6 +230,12 @@ class ProductDetailScreen extends StatelessWidget {
                               Row(
                                 children: [
                                   Text(
+                                    '₹${product.mrp}  ',
+                                    style: textTheme.bodySmall!.copyWith(
+                                        fontSize: 20.fSize,
+                                        decoration: TextDecoration.lineThrough),
+                                  ),
+                                  Text(
                                     '₹${product.finalPrice}',
                                     style: textTheme.titleMedium!
                                         .copyWith(fontSize: 20.fSize),
@@ -284,24 +289,25 @@ class ProductDetailScreen extends StatelessWidget {
                     //       textTheme.bodySmall!.copyWith(color: Colors.black),
                     // ),
                     SizedBox(height: 24.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Select Size',
-                          style: textTheme.titleMedium,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            _showSizeChart(context, textTheme);
-                          },
-                          child: Text(
-                            'Size Chart',
-                            style: textTheme.bodySmall,
+                    if (product.sizeChart != '')
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Select Size',
+                            style: textTheme.titleMedium,
                           ),
-                        ),
-                      ],
-                    ),
+                          InkWell(
+                            onTap: () {
+                              _showSizeChart(context, product.sizeChart);
+                            },
+                            child: Text(
+                              'Size Chart',
+                              style: textTheme.bodySmall,
+                            ),
+                          ),
+                        ],
+                      ),
                     SizedBox(height: 16.h),
 
                     BlocConsumer<ProductDetailBloc, ProductDetailState>(
@@ -690,6 +696,7 @@ class ProductDetailScreen extends StatelessWidget {
                             List<CartModel> selectedItems = <CartModel>[];
                             if (_product != null) {
                               selectedItems.add(CartModel(
+                                mrp: _product?.mrp ?? "",
                                 inventoryId: _selectedColor,
                                 cartId: 0,
                                 id: _product!.id,
@@ -715,98 +722,103 @@ class ProductDetailScreen extends StatelessWidget {
     );
   }
 
-  Future<dynamic> _showSizeChart(BuildContext context, TextTheme textTheme) {
+  Future<dynamic> _showSizeChart(BuildContext context, String url) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     return showModalBottomSheet(
       context: context,
       builder: (context) => SizedBox(
         height: 300.v,
         child: Padding(
-          padding: EdgeInsets.all(10.0.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Foot Measurement(cm)',
-                style: textTheme.titleLarge,
-              ),
-              SizedBox(height: 20.v),
-              Table(
-                border: TableBorder.all(),
-                columnWidths: const {
-                  0: FlexColumnWidth(1),
-                  1: FlexColumnWidth(2),
-                  2: FlexColumnWidth(1),
-                },
-                children: [
-                  TableRow(children: [
-                    TableCell(
-                        child: Center(
-                            child: Text('Size(UK)',
-                                style: textTheme.titleMedium))),
-                    TableCell(
-                        child: Center(
-                            child: Text('Brand Size(UK)',
-                                style: textTheme.titleMedium))),
-                    TableCell(
-                        child: Center(
-                            child: Text('Foot Length',
-                                style: textTheme.titleMedium))),
-                  ]),
-                  TableRow(children: [
-                    TableCell(
-                        child: Center(
-                            child: Text('20', style: textTheme.bodySmall))),
-                    TableCell(
-                        child: Center(
-                            child: Text('30', style: textTheme.bodySmall))),
-                    TableCell(
-                        child: Center(
-                            child: Text('40', style: textTheme.bodySmall))),
-                  ]),
-                  TableRow(children: [
-                    TableCell(
-                        child: Center(
-                            child: Text('10', style: textTheme.bodySmall))),
-                    TableCell(
-                        child: Center(
-                            child: Text('15', style: textTheme.bodySmall))),
-                    TableCell(
-                        child: Center(
-                            child: Text('30', style: textTheme.bodySmall))),
-                  ]),
-                  TableRow(children: [
-                    TableCell(
-                        child: Center(
-                            child: Text('10', style: textTheme.bodySmall))),
-                    TableCell(
-                        child: Center(
-                            child: Text('15', style: textTheme.bodySmall))),
-                    TableCell(
-                        child: Center(
-                            child: Text('30', style: textTheme.bodySmall))),
-                  ]),
-                  TableRow(children: [
-                    TableCell(
-                        child: Center(
-                            child: Text('10', style: textTheme.bodySmall))),
-                    TableCell(
-                        child: Center(
-                            child: Text('15', style: textTheme.bodySmall))),
-                    TableCell(
-                        child: Center(
-                            child: Text('30', style: textTheme.bodySmall))),
-                  ]),
-                ],
-              ),
-              SizedBox(height: 5.v),
-              Text(
-                "Tip : If you don't find an exact match, go for the next size",
-                style: textTheme.bodySmall,
-              ),
-            ],
-          ),
-        ),
+            padding: EdgeInsets.all(10.0.h),
+            child: CustomImageView(
+              imagePath: url,
+            )
+            // Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   mainAxisSize: MainAxisSize.min,
+            //   children: [
+            //     Text(
+            //       'Foot Measurement(cm)',
+            //       style: textTheme.titleLarge,
+            //     ),
+            //     SizedBox(height: 20.v),
+            //     Table(
+            //       border: TableBorder.all(),
+            //       columnWidths: const {
+            //         0: FlexColumnWidth(1),
+            //         1: FlexColumnWidth(2),
+            //         2: FlexColumnWidth(1),
+            //       },
+            //       children: [
+            //         TableRow(children: [
+            //           TableCell(
+            //               child: Center(
+            //                   child: Text('Size(UK)',
+            //                       style: textTheme.titleMedium))),
+            //           TableCell(
+            //               child: Center(
+            //                   child: Text('Brand Size(UK)',
+            //                       style: textTheme.titleMedium))),
+            //           TableCell(
+            //               child: Center(
+            //                   child: Text('Foot Length',
+            //                       style: textTheme.titleMedium))),
+            //         ]),
+            //         TableRow(children: [
+            //           TableCell(
+            //               child: Center(
+            //                   child: Text('20', style: textTheme.bodySmall))),
+            //           TableCell(
+            //               child: Center(
+            //                   child: Text('30', style: textTheme.bodySmall))),
+            //           TableCell(
+            //               child: Center(
+            //                   child: Text('40', style: textTheme.bodySmall))),
+            //         ]),
+            //         TableRow(children: [
+            //           TableCell(
+            //               child: Center(
+            //                   child: Text('10', style: textTheme.bodySmall))),
+            //           TableCell(
+            //               child: Center(
+            //                   child: Text('15', style: textTheme.bodySmall))),
+            //           TableCell(
+            //               child: Center(
+            //                   child: Text('30', style: textTheme.bodySmall))),
+            //         ]),
+            //         TableRow(children: [
+            //           TableCell(
+            //               child: Center(
+            //                   child: Text('10', style: textTheme.bodySmall))),
+            //           TableCell(
+            //               child: Center(
+            //                   child: Text('15', style: textTheme.bodySmall))),
+            //           TableCell(
+            //               child: Center(
+            //                   child: Text('30', style: textTheme.bodySmall))),
+            //         ]),
+            //         TableRow(children: [
+            //           TableCell(
+            //               child: Center(
+            //                   child: Text('10', style: textTheme.bodySmall))),
+            //           TableCell(
+            //               child: Center(
+            //                   child: Text('15', style: textTheme.bodySmall))),
+            //           TableCell(
+            //               child: Center(
+            //                   child: Text('30', style: textTheme.bodySmall))),
+            //         ]),
+            //       ],
+            //     ),
+            //     SizedBox(height: 5.v),
+            //     Text(
+            //       "Tip : If you don't find an exact match, go for the next size",
+            //       style: textTheme.bodySmall,
+            //     ),
+            //   ],
+            // ),
+            //
+            ),
       ),
     );
   }

@@ -92,4 +92,5 @@ class ApiConstant {
   static String couponDetails = 'api/user/coupon/details_by_code';
   static String notification = 'api/user/my_notification';
   static String reelView = 'api/user/record-reel-view';
+  static String shippingFee = 'api/user/calculate-shipping';
 }

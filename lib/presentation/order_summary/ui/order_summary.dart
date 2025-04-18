@@ -6,10 +6,12 @@ import 'package:laiza/data/models/coupon_detail_model/coupon_detail_model.dart';
 import 'package:laiza/data/repositories/address_repository/address_repository.dart';
 import 'package:laiza/data/repositories/coupon_repository/coupon_repository.dart';
 import 'package:laiza/presentation/order_summary/cubit/order_summary_cubit.dart';
+import 'package:laiza/presentation/shimmers/loading_list.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../../data/models/address_model/address_model.dart';
 import '../../../data/models/cart_model/cart_model.dart';
+import '../../../data/models/shipping_fee_model/shipping_fee_model.dart';
 import '../../../data/repositories/order_repository/order_repository.dart';
 import '../../../data/services/razorpay_service.dart';
 import '../../address_screen/bloc/address_bloc.dart';
@@ -31,15 +33,43 @@ class _OrderSummaryState extends State<OrderSummary> {
   num afterDiscountTotal = 0;
   Address? address;
   late RazorpayService _razorpayService;
+  bool isLoading = false;
+  String selectedShippingOption = 'Standard';
+  int deliveryCharge = 0;
 
   @override
   void initState() {
     super.initState();
+    getShippingDetails();
     _razorpayService = RazorpayService(
       onSuccess: _handlePaymentSuccess,
       onError: _handlePaymentError,
       onExternalWallet: _handleExternalWallet,
     );
+  }
+
+  ShippingFeeModel? shippingFeeModel;
+
+  getShippingDetails() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      shippingFeeModel =
+          await context.read<OrderRepository>().getShippingFee(widget.items);
+
+      setState(() {
+        if (shippingFeeModel != null) {
+          deliveryCharge = shippingFeeModel!
+              .essentialPlan.eshopboxStandard.totalShippingCharges
+              .round();
+        }
+        isLoading = false;
+      });
+      print('Shipping model => ${shippingFeeModel!.essentialPlan}');
+    } catch (e) {
+      print('Error=> $e');
+    }
   }
 
   @override
@@ -228,6 +258,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                     padding: EdgeInsets.only(bottom: 12.v),
                     child: _buildCartItem(
                         CartModel(
+                          mrp: widget.items[index].mrp,
                           inventoryId: widget.items[index].inventoryId,
                           cartId: widget.items[index].cartId,
                           id: widget.items[index].id,
@@ -258,6 +289,127 @@ class _OrderSummaryState extends State<OrderSummary> {
                           fontSize: 15.h, fontWeight: FontWeight.bold),
                     ),
                   )),
+
+              SizedBox(height: 10.v),
+              Text('Shipping Options', style: textTheme.titleMedium),
+              SizedBox(height: 10.v),
+              if (isLoading) const LoadingListPage(),
+              if (shippingFeeModel != null)
+                Column(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          selectedShippingOption = 'Standard';
+                          deliveryCharge = deliveryCharge = shippingFeeModel!
+                              .essentialPlan
+                              .eshopboxStandard
+                              .totalShippingCharges
+                              .round();
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: selectedShippingOption == 'Standard'
+                                ? Border.all(color: AppColor.primary)
+                                : null,
+                            color: AppColor.offWhite,
+                            borderRadius: BorderRadius.circular(5.h)),
+                        padding: EdgeInsets.all(20.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Standard', style: textTheme.titleMedium),
+                            SizedBox(height: 10.h),
+                            _buildDetailsTile(context,
+                                title: "Shipping Charges",
+                                value:
+                                    "₹${shippingFeeModel?.essentialPlan.eshopboxStandard.totalShippingCharges}"),
+                            _buildDetailsTile(context,
+                                title: "Estimated Delivery Days",
+                                value:
+                                    "${shippingFeeModel?.essentialPlan.eshopboxStandard.estimatedDeliveryDays}"),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          selectedShippingOption = 'Express';
+                          deliveryCharge = deliveryCharge = shippingFeeModel!
+                              .essentialPlan
+                              .eshopboxExpress
+                              .totalShippingCharges
+                              .round();
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: selectedShippingOption == 'Express'
+                                ? Border.all(color: AppColor.primary)
+                                : null,
+                            color: AppColor.offWhite,
+                            borderRadius: BorderRadius.circular(5.h)),
+                        padding: EdgeInsets.all(20.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Express', style: textTheme.titleMedium),
+                            SizedBox(height: 10.h),
+                            _buildDetailsTile(context,
+                                title: "Shipping Charges",
+                                value:
+                                    "₹${shippingFeeModel?.essentialPlan.eshopboxExpress.totalShippingCharges}"),
+                            _buildDetailsTile(context,
+                                title: "Estimated Delivery Days",
+                                value:
+                                    "${shippingFeeModel?.essentialPlan.eshopboxExpress.estimatedDeliveryDays}"),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          selectedShippingOption = 'Priority';
+                          deliveryCharge = deliveryCharge = shippingFeeModel!
+                              .essentialPlan
+                              .eshopboxPriority
+                              .totalShippingCharges
+                              .round();
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: selectedShippingOption == 'Priority'
+                                ? Border.all(color: AppColor.primary)
+                                : null,
+                            color: AppColor.offWhite,
+                            borderRadius: BorderRadius.circular(5.h)),
+                        padding: EdgeInsets.all(20.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Priority', style: textTheme.titleMedium),
+                            SizedBox(height: 10.h),
+                            _buildDetailsTile(context,
+                                title: "Shipping Charges",
+                                value:
+                                    "₹${shippingFeeModel?.essentialPlan.eshopboxPriority.totalShippingCharges}"),
+                            _buildDetailsTile(context,
+                                title: "Estimated Delivery Days",
+                                value:
+                                    "${shippingFeeModel?.essentialPlan.eshopboxPriority.estimatedDeliveryDays}"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
               SizedBox(height: 24.v),
               Text('Payment Details', style: textTheme.titleMedium),
               SizedBox(height: 12.v),
@@ -280,7 +432,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                             title: "Item",
                             value: widget.items.length.toString()),
                         _buildDetailsTile(context,
-                            title: "Delivery:", value: "free"),
+                            title: "Delivery:", value: "₹$deliveryCharge"),
                         _buildDetailsTile(context,
                             title: "Total:",
                             value: "₹${totalPrice.toStringAsFixed(2)}"),
@@ -290,13 +442,14 @@ class _OrderSummaryState extends State<OrderSummary> {
                         _buildDetailsTile(context,
                             title: "Order Total:",
                             value:
-                                "₹${(totalPrice - couponPrice).toStringAsFixed(2)}"),
+                                "₹${(totalPrice - couponPrice + deliveryCharge).toStringAsFixed(2)}"),
                       ],
                     ),
                   );
                 },
               ),
-              SizedBox(height: 10.v),
+
+              SizedBox(height: 20.v),
               CustomOutlineButton(
                 onPressed: () async {
                   if (address?.city == null) {
@@ -352,7 +505,8 @@ class _OrderSummaryState extends State<OrderSummary> {
                   children: [
                     Text('Total', style: textTheme.bodySmall),
                     SizedBox(height: 5.v),
-                    Text('₹${(totalPrice - couponPrice).toStringAsFixed(2)}',
+                    Text(
+                        '₹${(totalPrice - couponPrice + deliveryCharge).toStringAsFixed(2)}',
                         style:
                             textTheme.titleLarge!.copyWith(fontSize: 20.fSize)),
                   ],

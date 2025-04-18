@@ -2,7 +2,13 @@ import 'package:laiza/core/app_export.dart';
 import 'package:laiza/data/blocs/my_streams/my_streams_bloc.dart';
 import 'package:laiza/data/models/user/user_model.dart';
 import 'package:laiza/data/repositories/live_stream_repository/live_stream_repository.dart';
+import 'package:laiza/data/repositories/reel_repository/reel_repository.dart';
 import 'package:laiza/presentation/shimmers/loading_list.dart';
+
+import '../../../../data/blocs/my_reel_bloc/my_reel_bloc.dart';
+import '../../../../widgets/play_button.dart';
+import '../../../shimmers/loading_grid.dart';
+import '../../my_reel_view/my_reel_view.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -96,10 +102,10 @@ class DashboardScreen extends StatelessWidget {
                         'Upcoming Live Streams',
                         style: textTheme.titleMedium,
                       ),
-                      Text(
-                        'View All',
-                        style: textTheme.bodySmall,
-                      ),
+                      // Text(
+                      //   'View All',
+                      //   style: textTheme.bodySmall,
+                      // ),
                     ],
                   ),
                   SizedBox(height: 12.v),
@@ -166,36 +172,36 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 24.v),
-                  Text(
-                    'Profile Analytics',
-                    style: textTheme.titleMedium,
-                  ),
-                  SizedBox(height: 12.v),
-                  SizedBox(
-                    height: 55.v,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) => Container(
-                        margin: EdgeInsets.only(right: 20.h),
-                        width: 144.h,
-                        decoration: BoxDecoration(color: AppColor.offWhite),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Follower Growth',
-                              style: textTheme.bodySmall,
-                            ),
-                            Text(
-                              '450',
-                              style: textTheme.bodySmall!
-                                  .copyWith(color: AppColor.greenColor),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Text(
+                  //   'Profile Analytics',
+                  //   style: textTheme.titleMedium,
+                  // ),
+                  // SizedBox(height: 12.v),
+                  // SizedBox(
+                  //   height: 55.v,
+                  //   child: ListView.builder(
+                  //     scrollDirection: Axis.horizontal,
+                  //     itemBuilder: (context, index) => Container(
+                  //       margin: EdgeInsets.only(right: 20.h),
+                  //       width: 144.h,
+                  //       decoration: BoxDecoration(color: AppColor.offWhite),
+                  //       child: Column(
+                  //         mainAxisAlignment: MainAxisAlignment.center,
+                  //         children: [
+                  //           Text(
+                  //             'Follower Growth',
+                  //             style: textTheme.bodySmall,
+                  //           ),
+                  //           Text(
+                  //             '450',
+                  //             style: textTheme.bodySmall!
+                  //                 .copyWith(color: AppColor.greenColor),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   SizedBox(height: 24.v),
                   Text(
                     ' Top-Performing Content',
@@ -214,200 +220,320 @@ class DashboardScreen extends StatelessWidget {
 
   Widget _postView(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return Column(
-      children: List.generate(
-        3,
-        (index) => Padding(
-          padding: EdgeInsets.only(bottom: 20.v),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomImageView(
-                width: SizeUtils.width,
-                height: 261.v,
-                fit: BoxFit.fill,
-                // radius: BorderRadius.only(
-                //     topRight: Radius.circular(12.h),
-                //     topLeft: Radius.circular(12.h)),
-                imagePath: ImageConstant.productImage,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.h, vertical: 5.v),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        const Icon(
-                          Icons.favorite_border,
-                          color: Colors.grey,
-                        ),
-                        Text(
-                          '52.3K',
-                          style: textTheme.bodySmall,
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        CustomImageView(
-                          height: 20.v,
-                          width: 20.v,
-                          imagePath: ImageConstant.commentIcon,
-                          color: Colors.grey,
-                        ),
-                        Text(
-                          '380',
-                          style: textTheme.bodySmall,
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        CustomImageView(
-                          width: 25.h,
-                          imagePath: ImageConstant.visibilityIcon,
-                          color: Colors.grey,
-                        ),
-                        Text(
-                          '680',
-                          style: textTheme.bodySmall,
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Row(
-                children: [
-                  CustomImageView(
-                    height: 100.v,
-                    width: 100.h,
-                    imagePath: ImageConstant.graph,
-                  ),
-                  SizedBox(width: 20.h),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+    return BlocProvider(
+      create: (context) => MyReelBloc(context.read<ReelRepository>()),
+      child: BlocBuilder<MyReelBloc, MyReelState>(
+        builder: (context, state) {
+          if (state is MyReelInitial) {
+            context.read<MyReelBloc>().add(LoadMyReelEvent());
+          } else if (state is MyReelLoading) {
+            return const LoadingGridScreen();
+          } else if (state is MyReelError) {
+            return Center(
+              child: Text(state.message),
+            );
+          } else if (state is MyReelLoaded) {
+            return state.reels.isEmpty
+                ? SingleChildScrollView(
+                    child: Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('Engagement Rate:8.2%',
-                              style: textTheme.bodySmall),
+                          SizedBox(height: 115.v),
+                          CustomImageView(
+                            imagePath: ImageConstant.noPostFound,
+                            height: 100.v,
+                          ),
+                          SizedBox(height: 15.v),
+                          Text(
+                            'No Post Yet',
+                            style: textTheme.titleMedium,
+                          )
                         ],
                       ),
-                      Row(
-                        children: [
-                          Text('Account Reach: 49K',
-                              style: textTheme.bodySmall),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text('Followers Growth: 8K',
-                              style: textTheme.bodySmall),
-                        ],
-                      ),
-                    ],
+                    ),
                   )
-                ],
-              )
-            ],
-          ),
-        ),
+                : GridView.builder(
+                    itemCount: state.reels.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        mainAxisSpacing: 5.v,
+                        crossAxisSpacing: 5.h,
+                        childAspectRatio: 140.h / 269.v,
+                        crossAxisCount: 2),
+                    itemBuilder: (context, index) => Column(
+                      children: [
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            CustomImageView(
+                              height: 201.v,
+                              fit: BoxFit.fill,
+                              radius: BorderRadius.only(
+                                  topRight: Radius.circular(12.h),
+                                  topLeft: Radius.circular(12.h)),
+                              imagePath: state.reels[index].reelCoverPath,
+                            ),
+                            PlayButton(
+                              isVisible: true,
+                              onTap: () {
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(
+                                  builder: (context) =>
+                                      VideoReelPage(initialIndex: index),
+                                ))
+                                    .then((_) {
+                                  context
+                                      .read<MyReelBloc>()
+                                      .add(LoadMyReelEvent());
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 7.v),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.h, vertical: 5.v),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                children: [
+                                  const Icon(
+                                    Icons.favorite_border,
+                                    color: Colors.grey,
+                                  ),
+                                  Text(
+                                    state.reels[index].likesCount.toString(),
+                                    //'52.3K',
+                                    style: textTheme.bodySmall,
+                                  )
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  CustomImageView(
+                                    height: 20.v,
+                                    width: 20.v,
+                                    imagePath: ImageConstant.commentIcon,
+                                    color: Colors.grey,
+                                  ),
+                                  Text(
+                                    state.reels[index].commentsCount.toString(),
+                                    style: textTheme.bodySmall,
+                                  )
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  CustomImageView(
+                                    width: 25.h,
+                                    imagePath: ImageConstant.visibilityIcon,
+                                    color: Colors.grey,
+                                  ),
+                                  Text(
+                                    state.reels[index].viewsCount.toString(),
+                                    style: textTheme.bodySmall,
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        Row(
+                          children: [
+                            CustomImageView(
+                              height: 44.v,
+                              width: 44.h,
+                              imagePath: ImageConstant.graph,
+                            ),
+                            SizedBox(width: 2.h),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Engagement Rate:',
+                                      style: textTheme.bodySmall!
+                                          .copyWith(fontSize: 10.fSize),
+                                    ),
+                                    Text(
+                                      '${state.reels[index].engagement?.rate}',
+                                      style: textTheme.bodySmall!.copyWith(
+                                          fontSize: 10.fSize,
+                                          color: AppColor.greenColor),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Account Reach:',
+                                      style: textTheme.bodySmall!
+                                          .copyWith(fontSize: 10.fSize),
+                                    ),
+                                    Text(
+                                      '${state.reels[index].engagement?.accountReach}',
+                                      style: textTheme.bodySmall!.copyWith(
+                                          fontSize: 10.fSize,
+                                          color: AppColor.greenColor),
+                                    ),
+                                  ],
+                                ),
+
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Followers Growth:',
+                                      style: textTheme.bodySmall!
+                                          .copyWith(fontSize: 10.fSize),
+                                    ),
+                                    Text(
+                                      '${state.reels[index].engagement?.followersGrowth}',
+                                      style: textTheme.bodySmall!.copyWith(
+                                          fontSize: 10.fSize,
+                                          color: AppColor.greenColor),
+                                    ),
+                                  ],
+                                ),
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.start,
+                                //   children: [
+                                //     Text(
+                                //       'Engagement Rate:${state.reels[index].engagement?.rate}',
+                                //       style: textTheme.bodySmall!
+                                //           .copyWith(fontSize: 10.fSize),
+                                //     ),
+                                //   ],
+                                // )
+                              ],
+                            )
+                          ],
+                        )
+                        // Padding(
+                        //   padding: EdgeInsets.symmetric(horizontal: 5.h),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //     children: [
+                        //       Column(
+                        //         children: [
+                        //           Visibility(
+                        //             visible: state.reels[index].likeStatus == 0,
+                        //             replacement: InkWell(
+                        //               onTap: () {
+                        //                 context.read<MyReelBloc>().add(
+                        //                     ToggleMyReelLikeButtonEvent(
+                        //                         state.reels[index].id));
+                        //               },
+                        //               child: const Icon(
+                        //                 Icons.favorite,
+                        //                 color: Colors.red,
+                        //               ),
+                        //             ),
+                        //             child: CustomImageView(
+                        //               margin:
+                        //                   EdgeInsets.only(top: 6.v, left: 2.h),
+                        //               onTap: () {
+                        //                 context.read<MyReelBloc>().add(
+                        //                     ToggleMyReelLikeButtonEvent(
+                        //                         state.reels[index].id));
+                        //               },
+                        //               imagePath: ImageConstant.favIcon,
+                        //               color: Colors.grey,
+                        //             ),
+                        //           ),
+                        //           SizedBox(height: 8.v),
+                        //           Text(
+                        //             state.reels[index].likesCount.toString(),
+                        //             style: textTheme.bodySmall!.copyWith(
+                        //                 fontSize: 12.fSize,
+                        //                 color: const Color(0xFF232323),
+                        //                 fontWeight: FontWeight.w300),
+                        //           )
+                        //         ],
+                        //       ),
+                        //       Column(
+                        //         children: [
+                        //           CustomImageView(
+                        //             onTap: () {
+                        //               Navigator.of(context)
+                        //                   .pushNamed(AppRoutes.commentsScreen,
+                        //                       arguments: state.reels[index].id)
+                        //                   .then((_) {
+                        //                 context
+                        //                     .read<MyReelBloc>()
+                        //                     .add(LoadMyReelEvent());
+                        //               });
+                        //               // showModalBottomSheet(
+                        //               //   context: context,
+                        //               //   isScrollControlled: true,
+                        //               //   builder: (context) => BlocProvider(
+                        //               //     create: (context) => CommentsBloc(
+                        //               //         context.read<CommentsRepository>()),
+                        //               //     child: SizedBox(
+                        //               //       height: SizeUtils.height * 0.8,
+                        //               //       child: CommentsScreen(
+                        //               //           reelId: state.reels[index].id),
+                        //               //     ),
+                        //               //   ),
+                        //               // ).then(
+                        //               //   (value) {
+                        //               //     context
+                        //               //         .read<MyReelBloc>()
+                        //               //         .add(LoadMyReelEvent());
+                        //               //   },
+                        //               // );
+                        //             },
+                        //             imagePath: ImageConstant.commentIcon,
+                        //             color: Colors.grey,
+                        //           ),
+                        //           SizedBox(height: 8.v),
+                        //           Text(
+                        //             state.reels[index].commentsCount.toString(),
+                        //             style: textTheme.bodySmall!.copyWith(
+                        //                 fontSize: 12.fSize,
+                        //                 color: const Color(0xFF232323),
+                        //                 fontWeight: FontWeight.w300),
+                        //           )
+                        //         ],
+                        //       ),
+                        //       InkWell(
+                        //         onTap: () async {
+                        //           await shareContent(
+                        //               state.reels[index].reelPath);
+                        //         },
+                        //         child: Column(
+                        //           children: [
+                        //             CustomImageView(
+                        //               imagePath: ImageConstant.shareIcon,
+                        //               color: Colors.grey,
+                        //             ),
+                        //             SizedBox(height: 8.v),
+                        //             Text(
+                        //               'Share',
+                        //               style: textTheme.bodySmall!.copyWith(
+                        //                   fontSize: 12.fSize,
+                        //                   color: const Color(0xFF232323),
+                        //                   fontWeight: FontWeight.w300),
+                        //             )
+                        //           ],
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // )
+                        //
+                      ],
+                    ),
+                  );
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
-    // GridView.builder(
-    //   shrinkWrap: true,
-    //   physics: const NeverScrollableScrollPhysics(),
-    //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-    //       mainAxisSpacing: 5.v,
-    //       crossAxisSpacing: 5.h,
-    //       childAspectRatio: 120.h / 269.v,
-    //       crossAxisCount: 2),
-    //   itemBuilder: (context, index) =>
-    //   Column(
-    //     crossAxisAlignment: CrossAxisAlignment.start,
-    //     children: [
-    //       CustomImageView(
-    //         height: 261.v,
-    //         fit: BoxFit.fill,
-    //         radius: BorderRadius.only(
-    //             topRight: Radius.circular(12.h),
-    //             topLeft: Radius.circular(12.h)),
-    //         imagePath: ImageConstant.productImage,
-    //       ),
-    //       Padding(
-    //         padding: EdgeInsets.all(5.h),
-    //         child: Row(
-    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //           children: [
-    //             Column(
-    //               children: [
-    //                 const Icon(
-    //                   Icons.favorite_border,
-    //                   color: Colors.grey,
-    //                 ),
-    //                 Text(
-    //                   '52.3K',
-    //                   style: textTheme.bodySmall,
-    //                 )
-    //               ],
-    //             ),
-    //             Column(
-    //               children: [
-    //                 CustomImageView(
-    //                   height: 20.v,
-    //                   width: 20.v,
-    //                   imagePath: ImageConstant.commentIcon,
-    //                   color: Colors.grey,
-    //                 ),
-    //                 Text(
-    //                   '380',
-    //                   style: textTheme.bodySmall,
-    //                 )
-    //               ],
-    //             ),
-    //             Column(
-    //               children: [
-    //                 CustomImageView(
-    //                   width: 25.h,
-    //                   imagePath: ImageConstant.visibilityIcon,
-    //                   color: Colors.grey,
-    //                 ),
-    //                 Text(
-    //                   '680',
-    //                   style: textTheme.bodySmall,
-    //                 )
-    //               ],
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //       Row(
-    //         children: [
-    //           CustomImageView(
-    //             height: 44.v,
-    //             width: 44.h,
-    //             imagePath: ImageConstant.graph,
-    //           ),
-    //           Column(
-    //             children: [
-    //               Row(
-    //                 children: [
-    //                   Text(
-    //                     'Engagement Rate:8.2%',
-    //                     style:
-    //                         textTheme.bodySmall!.copyWith(fontSize: 10.fSize),
-    //                   )
-    //                 ],
-    //               )
-    //             ],
-    //           )
-    //         ],
-    //       )
-    //     ],
-    //   ),
-
-    // );
   }
 }

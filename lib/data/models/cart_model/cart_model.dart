@@ -7,6 +7,7 @@ class CartModel extends Equatable {
   final double price;
   final int quantity;
   final String name;
+  final String mrp;
   final bool isSelected;
   final int inventoryId;
 
@@ -16,6 +17,7 @@ class CartModel extends Equatable {
     required this.url,
     required this.price,
     required this.quantity,
+    required this.mrp,
     required this.name,
     required this.isSelected,
     required this.inventoryId,
@@ -30,6 +32,7 @@ class CartModel extends Equatable {
         id: id,
         url: url,
         price: price,
+        mrp: mrp,
         quantity: quantity ?? this.quantity,
         name: name,
         isSelected: isSelected ?? this.isSelected,
@@ -38,5 +41,5 @@ class CartModel extends Equatable {
 
   @override
   List<Object?> get props =>
-      [id, url, price, quantity, name, isSelected, cartId, inventoryId];
+      [id, url, price, quantity, name, isSelected, cartId, inventoryId, mrp];
 }

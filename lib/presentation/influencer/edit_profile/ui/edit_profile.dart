@@ -164,6 +164,7 @@ class EditProfileScreen extends StatelessWidget {
                                 } else if (state is CategoryLoaded) {
                                   categories.clear();
                                   categories.addAll(state.category);
+
                                   if (_userModel?.productCategory != null) {
                                     Category category = categories.firstWhere(
                                         (Category category) =>

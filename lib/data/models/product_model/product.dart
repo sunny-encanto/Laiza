@@ -17,6 +17,7 @@ class Product {
   // Category subcategory;
   String price;
   String finalPrice;
+  String mrp;
   int stockQuantity;
   List<String> availableSize;
   List<String> availableColor;
@@ -68,6 +69,7 @@ class Product {
     required this.productImage,
     required this.inventories,
     required this.sizeChart,
+    required this.mrp,
   });
 
   Product copyWith({bool? isAddedToWishlist, bool? isAsked}) {
@@ -99,6 +101,7 @@ class Product {
         discount: discount,
         productImage: productImage,
         sizeChart: sizeChart,
+        mrp: mrp,
         inventories: inventories);
   }
 
@@ -150,6 +153,7 @@ class Product {
         totalRatings: json["total_ratings"] ?? 0,
         discount: json["product_discount"] ?? 0,
         sizeChart: json["size_cart"] ?? '',
+        mrp: json["mrp"] ?? '',
         additionalInfo: json['additional_info'] == null
             ? null
             : ProductAdditionalInfo.fromJson(
@@ -171,6 +175,7 @@ class Product {
         "product_image": productImage,
         "price": price,
         "final_price": finalPrice,
+        "mrp": mrp,
         "stock_quantity": stockQuantity,
         "available_size": List<dynamic>.from(availableSize.map((x) => x)),
         "available_color": List<dynamic>.from(availableColor.map((x) => x)),

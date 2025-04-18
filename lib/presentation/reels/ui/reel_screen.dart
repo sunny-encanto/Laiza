@@ -883,9 +883,18 @@ class _ReelPlayerWidget extends State<ReelPlayerWidget>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      '₹ ${product.price}',
-                      style: TextStyle(fontSize: 15.fSize),
+                    Row(
+                      children: [
+                        Text(
+                          '₹ ${product.mrp} ',
+                          style: textTheme.bodySmall!
+                              .copyWith(decoration: TextDecoration.lineThrough),
+                        ),
+                        Text(
+                          '₹ ${product.price}',
+                          style: TextStyle(fontSize: 15.fSize),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 5.h),
                     Text(

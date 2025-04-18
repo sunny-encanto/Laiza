@@ -186,9 +186,21 @@ class CreatorScreen extends StatelessWidget {
                                               style: textTheme.titleMedium,
                                             ),
                                             SizedBox(height: 6.v),
-                                            Text(
-                                              '₹ ${product.price}',
-                                              style: textTheme.bodySmall,
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  '₹ ${product.price} ',
+                                                  style: textTheme.bodySmall!
+                                                      .copyWith(
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .lineThrough),
+                                                ),
+                                                Text(
+                                                  '₹ ${product.price}',
+                                                  style: textTheme.titleMedium,
+                                                ),
+                                              ],
                                             ),
                                             SizedBox(height: 8.v),
                                             Center(

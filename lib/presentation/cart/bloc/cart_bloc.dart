@@ -46,6 +46,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           price: double.parse(item.product.price),
           quantity: item.quantity,
           name: item.product.productName,
+          mrp: item.product.mrp,
           isSelected: true,
         ),
       );

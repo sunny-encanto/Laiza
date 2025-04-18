@@ -72,9 +72,19 @@ class WishlistScreen extends StatelessWidget {
                       style: textTheme.bodySmall,
                     ),
                     SizedBox(height: 8.v),
-                    Text(
-                      '₹${item.product.price}',
-                      style: textTheme.titleMedium,
+                    Row(
+                      children: [
+                        Text(
+                          '₹${item.product.mrp} ',
+                          style: textTheme.bodySmall!.copyWith(
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                        Text(
+                          '₹${item.product.price}',
+                          style: textTheme.titleMedium,
+                        ),
+                      ],
                     ),
                     SizedBox(height: 12.v),
                     Row(

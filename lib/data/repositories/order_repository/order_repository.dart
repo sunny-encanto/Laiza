@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:laiza/data/models/common_model/common_model.dart';
 import 'package:laiza/data/models/influencer_order_model/influencer_order_model.dart';
 import 'package:laiza/data/models/my_orders_model/my_order_model.dart';
+import 'package:laiza/data/models/shipping_fee_model/shipping_fee_model.dart';
 
 import '../../../core/network/dio_client.dart';
 import '../../../core/utils/api_constant.dart';
@@ -80,6 +81,31 @@ class OrderRepository {
     } catch (e) {
       Logger.log('Error during get influencer order', e.toString());
       throw Exception('Failed to during get  influencer order');
+    }
+  }
+
+  Future<ShippingFeeModel> getShippingFee(List<CartModel> selectedItems) async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+      FormData formData = FormData();
+
+      for (var item in selectedItems) {
+        formData.fields
+            .add(MapEntry('inventory_id[]', item.inventoryId.toString()));
+        formData.fields.add(MapEntry('product_id[]', item.id.toString()));
+        formData.fields.add(MapEntry('quantity[]', item.quantity.toString()));
+      }
+      Response response =
+          await _apiClient.post(ApiConstant.shippingFee, data: formData);
+      ShippingFeeModel model = ShippingFeeModel.fromJson(response.data);
+      return model;
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during get shipping fee ', e.toString());
+      throw Exception('Failed to get shipping fee');
     }
   }
 }

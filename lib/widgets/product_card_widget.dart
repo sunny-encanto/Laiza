@@ -36,12 +36,12 @@ class ProductCardWidget extends StatelessWidget {
             SizedBox(height: 2.v),
             Row(
               children: [
-                // Text(
-                //   '₹${product.price}',
-                //   style: textTheme.bodySmall!
-                //       .copyWith(decoration: TextDecoration.lineThrough),
-                // ),
-                // SizedBox(width: 5.h),
+                Text(
+                  '₹${product.mrp}',
+                  style: textTheme.bodySmall!
+                      .copyWith(decoration: TextDecoration.lineThrough),
+                ),
+                SizedBox(width: 5.h),
                 Text(
                   '₹${product.finalPrice}',
                   style: textTheme.titleMedium,

@@ -16,6 +16,7 @@ class Reel {
   int viewsCount;
   List<ReelProduct> product;
   UserModel user;
+  Engagement? engagement;
 
   Reel({
     required this.id,
@@ -33,6 +34,7 @@ class Reel {
     required this.product,
     required this.user,
     required this.viewsCount,
+    this.engagement,
   });
 
   Reel copyWith({int? likeStatus, int? likesCount}) {
@@ -52,6 +54,7 @@ class Reel {
       product: product,
       user: user,
       viewsCount: viewsCount,
+      engagement: engagement,
     );
   }
 
@@ -69,6 +72,9 @@ class Reel {
         reelCoverPath: json["reel_cover_path"],
         reelHashtag: json["reel_hashtag"],
         likesCount: json["likes_count"] ?? 0,
+        engagement: json["engagement"] != null
+            ? Engagement.fromJson(json["engagement"])
+            : null,
         commentsCount: json["comments_count"] ?? 0,
         viewsCount: json["views_count"] ?? 0,
         product: json["product"] != null
@@ -95,8 +101,33 @@ class Reel {
         "comments_count": commentsCount,
         "category_id": catId,
         "views_count": viewsCount,
+        "engagement": engagement?.toJson(),
         "product": List<dynamic>.from(product.map((x) => x.toJson())),
         'users': user.toJson()
+      };
+}
+
+class Engagement {
+  String rate;
+  int accountReach;
+  int followersGrowth;
+
+  Engagement({
+    required this.rate,
+    required this.accountReach,
+    required this.followersGrowth,
+  });
+
+  factory Engagement.fromJson(Map<String, dynamic> json) => Engagement(
+        rate: json["rate"],
+        accountReach: json["account_reach"],
+        followersGrowth: json["followers_growth"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "rate": rate,
+        "account_reach": accountReach,
+        "followers_growth": followersGrowth,
       };
 }
 
@@ -104,6 +135,7 @@ class ReelProduct {
   int id;
   String productName;
   String price;
+  String mrp;
   String productImage;
   int stock;
 
@@ -111,6 +143,7 @@ class ReelProduct {
     required this.id,
     required this.productName,
     required this.price,
+    required this.mrp,
     required this.productImage,
     required this.stock,
   });
@@ -120,6 +153,7 @@ class ReelProduct {
         productName: json["product_name"],
         price: json["price"],
         productImage: json["product_image"],
+        mrp: json["mrp"] ?? '',
         stock: json["total_quantity"] ?? 0,
       );
 
@@ -127,6 +161,7 @@ class ReelProduct {
         "id": id,
         "product_name": productName,
         "price": price,
+        "mrp": mrp,
         "product_image": productImage,
         'total_quantity': stock,
       };

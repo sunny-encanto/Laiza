@@ -71,12 +71,14 @@ class WishListProduct {
   int id;
   String productName;
   String price;
+  String mrp;
   List<Image> images;
 
   WishListProduct({
     required this.id,
     required this.productName,
     required this.price,
+    required this.mrp,
     required this.images,
   });
 
@@ -85,6 +87,7 @@ class WishListProduct {
         id: json["id"],
         productName: json["product_name"],
         price: json["price"],
+        mrp: json["mrp"] ?? "",
         images: List<Image>.from(json["images"].map((x) => Image.fromJson(x))),
       );
 
@@ -92,6 +95,7 @@ class WishListProduct {
         "id": id,
         "product_name": productName,
         "price": price,
+        "mrp": mrp,
         "images": List<dynamic>.from(images.map((x) => x.toJson())),
       };
 }
