@@ -703,7 +703,9 @@ class InfluencerMyProfileScreen extends StatelessWidget {
                                       Text('Followers',
                                           style: textTheme.bodySmall),
                                       SizedBox(height: 4.v),
-                                      Text('224.5K',
+                                      Text(
+                                          state.userModel.followersCount
+                                              .toString(),
                                           style: textTheme.titleMedium),
                                     ],
                                   ),

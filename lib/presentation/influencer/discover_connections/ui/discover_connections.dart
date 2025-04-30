@@ -82,7 +82,8 @@ class DiscoverConnectionsScreen extends StatelessWidget {
     TextTheme textTheme = Theme.of(context).textTheme;
     return ListTile(
       onTap: () {
-        Navigator.of(context).pushNamed(AppRoutes.sellerInfoScreen);
+        Navigator.of(context).pushNamed(AppRoutes.sellerInfoScreen,
+            arguments: items[index].id.toString());
       },
       contentPadding: const EdgeInsets.all(0),
       leading: CustomImageView(
@@ -97,30 +98,36 @@ class DiscoverConnectionsScreen extends StatelessWidget {
           CustomElevatedButton(
             width: 100.h,
             height: 32.v,
-            text: items[index].isConnected ? 'Connected' : 'Connect',
+            text: items[index].isConnected == 'not_connected'
+                ? 'Connect'
+                : items[index].isConnected.capitalize(),
             buttonTextStyle: textTheme.titleSmall,
             onPressed: () {
-              if (isFiltered) {
-                context
-                    .read<DiscoverConnectionsBloc>()
-                    .add(SendFilterConnectionEvent(items[index].id));
-              } else {
-                context
-                    .read<DiscoverConnectionsBloc>()
-                    .add(SendConnectionEvent(items[index].id));
+              if (items[index].isConnected == 'not_connected') {
+                if (isFiltered) {
+                  context
+                      .read<DiscoverConnectionsBloc>()
+                      .add(SendFilterConnectionEvent(items[index].id));
+                } else {
+                  context
+                      .read<DiscoverConnectionsBloc>()
+                      .add(SendConnectionEvent(items[index].id));
+                }
               }
             },
           ),
           InkWell(
             onTap: () {
-              if (isFiltered) {
-                context
-                    .read<DiscoverConnectionsBloc>()
-                    .add(CrossFilterConnectionEvent(items[index].id));
-              } else {
-                context
-                    .read<DiscoverConnectionsBloc>()
-                    .add(CrossConnectionEvent(items[index].id));
+              if (items[index].isConnected == 'not_connected') {
+                if (isFiltered) {
+                  context
+                      .read<DiscoverConnectionsBloc>()
+                      .add(CrossFilterConnectionEvent(items[index].id));
+                } else {
+                  context
+                      .read<DiscoverConnectionsBloc>()
+                      .add(CrossConnectionEvent(items[index].id));
+                }
               }
             },
             child: const Icon(

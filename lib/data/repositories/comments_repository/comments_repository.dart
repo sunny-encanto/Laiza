@@ -133,8 +133,8 @@ class CommentsRepository {
     try {
       _apiClient
           .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
-      FormData data = FormData.fromMap(
-          {'comment_id': commentId, 'parent_id': commentId, 'comment': reply});
+      FormData data =
+          FormData.fromMap({'comment_id': commentId, 'comment': reply});
       Response response =
           await _apiClient.post(ApiConstant.addCommentReply, data: data);
 

@@ -98,9 +98,10 @@ class TrendingItemGridWidget extends StatelessWidget {
                                   (item) => item.type == TrendingItemType.REEL)
                               .toList();
                           List<Reel> reels = reelItems
-                              .map((e) => Reel(
+                              .map(
+                                (e) => Reel(
                                   id: e.id,
-                                  userId: 0,
+                                  userId: e.userId,
                                   productId: <String>[],
                                   catId: 0,
                                   reelTitle: '',
@@ -111,15 +112,17 @@ class TrendingItemGridWidget extends StatelessWidget {
                                   reelHashtag: '',
                                   likesCount: 0,
                                   commentsCount: 0,
-
-                                  ///TODO: Need to change view count
                                   viewsCount: e.viewCount,
                                   product: e.product,
                                   user: UserModel(
+                                      userType: e.usertype,
+                                      role: e.usertype,
                                       id: e.userId.toString(),
                                       isFollowed: e.isFollow == 1,
                                       name: e.userName,
-                                      profileImg: e.userImage)))
+                                      profileImg: e.userImage),
+                                ),
+                              )
                               .toList();
                           int initialIndex = reels.indexWhere(
                               (item) => item.id == trendingItems.id);

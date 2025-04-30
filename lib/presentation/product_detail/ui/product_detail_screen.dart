@@ -23,6 +23,7 @@ class ProductDetailScreen extends StatelessWidget {
   int _selectedColor = 0;
   Product? _product;
   List<Inventory> _colors = <Inventory>[];
+  bool _isAddedToCart = false;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +63,7 @@ class ProductDetailScreen extends StatelessWidget {
             } else if (state is ProductDetailLoaded) {
               final Product product = state.product;
               _product = state.product;
+              _isAddedToCart = state.product.isAddedToCart;
               _isLiked = state.product.isAddedToWishlist;
               _selectedSize = state.product.inventories.first.size;
               context.read<ProductDetailBloc>().add(ProductSizeChangeEvent(
@@ -232,7 +234,7 @@ class ProductDetailScreen extends StatelessWidget {
                                   Text(
                                     '₹${product.mrp}  ',
                                     style: textTheme.bodySmall!.copyWith(
-                                        fontSize: 20.fSize,
+                                        fontSize: 16.fSize,
                                         decoration: TextDecoration.lineThrough),
                                   ),
                                   Text(
@@ -664,27 +666,51 @@ class ProductDetailScreen extends StatelessWidget {
                 children: [
                   Expanded(
                       child:
-                          BlocListener<ProductDetailBloc, ProductDetailState>(
+                          BlocConsumer<ProductDetailBloc, ProductDetailState>(
                     listener: (context, state) {
                       if (state is ProductAddedToCart) {
                         context.showSnackBar(state.message);
-                        Navigator.of(context).pushNamed(AppRoutes.cartScreen);
+                        Navigator.of(context)
+                            .pushNamed(AppRoutes.cartScreen)
+                            .then((_) {
+                          context
+                              .read<ProductDetailBloc>()
+                              .add(ProductDetailLoadEvent(id));
+                        });
                       } else if (state is ProductAddedToCartError) {
                         context.showSnackBar(state.message);
                       }
                     },
-                    child: CustomOutlineButton(
-                        leftIcon: CustomImageView(
-                          margin: EdgeInsets.only(right: 10.h),
-                          imagePath: ImageConstant.cartBlackIcon,
-                        ),
+                    builder: (context, state) => CustomOutlineButton(
+                        leftIcon: _isAddedToCart
+                            ? const Icon(
+                                Icons.done,
+                                color: Colors.green,
+                              )
+                            : CustomImageView(
+                                margin: EdgeInsets.only(right: 10.h),
+                                imagePath: ImageConstant.cartBlackIcon,
+                              ),
                         onPressed: () async {
-                          context.read<ProductDetailBloc>().add(
-                              ProductAddToCart(
-                                  id: id, inventoryId: _selectedColor));
-                          context.read<ProfileBloc>().add(FetchProfile());
+                          if (_isAddedToCart) {
+                            Navigator.of(context)
+                                .pushNamed(AppRoutes.cartScreen)
+                                .then((_) {
+                              context
+                                  .read<ProductDetailBloc>()
+                                  .add(ProductDetailLoadEvent(id));
+                            });
+                          } else {
+                            context.read<ProductDetailBloc>().add(
+                                ProductAddToCart(
+                                    id: id, inventoryId: _selectedColor));
+                            context.read<ProfileBloc>().add(FetchProfile());
+                          }
                         },
-                        text: 'Add to Cart'),
+                        buttonTextStyle: _isAddedToCart
+                            ? TextStyle(color: Colors.green, fontSize: 18.fSize)
+                            : null,
+                        text: _isAddedToCart ? "Added" : 'Add to Cart'),
                   )),
                   SizedBox(width: 12.h),
                   Expanded(
@@ -723,7 +749,6 @@ class ProductDetailScreen extends StatelessWidget {
   }
 
   Future<dynamic> _showSizeChart(BuildContext context, String url) {
-    TextTheme textTheme = Theme.of(context).textTheme;
     return showModalBottomSheet(
       context: context,
       builder: (context) => SizedBox(

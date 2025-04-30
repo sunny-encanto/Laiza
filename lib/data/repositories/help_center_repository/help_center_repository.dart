@@ -37,9 +37,140 @@ class HelpCenterRepository {
       Response response = await _apiClient.get(ApiConstant.getPrivacy);
 
       if (response.statusCode == 200) {
-        return response.data.toString();
+        return response.data['data'].toString();
       } else {
-        return response.data.toString();
+        return response.data['data'].toString();
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during  get privacy', e.toString());
+      throw Exception('Failed to get privacy ');
+    }
+  }
+
+  Future<String> getTermsAndCondition() async {
+    try {
+      Response response = await _apiClient.get(ApiConstant.termsAndConditions);
+
+      if (response.statusCode == 200) {
+        return response.data['data'].toString();
+      } else {
+        return response.data['data'].toString();
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during  get privacy', e.toString());
+      throw Exception('Failed to get privacy ');
+    }
+  }
+
+  Future<String> responsibleDisclosurePolicy() async {
+    try {
+      Response response =
+          await _apiClient.get(ApiConstant.responsibleDisclosurePolicy);
+
+      if (response.statusCode == 200) {
+        return response.data['data'].toString();
+      } else {
+        return response.data['data'].toString();
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during  get privacy', e.toString());
+      throw Exception('Failed to get privacy ');
+    }
+  }
+
+  Future<String> antiPhishingPolicy() async {
+    try {
+      Response response = await _apiClient.get(ApiConstant.antiPhishingPolicy);
+
+      if (response.statusCode == 200) {
+        return response.data['data'].toString();
+      } else {
+        return response.data['data'].toString();
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during  get privacy', e.toString());
+      throw Exception('Failed to get privacy ');
+    }
+  }
+
+  Future<String> intellectualPropertyPolicy() async {
+    try {
+      Response response =
+          await _apiClient.get(ApiConstant.intellectualPropertyPolicy);
+
+      if (response.statusCode == 200) {
+        return response.data['data'].toString();
+      } else {
+        return response.data['data'].toString();
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during  get privacy', e.toString());
+      throw Exception('Failed to get privacy ');
+    }
+  }
+
+  Future<String> refundReturnReplacementPolicy() async {
+    try {
+      Response response =
+          await _apiClient.get(ApiConstant.refundReturnPropertyPolicy);
+
+      if (response.statusCode == 200) {
+        return response.data['data'].toString();
+      } else {
+        return response.data['data'].toString();
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during  get privacy', e.toString());
+      throw Exception('Failed to get privacy ');
+    }
+  }
+
+  Future<String> laiza_cancellation_refund_policy() async {
+    try {
+      Response response =
+          await _apiClient.get(ApiConstant.laiza_cancellation_refund_policy);
+
+      if (response.statusCode == 200) {
+        return response.data['data'].toString();
+      } else {
+        return response.data['data'].toString();
+      }
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during  get privacy', e.toString());
+      throw Exception('Failed to get privacy ');
+    }
+  }
+
+  Future<String> third_party_functionalities() async {
+    try {
+      Response response =
+          await _apiClient.get(ApiConstant.third_party_functionalities);
+
+      if (response.statusCode == 200) {
+        return response.data['data'].toString();
+      } else {
+        return response.data['data'].toString();
       }
     } on DioException catch (e) {
       String message = e.response?.data['message'] ?? 'Unknown error';

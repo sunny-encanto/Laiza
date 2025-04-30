@@ -9,17 +9,20 @@ import '../../../core/utils/api_constant.dart';
 import '../../../core/utils/logger.dart';
 import '../../../core/utils/pref_utils.dart';
 import '../../models/cart_model/cart_model.dart';
+import '../../models/singleOrderDetails/singleorderDetials.dart';
+import '../../models/tracking_model/tracking_model.dart';
 
 class OrderRepository {
   final ApiClient _apiClient = ApiClient();
 
-  Future<CommonModel> crateOrder(
-      List<CartModel> selectedItems, String paymentMode) async {
+  Future<CommonModel> crateOrder(List<CartModel> selectedItems,
+      String paymentMode, String shippingCharges) async {
     try {
       _apiClient
           .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
       FormData formData = FormData();
       formData.fields.add(MapEntry('payment_status', paymentMode));
+      formData.fields.add(MapEntry('shipping_charges', shippingCharges));
       for (var item in selectedItems) {
         formData.fields
             .add(MapEntry('inventory_id[]', item.inventoryId.toString()));
@@ -106,6 +109,41 @@ class OrderRepository {
     } catch (e) {
       Logger.log('Error during get shipping fee ', e.toString());
       throw Exception('Failed to get shipping fee');
+    }
+  }
+
+  Future<TrackingDetailModel> trackOrder(String trackingId) async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+      Response response = await _apiClient.get(ApiConstant.orderTracking,
+          queryParameters: {'tracking_ids': trackingId});
+      TrackingDetailModel model = TrackingDetailModel.fromJson(response.data);
+      return model;
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during trackOrder', e.toString());
+      throw Exception('Failed to trackOrder');
+    }
+  }
+
+  Future<SingleOrderDetailsModel> singleOrderDetails(String id) async {
+    try {
+      _apiClient
+          .setHeaders({'Authorization': 'Bearer ${PrefUtils.getToken()}'});
+      Response response =
+          await _apiClient.get("${ApiConstant.singleOrderDetails}/$id");
+      SingleOrderDetailsModel model =
+          SingleOrderDetailsModel.fromJson(response.data);
+      return model;
+    } on DioException catch (e) {
+      String message = e.response?.data['message'] ?? 'Unknown error';
+      throw message;
+    } catch (e) {
+      Logger.log('Error during get single Order Details', e.toString());
+      throw Exception('Failed to get single Order Details');
     }
   }
 }

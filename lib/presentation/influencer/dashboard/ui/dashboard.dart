@@ -1,4 +1,5 @@
 import 'package:laiza/core/app_export.dart';
+import 'package:laiza/core/utils/date_time_utils.dart';
 import 'package:laiza/data/blocs/my_streams/my_streams_bloc.dart';
 import 'package:laiza/data/models/user/user_model.dart';
 import 'package:laiza/data/repositories/live_stream_repository/live_stream_repository.dart';
@@ -134,7 +135,8 @@ class DashboardScreen extends StatelessWidget {
                                       height: 80.v,
                                       width: 80.h,
                                       radius: BorderRadius.circular(6.h),
-                                      imagePath: ImageConstant.productImage,
+                                      imagePath:
+                                          state.streams[index].productImage,
                                     ),
                                     SizedBox(width: 8.h),
                                     SizedBox(
@@ -142,9 +144,19 @@ class DashboardScreen extends StatelessWidget {
                                       child: Row(
                                         children: [
                                           Expanded(
-                                            child: Text(
-                                              state.streams[index].title,
-                                              style: textTheme.titleMedium,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  state.streams[index].title,
+                                                  style: textTheme.titleMedium,
+                                                ),
+                                                Text(
+                                                  state.streams[index].status,
+                                                  style: textTheme.titleMedium,
+                                                ),
+                                              ],
                                             ),
                                           ),
                                           Column(
@@ -153,9 +165,14 @@ class DashboardScreen extends StatelessWidget {
                                                 "live in",
                                                 style: textTheme.bodySmall,
                                               ),
+                                              Text(
+                                                  state.streams[index].date
+                                                      .format(),
+                                                  //"04H: 35M: 28S",
+                                                  style: textTheme.titleMedium),
                                               Text(state.streams[index].time,
                                                   //"04H: 35M: 28S",
-                                                  style: textTheme.titleMedium)
+                                                  style: textTheme.titleMedium),
                                             ],
                                           )
                                         ],

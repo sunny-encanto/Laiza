@@ -319,15 +319,16 @@ class HomeScreen extends StatelessWidget {
                                         CustomElevatedButton(
                                           width: 122.h,
                                           height: 33.v,
-                                          text: seller.isConnected
-                                              ? 'Connected '
-                                              : 'Connect Now',
+                                          text: seller.isConnected ==
+                                                  'not_connected'
+                                              ? 'Connect Now '
+                                              : 'Connected',
                                           buttonTextStyle: textTheme.titleSmall,
                                           onPressed: () {
-                                            context
-                                                .read<DiscoverConnectionsBloc>()
-                                                .add(SendConnectionEvent(
-                                                    seller.id));
+                                            // context
+                                            //     .read<DiscoverConnectionsBloc>()
+                                            //     .add(SendConnectionEvent(
+                                            //         seller.id));
                                             // Navigator.of(context).pushNamed(
                                             //     AppRoutes.sellerInfoScreen);
                                           },

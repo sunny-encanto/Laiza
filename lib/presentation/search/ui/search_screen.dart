@@ -45,12 +45,16 @@ class _SearchScreenState extends State<SearchScreen>
           leadingWidth: 30.h,
           title: CustomTextFormField(
             controller: _searchController,
-            prefixConstraints: BoxConstraints(maxWidth: 25.h),
+            prefixConstraints: BoxConstraints(minWidth: 25.h),
+            readOnly: true,
+            contentPadding: EdgeInsets.all(15.h),
             prefix: Padding(
               padding: EdgeInsets.only(left: 10.h),
               child: CustomImageView(
+                margin: EdgeInsets.only(right: 5.h),
                 width: 15.h,
                 imagePath: ImageConstant.searchIcon,
+                fit: BoxFit.contain,
               ),
             ),
             suffix: BlocBuilder<SearchBloc, SearchState>(
@@ -185,9 +189,20 @@ class _SearchScreenState extends State<SearchScreen>
                                       //       overflow: TextOverflow.ellipsis),
                                       // ),
                                       SizedBox(height: 6.v),
-                                      Text(
-                                        '₹ ${state.searchResult[index].price}',
-                                        style: textTheme.bodySmall,
+                                      Row(
+                                        children: [
+                                          Text(
+                                            '₹${state.searchResult[index].mrp}  ',
+                                            style: textTheme.bodySmall!
+                                                .copyWith(
+                                                    decoration: TextDecoration
+                                                        .lineThrough),
+                                          ),
+                                          Text(
+                                            '₹${state.searchResult[index].finalPrice}',
+                                            style: textTheme.titleMedium,
+                                          ),
+                                        ],
                                       ),
                                       SizedBox(height: 8.v),
                                       Center(
@@ -246,9 +261,13 @@ class _SearchScreenState extends State<SearchScreen>
       subtitle: Row(
         children: [
           CustomImageView(imagePath: ImageConstant.groupIcon),
-          SizedBox(width: 2.h),
+          SizedBox(width: 5.h),
           Text(
             item.followersCount,
+            style: textTheme.bodySmall,
+          ),
+          Text(
+            ' Followers',
             style: textTheme.bodySmall,
           ),
         ],

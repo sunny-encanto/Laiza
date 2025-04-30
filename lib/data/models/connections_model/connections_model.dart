@@ -1,11 +1,11 @@
-import 'package:laiza/core/app_export.dart';
+import '../../../core/utils/image_constant.dart';
 
 class ConnectionsModel {
   final int id;
   final String name;
   final String category;
   final String profile;
-  final bool isConnected;
+  final String isConnected;
 
   ConnectionsModel({
     required this.id,
@@ -15,7 +15,7 @@ class ConnectionsModel {
     required this.isConnected,
   });
 
-  ConnectionsModel copyWith({bool? isConnected}) => ConnectionsModel(
+  ConnectionsModel copyWith({String? isConnected}) => ConnectionsModel(
         id: id,
         name: name,
         category: category,
@@ -29,40 +29,41 @@ class ConnectionsModel {
         category: json["category"] ?? "",
         profile: json["profile_img"],
         name: json["name"],
-        isConnected: true,
+        isConnected: 'not_connected',
       );
 
   Map<String, dynamic> toJson() =>
       {'id': id, 'category': category, 'profile_img': profile, 'name': name};
 }
 
+//
 List<ConnectionsModel> connectionsList = <ConnectionsModel>[
   ConnectionsModel(
     id: 1,
     name: 'Krithika Thapar',
     category: 'Cosmetics',
     profile: ImageConstant.profileBg,
-    isConnected: false,
+    isConnected: 'not_connected',
   ),
   ConnectionsModel(
     id: 2,
     name: 'Devendra Soni',
     category: 'Cosmetics',
     profile: ImageConstant.profileBg,
-    isConnected: false,
+    isConnected: 'not_connected',
   ),
   ConnectionsModel(
     id: 3,
     name: 'Rishabh Sharma',
     category: 'Cosmetics',
     profile: ImageConstant.profileBg,
-    isConnected: false,
+    isConnected: 'not_connected',
   ),
   ConnectionsModel(
     id: 4,
     name: 'Kunal Kapoor',
     category: 'Cosmetics',
     profile: ImageConstant.profileBg,
-    isConnected: false,
+    isConnected: 'not_connected',
   ),
 ];

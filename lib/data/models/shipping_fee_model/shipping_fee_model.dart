@@ -33,26 +33,26 @@ class EssentialPlan {
   factory EssentialPlan.fromJson(Map<String, dynamic> json) => EssentialPlan(
         eshopboxStandard: Eshopbox.fromJson(json["eshopboxStandard"]),
         eshopboxExpress: Eshopbox.fromJson(json["eshopboxExpress"]),
-        eshopboxPriority: Eshopbox.fromJson(json["eshopboxPriority"]),
+        eshopboxPriority: Eshopbox.fromJson(json["eshopboxPrime"]),
       );
 
   Map<String, dynamic> toJson() => {
         "eshopboxStandard": eshopboxStandard.toJson(),
         "eshopboxExpress": eshopboxExpress.toJson(),
-        "eshopboxPriority": eshopboxPriority.toJson(),
+        "eshopboxPrime": eshopboxPriority.toJson(),
       };
 }
 
 class Eshopbox {
-  int shippingBaseFreight;
-  int expressSurcharge;
-  int codCollectionFees;
-  int reverseShippingFees;
-  int fuelSurcharge;
-  int doorstepQcFees;
-  double gst;
-  double totalShippingCharges;
-  int estimatedDeliveryDays;
+  num shippingBaseFreight;
+  num expressSurcharge;
+  num codCollectionFees;
+  num reverseShippingFees;
+  num fuelSurcharge;
+  num doorstepQcFees;
+  num gst;
+  num totalShippingCharges;
+  num estimatedDeliveryDays;
 
   Eshopbox({
     required this.shippingBaseFreight,

@@ -45,6 +45,8 @@ class Address {
   int? id;
   String? lat;
   String? long;
+  String? phone;
+  String? alternateNumber;
 
   Address({
     this.userId,
@@ -61,6 +63,8 @@ class Address {
     this.address,
     this.lat,
     this.long,
+    this.phone,
+    this.alternateNumber,
   });
 
   factory Address.fromJson(Map<String, dynamic> json) => Address(
@@ -70,14 +74,16 @@ class Address {
         areaStreet: json["area_street"],
         landmark: json["landmark"],
         pinCode: json["pincode"],
-        city: json["city"],
-        state: json["state"],
-        country: json["country"],
+        city: json["city"].toString(),
+        state: json["state"].toString(),
+        country: json["country"].toString(),
         makeDefaultAddress: json["make_default_address"],
         id: json["id"],
         address: json["full_address"] ?? '',
         lat: json["latitude"] ?? "",
         long: json["longitude"] ?? "",
+        phone: json["phone_number"] ?? "",
+        alternateNumber: json["alternate_number"] ?? "",
       );
 
   Map<String, dynamic> toJson() {
@@ -98,6 +104,8 @@ class Address {
       map["make_default_address"] = makeDefaultAddress;
     }
     if (id != null) map["id"] = id;
+    if (phone != null) map["phone_number"] = phone;
+    if (alternateNumber != null) map["alternate_number"] = phone;
     return map;
   }
 }

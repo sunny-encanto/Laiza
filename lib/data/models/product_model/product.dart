@@ -38,6 +38,7 @@ class Product {
   num totalRatings;
   List<Inventory> inventories;
   String sizeChart;
+  bool isAddedToCart;
 
   Product({
     required this.id,
@@ -70,9 +71,11 @@ class Product {
     required this.inventories,
     required this.sizeChart,
     required this.mrp,
+    required this.isAddedToCart,
   });
 
-  Product copyWith({bool? isAddedToWishlist, bool? isAsked}) {
+  Product copyWith(
+      {bool? isAddedToWishlist, bool? isAsked, bool? isAddedToCart}) {
     return Product(
         id: id,
         userId: userId,
@@ -102,6 +105,7 @@ class Product {
         productImage: productImage,
         sizeChart: sizeChart,
         mrp: mrp,
+        isAddedToCart: isAddedToCart ?? this.isAddedToCart,
         inventories: inventories);
   }
 
@@ -154,6 +158,7 @@ class Product {
         discount: json["product_discount"] ?? 0,
         sizeChart: json["size_cart"] ?? '',
         mrp: json["mrp"] ?? '',
+        isAddedToCart: json["is_cart"] ?? false,
         additionalInfo: json['additional_info'] == null
             ? null
             : ProductAdditionalInfo.fromJson(
@@ -191,6 +196,7 @@ class Product {
         "average_rating": averageRating,
         "total_ratings": totalRatings,
         "product_discount": discount,
+        "is_cart": isAddedToCart,
         "size_cart": sizeChart,
         "inventories": List<dynamic>.from(inventories.map((x) => x.toJson())),
       };

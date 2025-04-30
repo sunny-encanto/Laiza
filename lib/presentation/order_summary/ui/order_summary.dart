@@ -34,6 +34,7 @@ class _OrderSummaryState extends State<OrderSummary> {
   Address? address;
   late RazorpayService _razorpayService;
   bool isLoading = false;
+  bool isOrderLoading = false;
   String selectedShippingOption = 'Standard';
   int deliveryCharge = 0;
 
@@ -82,9 +83,8 @@ class _OrderSummaryState extends State<OrderSummary> {
     context.showSnackBar("Payment Successful: ${response.paymentId}");
     Navigator.of(context)
         .pushNamedAndRemoveUntil(AppRoutes.orderPlacedScreen, (route) => false);
-    context
-        .read<OrderRepository>()
-        .crateOrder(widget.items, PaymentMode.ONLINE.name);
+    context.read<OrderRepository>().crateOrder(
+        widget.items, PaymentMode.ONLINE.name, deliveryCharge.toString());
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -178,8 +178,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                                               onTap: () {
                                                 Navigator.of(context)
                                                     .pushNamed(
-                                                        AppRoutes
-                                                            .addAddressScreen,
+                                                        AppRoutes.addressScreen,
                                                         arguments:
                                                             state.address)
                                                     .then((_) => context
@@ -244,8 +243,6 @@ class _OrderSummaryState extends State<OrderSummary> {
                   },
                 ),
               ),
-
-              /// Address Box
 
               /// Product Detail,
               SizedBox(height: 24.v),
@@ -371,42 +368,6 @@ class _OrderSummaryState extends State<OrderSummary> {
                       ),
                     ),
                     SizedBox(height: 10.h),
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          selectedShippingOption = 'Priority';
-                          deliveryCharge = deliveryCharge = shippingFeeModel!
-                              .essentialPlan
-                              .eshopboxPriority
-                              .totalShippingCharges
-                              .round();
-                        });
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: selectedShippingOption == 'Priority'
-                                ? Border.all(color: AppColor.primary)
-                                : null,
-                            color: AppColor.offWhite,
-                            borderRadius: BorderRadius.circular(5.h)),
-                        padding: EdgeInsets.all(20.h),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Priority', style: textTheme.titleMedium),
-                            SizedBox(height: 10.h),
-                            _buildDetailsTile(context,
-                                title: "Shipping Charges",
-                                value:
-                                    "₹${shippingFeeModel?.essentialPlan.eshopboxPriority.totalShippingCharges}"),
-                            _buildDetailsTile(context,
-                                title: "Estimated Delivery Days",
-                                value:
-                                    "${shippingFeeModel?.essentialPlan.eshopboxPriority.estimatedDeliveryDays}"),
-                          ],
-                        ),
-                      ),
-                    ),
                   ],
                 ),
 
@@ -450,81 +411,83 @@ class _OrderSummaryState extends State<OrderSummary> {
               ),
 
               SizedBox(height: 20.v),
-              CustomOutlineButton(
-                onPressed: () async {
-                  if (address?.city == null) {
-                    context.showSnackBar('Please add address');
-                    return;
-                  } else {
-                    try {
-                      await context
-                          .read<OrderRepository>()
-                          .crateOrder(widget.items, PaymentMode.COD.name);
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          AppRoutes.orderPlacedScreen, (route) => false);
-                    } catch (e) {
-                      context.showSnackBar(e.toString());
+              Visibility(
+                visible: !isLoading,
+                child: CustomOutlineButton(
+                  isLoading: isOrderLoading,
+                  loaderColor: AppColor.primary,
+                  onPressed: () async {
+                    if (address?.city == null) {
+                      context.showSnackBar('Please add address');
+                      return;
+                    } else {
+                      try {
+                        setState(() {
+                          isOrderLoading = true;
+                        });
+                        await context.read<OrderRepository>().crateOrder(
+                            widget.items,
+                            PaymentMode.COD.name,
+                            deliveryCharge.toString());
+                        setState(() {
+                          isOrderLoading = false;
+                        });
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            AppRoutes.orderPlacedScreen, (route) => false);
+                      } catch (e) {
+                        setState(() {
+                          isOrderLoading = false;
+                        });
+                        context.showSnackBar(e.toString());
+                      }
                     }
-                  }
-                },
-                buttonStyle: OutlinedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: Colors.white,
-                    shape: StadiumBorder(
-                        side: BorderSide(color: AppColor.primary))),
-                text: 'COD',
+                  },
+                  buttonStyle: OutlinedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: Colors.white,
+                      shape: StadiumBorder(
+                          side: BorderSide(color: AppColor.primary))),
+                  text: 'COD',
+                ),
               ),
               SizedBox(height: 80.v),
-
-              ///Select Payment Method
-              // Text(
-              //   'Select Payment Method',
-              //   style: textTheme.titleMedium,
-              // ),
-              // SizedBox(height: 12.v),
             ],
           ),
         ),
       ),
       bottomSheet: Padding(
         padding: EdgeInsets.all(20.h),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            BlocConsumer<OrderSummaryCubit, OrderSummaryState>(
-              listener: (context, state) {
-                // if (state is DiscountAdded) {
-                //   totalPrice = state.totalPrice;
-                //   couponPrice = state.discountPrice;
-                // }
-              },
-              builder: (context, state) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('Total', style: textTheme.bodySmall),
-                    SizedBox(height: 5.v),
-                    Text(
-                        '₹${(totalPrice - couponPrice + deliveryCharge).toStringAsFixed(2)}',
-                        style:
-                            textTheme.titleLarge!.copyWith(fontSize: 20.fSize)),
-                  ],
-                );
-              },
-            ),
-            CustomElevatedButton(
-                width: 160.h,
-                height: 48.v,
-                text: 'Pay Now',
-                buttonTextStyle: TextStyle(fontSize: 14.fSize),
-                onPressed: _startPayment
-                //     () {
-                //   // Navigator.of(context).pushNamed(AppRoutes.orderPlacedScreen);
-                //   // context.read<OrderRepository>().crateOrder(items);
-                // },
-                ),
-          ],
+        child: BlocConsumer<OrderSummaryCubit, OrderSummaryState>(
+          listener: (context, state) {},
+          builder: (context, state) {
+            return Visibility(
+              visible: !isLoading,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Total', style: textTheme.bodySmall),
+                      SizedBox(height: 5.v),
+                      Text(
+                          '₹${(totalPrice - couponPrice + deliveryCharge).toStringAsFixed(2)}',
+                          style: textTheme.titleLarge!
+                              .copyWith(fontSize: 20.fSize)),
+                    ],
+                  ),
+                  CustomElevatedButton(
+                    width: 160.h,
+                    height: 48.v,
+                    text: 'Pay Now',
+                    buttonTextStyle: TextStyle(fontSize: 14.fSize),
+                    onPressed: _startPayment,
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
@@ -536,7 +499,7 @@ class _OrderSummaryState extends State<OrderSummary> {
       return;
     } else {
       _razorpayService.openCheckout(
-        amount: (totalPrice - couponPrice).toInt(),
+        amount: (totalPrice - couponPrice + deliveryCharge).toInt(),
         name: 'Laiza',
         description: 'Payment for Product',
         contact: '9876543210',

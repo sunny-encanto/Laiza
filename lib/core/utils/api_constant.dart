@@ -79,6 +79,7 @@ class ApiConstant {
   static String getCollectionDetails = 'api/user/collection/details';
   static String deleteCollection = 'api/user/collection/delete';
   static String getPrivacy = 'api/privacy_policies';
+  static String termsAndConditions = 'api/terms_and_conditions';
   static String addRating = 'api/user/rate_product';
   static String reelsFromMyInfluencer = 'api/user/my_influencer_reels';
   static String createOrder = 'api/user/create-order';
@@ -93,4 +94,16 @@ class ApiConstant {
   static String notification = 'api/user/my_notification';
   static String reelView = 'api/user/record-reel-view';
   static String shippingFee = 'api/user/calculate-shipping';
+  static String orderTracking = 'api/user/order-tracking';
+  static String singleOrderDetails = 'api/user/single_order_details';
+  static String sellerDetails = 'api/user/product/details_seller_info';
+  static String responsibleDisclosurePolicy =
+      'api/responsible_disclosure_policy';
+  static String antiPhishingPolicy = 'api/anti_phishing_policy';
+  static String intellectualPropertyPolicy = 'api/intellectual_property_policy';
+  static String refundReturnPropertyPolicy =
+      'api/refund_return_replacement_policy';
+  static String laiza_cancellation_refund_policy =
+      'api/laiza_cancellation_refund_policy';
+  static String third_party_functionalities = 'api/third_party_functionalities';
 }

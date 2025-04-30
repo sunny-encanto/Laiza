@@ -28,6 +28,7 @@ class Order {
   int id;
   int userId;
   String orderNumber;
+  String trackingId;
   String totalPrice;
   String discount;
   String finalPrice;
@@ -43,6 +44,7 @@ class Order {
     required this.id,
     required this.userId,
     required this.orderNumber,
+    required this.trackingId,
     required this.totalPrice,
     required this.discount,
     required this.finalPrice,
@@ -59,6 +61,7 @@ class Order {
         id: json["id"],
         userId: json["user_id"],
         orderNumber: json["order_number"],
+        trackingId: json["tracking_id"] ?? '',
         totalPrice: json["total_price"],
         discount: json["discount"],
         finalPrice: json["final_price"],
@@ -76,6 +79,7 @@ class Order {
         "id": id,
         "user_id": userId,
         "order_number": orderNumber,
+        "tracking_id": trackingId,
         "total_price": totalPrice,
         "discount": discount,
         "final_price": finalPrice,
@@ -95,6 +99,7 @@ class OrderItem {
   int productId;
   int quantity;
   String price;
+  String trackingId;
   int gst;
   DateTime createdAt;
   DateTime updatedAt;
@@ -107,6 +112,7 @@ class OrderItem {
     required this.productId,
     required this.quantity,
     required this.price,
+    required this.trackingId,
     required this.gst,
     required this.createdAt,
     required this.updatedAt,
@@ -119,6 +125,7 @@ class OrderItem {
         productId: json["product_id"] ?? 0,
         quantity: json["quantity"] ?? 0,
         price: json["price"],
+        trackingId: json["tracking_id"] ?? '',
         gst: json["gst"] ?? 0,
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
@@ -132,6 +139,7 @@ class OrderItem {
         "quantity": quantity,
         "price": price,
         "gst": gst,
+        'tracking_id': trackingId,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
         // "product": product.toJson(),

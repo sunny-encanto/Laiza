@@ -31,7 +31,10 @@ import '../presentation/address_screen/ui/address_screen.dart';
 import '../presentation/auth/change_password/ui/create_password.dart';
 import '../presentation/auth/settings_page/ui/settings_page.dart';
 import '../presentation/influencer/order_management/bloc/influencer_orders_bloc.dart';
+import '../presentation/influencer/side_bar/ui/side_bar.dart';
 import '../presentation/order_summary/ui/order_summary.dart';
+import '../presentation/order_track/cubit/order_track_cubit.dart';
+import '../presentation/privacy_policy/ui/terms_and_services.dart';
 import '../presentation/report_user/ui/report_user_screen.dart';
 import '../presentation/search/ui/influencer_search_screen.dart';
 import '../presentation/user_edit_porfile/ui/user_edit_profile.dart';
@@ -98,6 +101,11 @@ class AppRoutes {
   static const String allFavInfluencerScreen = '/all_fav_influencer_screen';
 
   static const String privacyPolicyScreen = '/privacy_policy_screen';
+
+  static const String termsAndServices = '/termsAndServices';
+
+  static const String responsibleDisclosurePolicy =
+      '/responsibleDisclosurePolicy';
 
   static const String helpCentreScreen = '/help_centre_screen';
 
@@ -166,6 +174,18 @@ class AppRoutes {
   static const String allCreatorsScreen = '/all_creators_screen';
 
   static const String influencerSearchScreen = '/influencer_search_screen';
+
+  static const String antiPhishingPolicy = '/AntiPhishingPolicy';
+
+  static const String refundReplacementPolicy = '/RefundReplacementPolicy';
+  static const String legalAndPolicies = '/LegalAndPolicies';
+
+  static const String cancellationRefundPolicyScreen =
+      '/CancellationRefundPolicyScreen';
+
+  static const String intellectualPropertyPolicyScreen =
+      '/IntellectualPropertyPolicyScreen';
+  static const String thirdPartyFunctionalities = '/thirdPartyFunctionalities';
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -244,6 +264,10 @@ class AppRoutes {
 
       case successScreen:
         return CupertinoPageRoute(builder: (context) => const SuccessScreen());
+
+      case legalAndPolicies:
+        return CupertinoPageRoute(
+            builder: (context) => const LegalAndPolicies());
 
       case bottomBarScreen:
         return CupertinoPageRoute(
@@ -346,9 +370,19 @@ class AppRoutes {
                       ChangePasswordBloc(context.read<AuthRepository>()),
                   child: ChangePasswordScreen(),
                 ));
+
       case orderTrackScreen:
+        Map<String, dynamic> data = settings.arguments as Map<String, dynamic>;
+        String trackingId = data['trackingId'];
+        String orderId = data['orderId'];
         return CupertinoPageRoute(
-            builder: (context) => const OrderTrackScreen());
+            builder: (context) => BlocProvider(
+                create: (context) =>
+                    OrderTrackCubit(context.read<OrderRepository>()),
+                child: OrderTrackScreen(
+                  trackingId: trackingId,
+                  orderId: orderId,
+                )));
 
       case myOrderScreen:
         return CupertinoPageRoute(
@@ -378,6 +412,7 @@ class AppRoutes {
                       SearchBloc(context.read<UserRepository>()),
                   child: const SearchScreen(),
                 ));
+
       case influencerSearchScreen:
         return CupertinoPageRoute(
             fullscreenDialog: true,
@@ -404,6 +439,55 @@ class AppRoutes {
                 create: (context) =>
                     PrivacyPolicyBloc(context.read<HelpCenterRepository>()),
                 child: const PrivacyPolicyScreen()));
+
+      case termsAndServices:
+        return CupertinoPageRoute(
+            builder: (context) => BlocProvider(
+                create: (context) =>
+                    PrivacyPolicyBloc(context.read<HelpCenterRepository>()),
+                child: const TermsAndServices()));
+
+      case responsibleDisclosurePolicy:
+        return CupertinoPageRoute(
+            builder: (context) => BlocProvider(
+                create: (context) =>
+                    PrivacyPolicyBloc(context.read<HelpCenterRepository>()),
+                child: const ResponsibleDisclosurePolicy()));
+
+      case antiPhishingPolicy:
+        return CupertinoPageRoute(
+            builder: (context) => BlocProvider(
+                create: (context) =>
+                    PrivacyPolicyBloc(context.read<HelpCenterRepository>()),
+                child: const AntiPhishingPolicy()));
+
+      case cancellationRefundPolicyScreen:
+        return CupertinoPageRoute(
+            builder: (context) => BlocProvider(
+                create: (context) =>
+                    PrivacyPolicyBloc(context.read<HelpCenterRepository>()),
+                child: const CancellationRefundPolicyScreen()));
+
+      case intellectualPropertyPolicyScreen:
+        return CupertinoPageRoute(
+            builder: (context) => BlocProvider(
+                create: (context) =>
+                    PrivacyPolicyBloc(context.read<HelpCenterRepository>()),
+                child: const IntellectualPropertyPolicyScreen()));
+
+      case refundReplacementPolicy:
+        return CupertinoPageRoute(
+            builder: (context) => BlocProvider(
+                create: (context) =>
+                    PrivacyPolicyBloc(context.read<HelpCenterRepository>()),
+                child: const RefundReplacementPolicy()));
+
+      case thirdPartyFunctionalities:
+        return CupertinoPageRoute(
+            builder: (context) => BlocProvider(
+                create: (context) =>
+                    PrivacyPolicyBloc(context.read<HelpCenterRepository>()),
+                child: const ThirdPartyFunctionalities()));
 
       case helpCentreScreen:
         return CupertinoPageRoute(builder: (context) => HelpCentreScreen());
@@ -492,10 +576,12 @@ class AppRoutes {
                 ));
 
       case sellerInfoScreen:
+        String id = settings.arguments as String;
         return CupertinoPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => SellerInfoBloc(),
-                  child: SellerInfoScreen(),
+                  create: (context) =>
+                      SellerInfoBloc(context.read<UserRepository>()),
+                  child: SellerInfoScreen(id: id),
                 ));
 
       case influencerMyProfile:
@@ -561,7 +647,7 @@ class AppRoutes {
             builder: (context) => BlocProvider(
                   create: (context) =>
                       EarningCubit(context.read<OrderRepository>()),
-                  child: EarningsScreen(),
+                  child: const EarningsScreen(),
                 ));
 
       case recentTransactionsScreen:

@@ -18,6 +18,7 @@ class UserModel {
   num? city;
   int? productCategory;
   String? instagramFollowers;
+  String? connectionStatus;
 
   String? userType;
   num? isLogin;
@@ -83,6 +84,7 @@ class UserModel {
     this.followersCount,
     this.followingCount,
     this.cartCount,
+    this.connectionStatus,
   });
 
 // CopyWith function
@@ -129,6 +131,7 @@ class UserModel {
       followersCount: followersCount,
       followingCount: followingCount,
       cartCount: cartCount,
+      connectionStatus: connectionStatus,
     );
   }
 
@@ -171,6 +174,7 @@ class UserModel {
         followersCount: json['followers_count'],
         followingCount: json['following_count'],
         cartCount: json['cart_count'],
+        connectionStatus: json['connection_status'] ?? '',
       );
 
   Map<String, dynamic> toJson() {
@@ -210,6 +214,7 @@ class UserModel {
     if (instagramUserName != null) data['insta_username'] = instagramUserName;
     if (followersCount != null) data['followers_count'] = followersCount;
     if (followingCount != null) data['following_count'] = followingCount;
+    if (connectionStatus != null) data['connection_status'] = connectionStatus;
     return data;
   }
 }

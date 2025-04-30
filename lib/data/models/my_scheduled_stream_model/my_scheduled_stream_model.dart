@@ -35,6 +35,7 @@ class MyScheduledStream {
   DateTime createdAt;
   DateTime updatedAt;
   String status;
+  String productImage;
   Users users;
 
   MyScheduledStream({
@@ -48,6 +49,7 @@ class MyScheduledStream {
     required this.createdAt,
     required this.updatedAt,
     required this.status,
+    required this.productImage,
     required this.users,
   });
 
@@ -63,6 +65,7 @@ class MyScheduledStream {
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         status: json["status"],
+        productImage: json["product_image"],
         users: Users.fromJson(json["users"]),
       );
 

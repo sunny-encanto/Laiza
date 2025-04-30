@@ -32,12 +32,13 @@ class DiscoverConnectionsBloc
     List<UserModel> users = await _userRepository.getAllSeller();
     for (var user in users) {
       _connectionsList.add(ConnectionsModel(
-        id: int.parse(user.id ?? '0'),
-        name: user.name ?? "",
-        category: '',
-        profile: user.profileImg ?? "",
-        isConnected: false,
-      ));
+          id: int.parse(user.id ?? '0'),
+          name: user.name ?? "",
+          category: '',
+          profile: user.profileImg ?? "",
+          isConnected: user.connectionStatus ?? ''
+          //'not_connected',
+          ));
     }
     emit(DiscoverConnectionsLoaded(_connectionsList));
   }
@@ -57,7 +58,7 @@ class DiscoverConnectionsBloc
     _connectionsList = _connectionsList.map((item) {
       if (event.id == item.id) {
         _connectionsRepository.sendConnection(event.id);
-        return item.copyWith(isConnected: !item.isConnected);
+        return item.copyWith(isConnected: 'Pending');
       }
       return item;
     }).toList();
@@ -71,7 +72,7 @@ class DiscoverConnectionsBloc
         currentState.connections.map((item) {
       if (event.id == item.id) {
         _connectionsRepository.sendConnection(event.id);
-        return item.copyWith(isConnected: !item.isConnected);
+        return item.copyWith(isConnected: item.isConnected);
       }
       return item;
     }).toList();

@@ -40,6 +40,7 @@ class TrendingItems {
   List<ReelProduct> product;
   String userName;
   String userImage;
+  String usertype;
   int userId;
   int viewCount;
 
@@ -54,6 +55,7 @@ class TrendingItems {
     required this.userName,
     required this.userImage,
     required this.userId,
+    required this.usertype,
     required this.viewCount,
   });
 
@@ -68,6 +70,7 @@ class TrendingItems {
         userName: userName,
         userImage: userImage,
         userId: userId,
+        usertype: usertype,
         viewCount: viewCount,
       );
 
@@ -84,6 +87,7 @@ class TrendingItems {
                 json["reel_product"].map((x) => ReelProduct.fromJson(x)))
             : <ReelProduct>[],
         userName: json['user_name'] ?? '',
+        usertype: json['user_type'] ?? '',
         userImage: json['profile_img'] ?? '',
         viewCount: json['view_count'] ?? 0,
       );
@@ -98,6 +102,7 @@ class TrendingItems {
         "reel_product": List<dynamic>.from(product.map((x) => x.toJson())),
         "user_name": userName,
         "profile_img": userImage,
+        "user_type": usertype,
         "user_id": userId
       };
 }

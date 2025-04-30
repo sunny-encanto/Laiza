@@ -62,7 +62,10 @@ class FollowingScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(4.h),
                                 image: DecorationImage(
                                     fit: BoxFit.fill,
-                                    image: NetworkImage(imagesList[index]))),
+                                    image: NetworkImage(state.followings[index]
+                                            .profileBg.isNotEmpty
+                                        ? state.followings[index].profileBg
+                                        : state.followings[index].profileImg))),
                             height: 120.v,
                             child: Stack(
                               alignment: Alignment.bottomCenter,
@@ -141,7 +144,7 @@ class FollowingScreen extends StatelessWidget {
                       ));
                     },
                     child: Text(
-                      'VIew All',
+                      'View All',
                       style: textTheme.bodySmall,
                     ),
                   ),
@@ -227,18 +230,48 @@ class TopInfluencersScreen extends StatelessWidget {
                 child: Text(state.message),
               );
             } else if (state is AllInfluencerLoaded) {
-              return MasonryGridView.builder(
-                gridDelegate:
-                    const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2),
-                shrinkWrap: true,
-                itemCount: state.influencers.length,
-                mainAxisSpacing: 5.v,
-                crossAxisSpacing: 5.h,
-                itemBuilder: (context, index) {
-                  return InfluencerProfileCardWidget(
-                      userModel: state.influencers[index]);
-                },
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CustomTextFormField(
+                        onTap: () {
+                          Navigator.of(context)
+                              .pushNamed(AppRoutes.searchScreen);
+                        },
+                        readOnly: true,
+                        contentPadding: EdgeInsets.all(15.h),
+                        prefixConstraints: BoxConstraints(minWidth: 25.h),
+                        prefix: Padding(
+                          padding: EdgeInsets.only(left: 10.h),
+                          child: CustomImageView(
+                            margin: EdgeInsets.only(right: 5.h),
+                            width: 20.h,
+                            imagePath: ImageConstant.searchIcon,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        hintText: 'Search for product or influencer',
+                      ),
+                    ),
+                    SizedBox(height: 20.v),
+                    MasonryGridView.builder(
+                      gridDelegate:
+                          const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2),
+                      shrinkWrap: true,
+                      itemCount: state.influencers.length,
+                      physics: const NeverScrollableScrollPhysics(),
+                      mainAxisSpacing: 5.v,
+                      crossAxisSpacing: 5.h,
+                      itemBuilder: (context, index) {
+                        return InfluencerProfileCardWidget(
+                            userModel: state.influencers[index]);
+                      },
+                    ),
+                  ],
+                ),
               );
             }
             return const SizedBox.shrink();

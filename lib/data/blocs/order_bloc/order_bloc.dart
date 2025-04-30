@@ -21,7 +21,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       emit(CreateOrderLoading());
       //Need to Change Here
       CommonModel model =
-          await _orderRepository.crateOrder([], event.paymentMode.name);
+          await _orderRepository.crateOrder([], event.paymentMode.name, '');
       emit(OrderCreated(model.message ?? ''));
     } catch (e) {
       emit(CreateOrderErrorState(e.toString()));

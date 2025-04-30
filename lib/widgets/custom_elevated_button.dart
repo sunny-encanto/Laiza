@@ -87,6 +87,7 @@ class CustomOutlineButton extends BaseButton {
     this.decoration,
     this.leftIcon,
     this.rightIcon,
+    this.loaderColor,
     super.margin,
     super.onPressed,
     super.buttonStyle,
@@ -104,6 +105,8 @@ class CustomOutlineButton extends BaseButton {
   final Widget? leftIcon;
 
   final Widget? rightIcon;
+
+  final Color? loaderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +140,7 @@ class CustomOutlineButton extends BaseButton {
               (isLoading ?? false)
                   ? Center(
                       child: LoadingAnimationWidget.staggeredDotsWave(
-                      color: Colors.white,
+                      color: loaderColor ?? Colors.white,
                       size: 30,
                     ))
                   : Text(

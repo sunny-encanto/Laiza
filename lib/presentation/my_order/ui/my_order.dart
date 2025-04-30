@@ -26,41 +26,118 @@ class MyOrderScreen extends StatelessWidget {
               } else if (state is MyOrderError) {
                 return Center(child: Text(state.message));
               } else if (state is MyOrderLoaded) {
-                List<OrderItem> orderList = <OrderItem>[];
-                orderList.clear();
-                for (var item in state.myOrdersModel.orders) {
-                  orderList.addAll(item.items);
+                if (state.myOrdersModel.orders.isEmpty) {
+                  return Column(
+                    children: [
+                      SizedBox(
+                        height: 120.v,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: CustomImageView(
+                          imagePath: ImageConstant.noOrders,
+                        ),
+                      ),
+                    ],
+                  );
                 }
-                return Column(
-                  children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: orderList.length,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return _buildItem(orderList[index], context);
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: state.myOrdersModel.orders.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(AppRoutes.orderTrackScreen, arguments: {
+                          "trackingId":
+                              state.myOrdersModel.orders[index].trackingId ??
+                                  '',
+                          'orderId':
+                              state.myOrdersModel.orders[index].id.toString()
+                        });
+                        // Navigator.of(context).push(MaterialPageRoute(
+                        //   builder: (context) => SeeOrderItem(
+                        //       orders: state.myOrdersModel.orders[index]),
+                        // ));
                       },
-                    ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //   children: [
-                    //     Text(
-                    //       'Past Orders',
-                    //       style: textTheme.titleMedium,
-                    //     ),
-                    //     Text('View All', style: textTheme.bodySmall)
-                    //   ],
-                    // ),
-                    // SizedBox(height: 20.h),
-                    // ListView.builder(
-                    //   shrinkWrap: true,
-                    //   itemCount: 3,
-                    //   physics: const NeverScrollableScrollPhysics(),
-                    //   itemBuilder: (context, index) {
-                    //     return _buildItem(textTheme, context);
-                    //   },
-                    // ),
-                  ],
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 16.v),
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              blurRadius: 6,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                          border: Border.all(
+                              color: AppColor.primary.withOpacity(0.5)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                    'Order #${state.myOrdersModel.orders[index].orderNumber}',
+                                    style: textTheme.titleMedium),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 4.0, horizontal: 8.0),
+                                  decoration: BoxDecoration(
+                                    color: state.myOrdersModel.orders[index]
+                                                .status ==
+                                            'Completed'
+                                        ? Colors.green.shade100
+                                        : Colors.red.shade100,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: Text(
+                                    state.myOrdersModel.orders[index].status,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: state.myOrdersModel.orders[index]
+                                                  .status ==
+                                              'Completed'
+                                          ? Colors.green
+                                          : Colors.red,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8.0),
+                            Text(
+                              'Price: ₹${state.myOrdersModel.orders[index].finalPrice}',
+                              style: textTheme.bodySmall,
+                            ),
+                            const SizedBox(height: 4.0),
+                            Text(
+                              'Payment Mode: ${state.myOrdersModel.orders[index].paymentStatus}',
+                              style: textTheme.bodySmall,
+                            ),
+                            const SizedBox(height: 4.0),
+                            Row(
+                              children: [
+                                Icon(Icons.shopping_basket_outlined,
+                                    color: AppColor.primary),
+                                const SizedBox(width: 4.0),
+                                Text(
+                                  '${state.myOrdersModel.orders[index].items.length} Items',
+                                  style: textTheme.titleMedium,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 );
               }
               return const SizedBox.shrink();
@@ -69,6 +146,32 @@ class MyOrderScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class SeeOrderItem extends StatelessWidget {
+  final Order orders;
+
+  const SeeOrderItem({super.key, required this.orders});
+
+  @override
+  Widget build(BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
+    return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            'My Orders',
+            style: textTheme.titleMedium,
+          ),
+        ),
+        body: ListView.builder(
+            shrinkWrap: true,
+            itemCount: 1,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return _buildItem(orders.items[index], context);
+            }));
   }
 
   SizedBox _buildItem(OrderItem item, BuildContext context) {
@@ -81,7 +184,11 @@ class MyOrderScreen extends StatelessWidget {
           children: [
             CustomImageView(
               onTap: () {
-                // Navigator.of(context).pushNamed(AppRoutes.orderTrackScreen);
+                Navigator.of(context).pushNamed(AppRoutes.orderTrackScreen,
+                    arguments: {
+                      "trackingId": item.trackingId,
+                      'orderId': item.orderId.toString()
+                    });
               },
               width: 135.h,
               height: 135.v,
@@ -101,20 +208,20 @@ class MyOrderScreen extends StatelessWidget {
                     style: textTheme.bodySmall,
                   ),
                   SizedBox(height: 8.v),
-                  Row(
-                    children: [
-                      Text(
-                        'Status-',
-                        style: textTheme.bodySmall,
-                      ),
-                      SizedBox(width: 5.v),
-                      Text(
-                        'Shipped',
-                        style: textTheme.bodySmall!
-                            .copyWith(color: AppColor.primary),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     Text(
+                  //       'Status-',
+                  //       style: textTheme.bodySmall,
+                  //     ),
+                  //     SizedBox(width: 5.v),
+                  //     Text(
+                  //       item.product.,
+                  //       style: textTheme.bodySmall!
+                  //           .copyWith(color: AppColor.primary),
+                  //     ),
+                  //   ],
+                  // ),
                   SizedBox(height: 8.v),
                   Text(
                     '₹${item.price}',
